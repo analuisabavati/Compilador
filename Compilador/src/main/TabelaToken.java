@@ -2,7 +2,7 @@ package main;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TabelaSimbolos {
+public class TabelaToken {
 
 	private static Map<String, String> tabelaSimbolos = new HashMap<String, String>();
 	static {

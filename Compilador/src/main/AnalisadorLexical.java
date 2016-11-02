@@ -3,7 +3,7 @@ package main;
 import java.util.Scanner;
 
 import static main.ArquivoUtil.*;
-import static main.TabelaSimbolos.*;
+import static main.TabelaToken.*;
 
 public class AnalisadorLexical {
 

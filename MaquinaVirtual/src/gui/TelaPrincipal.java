@@ -1,13 +1,10 @@
 package gui;
 
-
-
 import static main.MaquinaVirtual.executaInstrucoes;
 import static main.MaquinaVirtual.montaDadosTabelaInstrucao;
 import static main.MaquinaVirtual.procurarArquivo;
 
 import java.awt.EventQueue;
-import java.awt.Label;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
