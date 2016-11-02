@@ -45,10 +45,6 @@ public class TabelaToken {
 		tabelaSimbolos.put(":", "sdoispontos");
 	}
 	
-	public static boolean verificaSeStringEhLexema(String string) {
-		return tabelaSimbolos.get(string) != null;
-	}
-
 	public static String retornaSimbolo(String string) {
 		return tabelaSimbolos.get(string);
 	}
