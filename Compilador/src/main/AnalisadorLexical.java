@@ -6,6 +6,12 @@ import static main.ArquivoUtil.*;
 import static main.TabelaToken.*;
 
 public class AnalisadorLexical {
+	
+	/*
+	 * TODO:
+	 * Arrumar numero da linha 
+	 * Tirar condiçao de nao escrever linha vazia no arquivo
+	 */
 
 	private static int indexCaractereLinha = 0;
 	private static int numeroLinha = 0;
