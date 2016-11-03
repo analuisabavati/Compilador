@@ -4,6 +4,11 @@ import java.util.List;
 import static gui.TelaPrincipal.*;
 
 public class MnemonicoMetodos {
+	
+	/*
+	 * TODO:
+	 * Finalizar os metodos (jmp, etc)
+	 */
 
 	public static List<Integer> execLDC(List<Integer> pilhaDados, Integer constante) {
 		pilhaDados.add(constante);

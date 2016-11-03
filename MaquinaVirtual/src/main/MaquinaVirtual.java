@@ -20,8 +20,15 @@ public class MaquinaVirtual {
 	private static String path;
 	private static boolean isListaInstrucoesVazia = true;
 	private static List<Instrucao> pilhaInstrucoes = new ArrayList<>();
+	
+	/*
+	 * TODO: 
+	 * Conferir msg de erros 
+	 * Adicionar numero da linha nos erros
+	 * Remover case de intruções não realizam nada
+	 */
 
-	public static List<Instrucao>  leInstrucoesDoArquivo(String caminhoDoArquivo) throws Exception {
+	public static List<Instrucao> leInstrucoesDoArquivo(String caminhoDoArquivo) throws Exception {
 		
 		if(caminhoDoArquivo == null) {
 			throw new Exception("Caminho do arquivo invalido!");
@@ -70,10 +77,10 @@ public class MaquinaVirtual {
 							instrucao.setLabel(elementosLinha.get(0));
 							instrucao.setParametro1(toInteger(elementosLinha.get(1)));
 						} else {
-							throw new Exception ("Linha com somente dois elemento errada!");
+							throw new Exception ("Linha deve começar com um mnemonico ou label!");
 						}
 					} else {
-						throw new Exception ("Linha com somente dois elemento errada (else)!");
+						throw new Exception ("Linha deve começar com um mnemonico ou label!");
 					}
 					break;
 				
