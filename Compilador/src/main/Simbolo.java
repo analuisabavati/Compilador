@@ -1,6 +1,6 @@
 package main;
 
-public class TabelaSimbolos {
+public class Simbolo {
 	
 	private String simbolo;
 	private TipoVariavel tipo;

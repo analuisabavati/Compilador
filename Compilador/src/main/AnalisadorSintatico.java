@@ -1,6 +1,7 @@
 package main;
 
 import static main.AnalisadorLexical.lexico;
+import static main.AnalisadorSemantico.*;
 
 public class AnalisadorSintatico {
 
