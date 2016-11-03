@@ -26,6 +26,7 @@ public class MaquinaVirtual {
 	 * Conferir msg de erros 
 	 * Adicionar numero da linha nos erros
 	 * Remover case de intruções não realizam nada
+	 * Fazer breakpoints 
 	 */
 
 	public static List<Instrucao> leInstrucoesDoArquivo(String caminhoDoArquivo) throws Exception {
