@@ -16,7 +16,7 @@ public class AnalisadorSemantico {
 		simbolo.setSimbolo(lexema);	
 	}
 	
-	public void colocaTipoVariaveis(TipoVariavel tipo) {
+	public void colocaTipoVariaveis(String tipo) {
 		
 	}
 	
