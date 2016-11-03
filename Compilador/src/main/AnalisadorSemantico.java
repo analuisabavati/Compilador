@@ -36,4 +36,12 @@ public class AnalisadorSemantico {
 		return false;
 	}
 	
+	public boolean naoExisteVariavelNaTabelaSimbolo(String lexema) {
+		return !existeVariavelNaTabelaSimbolo(lexema);
+	}
+
+	public boolean existeVariavelNaTabelaSimbolo(String lexema) {
+		return false;
+	}
+	
 }

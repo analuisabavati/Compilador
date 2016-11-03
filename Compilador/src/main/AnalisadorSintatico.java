@@ -79,7 +79,7 @@ public class AnalisadorSintatico {
 	private static Token analisaVariaveis(Token token) throws Exception {
 		do {
 			if (token.getSimbolo().equals("sidentificador")) {
-				//TODO: if(naoExisteVariavelNaSimboloTabela) { 
+				//TODO: if(naoExisteVariavelNaTabelaSimbolo) { 
 				// TODO: insereTabelaSimbolos(token.getLexema()); 
 				token = lexico();
 				if (token.getSimbolo().equals("svirgula") || token.getSimbolo().equals("sdoispontos")) {
