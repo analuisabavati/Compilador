@@ -4,49 +4,49 @@ import java.util.Map;
 
 public class TabelaToken {
 
-	private static Map<String, String> tabelaSimbolos = new HashMap<String, String>();
+	private static Map<String, String> tabelaToken = new HashMap<String, String>();
 	static {
-		tabelaSimbolos.put("programa", "sprograma");
-		tabelaSimbolos.put("inicio", "sinicio");
-		tabelaSimbolos.put("fim", "sfim");
-		tabelaSimbolos.put("procedimento", "sprocedimento");
-		tabelaSimbolos.put("funcao", "sfuncao");
-		tabelaSimbolos.put("se", "sse");
-		tabelaSimbolos.put("entao", "sentao");
-		tabelaSimbolos.put("senao", "ssenao");
-		tabelaSimbolos.put("enquanto", "senquanto");
-		tabelaSimbolos.put("faca", "sfaca");
-		tabelaSimbolos.put(":=", "satribuicao");
-		tabelaSimbolos.put("escreva", "sescreva");
-		tabelaSimbolos.put("leia", "sleia");
-		tabelaSimbolos.put("var", "svar");
-		tabelaSimbolos.put("inteiro", "sinteiro");
-		tabelaSimbolos.put("booleano", "sbooleano");
-		tabelaSimbolos.put("identificador", "sidentificador");
-		tabelaSimbolos.put("numero", "snumero");
-		tabelaSimbolos.put(".", "sponto");
-		tabelaSimbolos.put(";", "sponto_virgula");
-		tabelaSimbolos.put(",", "svirgula");
-		tabelaSimbolos.put("(", "sabre_parenteses");
-		tabelaSimbolos.put(")", "sfecha_parenteses");
-		tabelaSimbolos.put(">", "smaior");
-		tabelaSimbolos.put(">=", "smaiorig");
-		tabelaSimbolos.put("=", "sig");
-		tabelaSimbolos.put("<", "smenor");
-		tabelaSimbolos.put("<=", "smenorig");
-		tabelaSimbolos.put("!=", "sdif");
-		tabelaSimbolos.put("+", "smais");
-		tabelaSimbolos.put("-", "smenos");
-		tabelaSimbolos.put("*", "smult");
-		tabelaSimbolos.put("div", "sdiv");
-		tabelaSimbolos.put("e", "se");
-		tabelaSimbolos.put("ou", "sou");
-		tabelaSimbolos.put("nao", "snao");
-		tabelaSimbolos.put(":", "sdoispontos");
+		tabelaToken.put("programa", "sprograma");
+		tabelaToken.put("inicio", "sinicio");
+		tabelaToken.put("fim", "sfim");
+		tabelaToken.put("procedimento", "sprocedimento");
+		tabelaToken.put("funcao", "sfuncao");
+		tabelaToken.put("se", "sse");
+		tabelaToken.put("entao", "sentao");
+		tabelaToken.put("senao", "ssenao");
+		tabelaToken.put("enquanto", "senquanto");
+		tabelaToken.put("faca", "sfaca");
+		tabelaToken.put(":=", "satribuicao");
+		tabelaToken.put("escreva", "sescreva");
+		tabelaToken.put("leia", "sleia");
+		tabelaToken.put("var", "svar");
+		tabelaToken.put("inteiro", "sinteiro");
+		tabelaToken.put("booleano", "sbooleano");
+		tabelaToken.put("identificador", "sidentificador");
+		tabelaToken.put("numero", "snumero");
+		tabelaToken.put(".", "sponto");
+		tabelaToken.put(";", "sponto_virgula");
+		tabelaToken.put(",", "svirgula");
+		tabelaToken.put("(", "sabre_parenteses");
+		tabelaToken.put(")", "sfecha_parenteses");
+		tabelaToken.put(">", "smaior");
+		tabelaToken.put(">=", "smaiorig");
+		tabelaToken.put("=", "sig");
+		tabelaToken.put("<", "smenor");
+		tabelaToken.put("<=", "smenorig");
+		tabelaToken.put("!=", "sdif");
+		tabelaToken.put("+", "smais");
+		tabelaToken.put("-", "smenos");
+		tabelaToken.put("*", "smult");
+		tabelaToken.put("div", "sdiv");
+		tabelaToken.put("e", "se");
+		tabelaToken.put("ou", "sou");
+		tabelaToken.put("nao", "snao");
+		tabelaToken.put(":", "sdoispontos");
 	}
 	
 	public static String retornaSimbolo(String string) {
-		return tabelaSimbolos.get(string);
+		return tabelaToken.get(string);
 	}
 
 }
