@@ -5,13 +5,7 @@ import java.util.Scanner;
 import static main.ArquivoUtil.*;
 import static main.TabelaToken.*;
 
-public class AnalisadorLexical {
-	
-	/*
-	 * TODO:
-	 * Arrumar numero da linha 
-	 * Tirar condiçao de nao escrever linha vazia no arquivo
-	 */
+public class AnalisadorLexico {
 
 	private static int indexCaractereLinha = 0;
 	private static int numeroLinha = 0;
@@ -24,7 +18,7 @@ public class AnalisadorLexical {
 		if (!arquivoTratado.hasNextLine()) {
 			throw new Exception("Arquivo Vazio!");
 		}
-		linhaArquivo = arquivoTratado.nextLine();
+		pulaLinhaVazia();
 	}
 
 	public static Token lexico() throws Exception {
@@ -32,12 +26,21 @@ public class AnalisadorLexical {
 			indexCaractereLinha = 0;
 			numeroLinha++;
 			if (arquivoTratado.hasNextLine()) {
-				linhaArquivo = arquivoTratado.nextLine();
+				pulaLinhaVazia();
 			} else {
 				throw new Exception("Chegou ao fim do arquivo. Não há mais tokens.");
 			}
-		}
+		} 
+		
+		
 		return pegaToken(linhaArquivo);
+	}
+
+	private static void pulaLinhaVazia() {
+		do {
+			linhaArquivo = arquivoTratado.nextLine();	
+			numeroLinha++;
+		} while (linhaArquivo.trim().isEmpty());
 	}
 
 	private static Token pegaToken(String linha) throws Exception {
@@ -59,9 +62,8 @@ public class AnalisadorLexical {
 				indexCaractereLinha++;
 				if (indexCaractereLinha > linhaArquivo.length() - 1) {
 					indexCaractereLinha = 0;
-					numeroLinha++;
 					if (arquivoTratado.hasNextLine()) {
-						linhaArquivo = arquivoTratado.nextLine();
+						pulaLinhaVazia();
 					} else {
 						throw new Exception("Chegou ao fim do arquivo. Não há mais tokens.");
 					}

@@ -1,13 +1,13 @@
 package main;
 
-import static main.AnalisadorLexical.lexico;
+import static main.AnalisadorLexico.lexico;
 import static main.AnalisadorSemantico.*;
 
 public class AnalisadorSintatico {
 
 	public static void main(String[] args) {
 		try {
-			AnalisadorLexical.main(null);
+			AnalisadorLexico.main(null);
 			Token token = lexico();
 
 			if (token.getSimbolo().equals("sprograma")) {

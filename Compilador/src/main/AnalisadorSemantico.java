@@ -13,7 +13,7 @@ public class AnalisadorSemantico {
 	
 	public void insereTabelaSimbolos(String lexema) {
 		Simbolo simbolo = new Simbolo();
-		simbolo.setSimbolo(lexema);	
+		simbolo.setLexema(lexema);	
 		tabelaSimbolos.add(simbolo);
 	}
 	

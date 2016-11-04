@@ -2,15 +2,15 @@ package main;
 
 public class Simbolo {
 	
-	private String simbolo;
+	private String lexema;
 	private String tipo;
 	private String nivel;
 	
-	public String getSimbolo() {
-		return simbolo;
+	public String getLexema() {
+		return lexema;
 	}
-	public void setSimbolo(String simbolo) {
-		this.simbolo = simbolo;
+	public void setLexema(String lexema) {
+		this.lexema = lexema;
 	}
 	public String getTipo() {
 		return tipo;
