@@ -21,28 +21,28 @@ public class AnalisadorSemantico {
 		
 	}
 	
-	public boolean existeVariavelNaTabelaSimbolos(String lexema) {
+	public boolean existeVariavelTabelaSimbolos(String lexema) {
 		return false;
 	}
 	
-	public boolean existeChamadaFuncaoNaTabelaSimbolos(String lexema) {
+	public boolean existeChamadaFuncaoTabelaSimbolos(String lexema) {
+		return false;
+	}	
+	
+	public boolean existeDeclaracaoProcedimentoTabelaSimbolos(String lexema) {
 		return false;
 	}
 	
-	public boolean naoExisteDeclaracaoProcedimentoNatabelaDeSimbolos(String lexema) {
-		return !existeDeclaracaoProcedimentoNatabelaDeSimbolos(lexema);
-	}
-	
-	public boolean existeDeclaracaoProcedimentoNatabelaDeSimbolos(String lexema) {
+	public boolean existeVariavelTabelaSimbolo(String lexema) {
 		return false;
 	}
 	
-	public boolean naoExisteVariavelNaTabelaSimbolo(String lexema) {
-		return !existeVariavelNaTabelaSimbolo(lexema);
+	public boolean naoExisteVariavelTabelaSimbolo(String lexema) {
+		return !existeVariavelTabelaSimbolo(lexema);
 	}
 
-	public boolean existeVariavelNaTabelaSimbolo(String lexema) {
-		return false;
+	public boolean naoExisteDeclaracaoProcedimentoTabelaSimbolos(String lexema) {
+		return !existeDeclaracaoProcedimentoTabelaSimbolos(lexema);
 	}
 	
 }
