@@ -20,6 +20,7 @@ public class MaquinaVirtual {
 	private static String path;
 	private static boolean isListaInstrucoesVazia = true;
 	private static List<Instrucao> pilhaInstrucoes = new ArrayList<>();
+	private static int numeroLinha = 0;
 	
 	/*
 	 * TODO: 
@@ -39,6 +40,7 @@ public class MaquinaVirtual {
 		Scanner leArquivo = new Scanner(new FileReader(caminhoDoArquivo));
 		while (leArquivo.hasNextLine()) {
 			String linhaArquivo = leArquivo.nextLine();
+			numeroLinha++;
 			StringTokenizer conteudoLinha = new StringTokenizer(linhaArquivo, ", ");
 			verificaNumElementosLinha(conteudoLinha);
 			Instrucao instrucao = montaInstrucao(conteudoLinha);
@@ -66,7 +68,7 @@ public class MaquinaVirtual {
 						instrucao.setMnemonico(elementosLinha.get(0));
 					}
 					else {
-						throw new Exception ("Linha com somente um elemento deve ser um mnemonico!");
+						throw new Exception ("Erro na linha: "+numeroLinha+". Linha com somente um elemento deve ser um mnemonico!");
 					}
 					break;
 					
@@ -78,10 +80,10 @@ public class MaquinaVirtual {
 							instrucao.setLabel(elementosLinha.get(0));
 							instrucao.setParametro1(toInteger(elementosLinha.get(1)));
 						} else {
-							throw new Exception ("Linha deve começar com um mnemonico ou label!");
+							throw new Exception ("Erro na linha: "+numeroLinha+". Linha deve começar com um mnemonico ou label!");
 						}
 					} else {
-						throw new Exception ("Linha deve começar com um mnemonico ou label!");
+						throw new Exception ("Erro na linha: "+numeroLinha+". Linha deve começar com um mnemonico ou label!");
 					}
 					break;
 				
@@ -100,7 +102,7 @@ public class MaquinaVirtual {
 
 	private static void verificaNumElementosLinha(StringTokenizer conteudoLinha) throws Exception {
 		if (conteudoLinha.countTokens() > numeroMaximoElementosLinha) {
-			throw new Exception("Numero de elementos por linha invalido!");
+			throw new Exception ("Erro na linha: "+numeroLinha+". Numero de elementos por linha invalido!");
 		}
 	}
 	
@@ -145,7 +147,7 @@ public class MaquinaVirtual {
 	
 	public static DefaultTableModel executaInstrucoes() throws Exception {
 		if (isListaInstrucoesVazia) {
-			throw new Exception("Lista de instrucoes vazia! Selecione um arquivo.");
+			throw new Exception ("Erro na linha: "+numeroLinha+". Lista de instrucoes vazia! Selecione um arquivo.");
 		}
 		List<Integer> pilhaDados = new ArrayList<>();
 		 
