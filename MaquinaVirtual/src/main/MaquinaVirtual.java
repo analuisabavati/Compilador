@@ -211,12 +211,6 @@ public class MaquinaVirtual {
 				pilhaDados = MnemonicoMetodos.execCMAQ(pilhaDados);
 				break;
 
-			case "START":
-				break;
-
-			case "HLT":
-				break;
-
 			case "STR":
 				pilhaDados = MnemonicoMetodos.execSTR(pilhaDados, instrucao.getParametro1());
 				break;
@@ -227,9 +221,6 @@ public class MaquinaVirtual {
 
 			case "JMFP":
 				pilhaDados = MnemonicoMetodos.execJMFP(pilhaDados, instrucao.getParametro1());
-				break;
-
-			case "NULL":
 				break;
 
 			case "RD":

@@ -56,24 +56,29 @@ public class AnalisadorLexico {
 		} else if (caractere == ';' || caractere == ',' || caractere == '(' || caractere == ')' || caractere == '.') {
 			return trataPontuacao(linha);
 		} else if (caractere == ' ') {
-			do {
-				indexCaractereLinha++;
-				if (indexCaractereLinha > linhaArquivo.length() - 1) {
-					indexCaractereLinha = 0;
-					if (arquivoTratado.hasNextLine()) {
-						trataLinhaVazia();
-					} else {
-						throw new Exception("Chegou ao fim do arquivo. Não há mais tokens.");
-					}
-					break;
-				} else {
-					caractere = linha.charAt(indexCaractereLinha);
-				}
-			} while (caractere == ' ');
+			getProximoCaracterValido(linha);
 			return pegaToken(linhaArquivo);
 		} else {
 			throw new Exception("Caractere Invalido: " + caractere + " na linha: " + numeroLinha + ".");
 		}
+	}
+
+	private static void getProximoCaracterValido(String linha) throws Exception {
+		Character caractere;
+		do {
+			indexCaractereLinha++;
+			if (indexCaractereLinha > linhaArquivo.length() - 1) {
+				indexCaractereLinha = 0;
+				if (arquivoTratado.hasNextLine()) {
+					trataLinhaVazia();
+				} else {
+					throw new Exception("Chegou ao fim do arquivo. Não há mais tokens.");
+				}
+				break;
+			} else {
+				caractere = linha.charAt(indexCaractereLinha);
+			}
+		} while (caractere == ' ');
 	}
 
 	private static Token trataDigito(String linha) {
