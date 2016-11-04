@@ -15,32 +15,30 @@ public class AnalisadorLexico {
 	public static void main(String[] args) throws Exception {
 		gravaArquivoFonteTratado();
 		arquivoTratado = abreArquivoFonte(pathArquivoTratado);
-		if (!arquivoTratado.hasNextLine()) {
+		if (arquivoTratado.hasNextLine()) {
+			trataLinhaVazia();
+		} else {
 			throw new Exception("Arquivo Vazio!");
 		}
-		pulaLinhaVazia();
 	}
 
 	public static Token lexico() throws Exception {
 		if (indexCaractereLinha > linhaArquivo.length() - 1) {
 			indexCaractereLinha = 0;
-			numeroLinha++;
 			if (arquivoTratado.hasNextLine()) {
-				pulaLinhaVazia();
+				trataLinhaVazia();
 			} else {
 				throw new Exception("Chegou ao fim do arquivo. Não há mais tokens.");
 			}
 		} 
-		
-		
 		return pegaToken(linhaArquivo);
 	}
 
-	private static void pulaLinhaVazia() {
+	private static void trataLinhaVazia() {
 		do {
 			linhaArquivo = arquivoTratado.nextLine();	
 			numeroLinha++;
-		} while (linhaArquivo.trim().isEmpty());
+		} while (linhaArquivo.trim().isEmpty() && arquivoTratado.hasNextLine());
 	}
 
 	private static Token pegaToken(String linha) throws Exception {
@@ -63,7 +61,7 @@ public class AnalisadorLexico {
 				if (indexCaractereLinha > linhaArquivo.length() - 1) {
 					indexCaractereLinha = 0;
 					if (arquivoTratado.hasNextLine()) {
-						pulaLinhaVazia();
+						trataLinhaVazia();
 					} else {
 						throw new Exception("Chegou ao fim do arquivo. Não há mais tokens.");
 					}
