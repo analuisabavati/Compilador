@@ -33,7 +33,7 @@ public class TelaPrincipal extends JFrame {
 	private static JTable tableDados = new JTable();
 	private static TelaPrincipal frame = new TelaPrincipal();
 	private JPanel contentPane;
-	private JLabel lblJanelaDeEntrada;
+	private JLabel lblJanelaEntrada;
 	private JLabel lblJanelaDeSaida;
 	private JLabel lblBreakPoints;
 	private JLabel lblInstruesASeremExecutadas;
@@ -44,6 +44,7 @@ public class TelaPrincipal extends JFrame {
 	private JScrollPane scrollTableInstrucoes;
 	private JScrollPane scrollJanelaEntrada;
 	private static JTextArea janelaSaida;
+	private static JTextPane janelaEntrada;
 
 	/**
 	 * Launch the application.
@@ -78,7 +79,7 @@ public class TelaPrincipal extends JFrame {
 
 		// Labels
 		lblInstruesASeremExecutadas = new JLabel("Instru\u00E7\u00F5es a serem executadas pela VM");
-		lblJanelaDeEntrada = new JLabel("Janela de Entrada");
+		lblJanelaEntrada = new JLabel("Janela de Entrada");
 		lblJanelaDeSaida = new JLabel("Janela de Saida");
 		lblBreakPoints = new JLabel("Break Point's");
 		lblContedoDaPilha = new JLabel("Conte\u00FAdo da Pilha");
@@ -91,7 +92,7 @@ public class TelaPrincipal extends JFrame {
 		inicializaJanelaSaida(scrollJanelaSaida);
 
 		inicializaLayout(scrollTableInstrucoes, scrollTableDados, scrollJanelaEntrada, scrollJanelaSaida,
-				scrollBreakPoints, lblInstruesASeremExecutadas, lblJanelaDeEntrada, lblJanelaDeSaida, lblBreakPoints,
+				scrollBreakPoints, lblInstruesASeremExecutadas, lblJanelaEntrada, lblJanelaDeSaida, lblBreakPoints,
 				lblContedoDaPilha);
 	}
 
@@ -131,7 +132,8 @@ public class TelaPrincipal extends JFrame {
 	}
 
 	private void inicializaJanelaEntrada(JScrollPane scrollJanelaEntrada) {
-		JTextPane janelaEntrada = new JTextPane();
+		janelaEntrada = new JTextPane();
+		
 		scrollJanelaEntrada.setViewportView(janelaEntrada);
 	}
 	
@@ -261,7 +263,9 @@ public class TelaPrincipal extends JFrame {
 	}
 	
 	public static Integer getJanelaEntrada() {
-		
+		janelaEntrada.setEditable(true);
+		janelaEntrada.enableInputMethods(true);
+			
 		return null;
 	}
 
