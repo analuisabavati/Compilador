@@ -22,6 +22,11 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 public class TelaPrincipal extends JFrame {
+	
+	/*
+	 *  TODO: 
+	 *  getJanelaEntrada();
+	 */
 
 	private static final long serialVersionUID = 8206910973434962454L;
 	private static JTable tableInstrucoes = new JTable();
@@ -253,6 +258,11 @@ public class TelaPrincipal extends JFrame {
 		janelaSaida.append(valor.toString() + "\n");
 		scrollJanelaSaida.setViewportView(janelaSaida);
 		frame.getContentPane().add(scrollJanelaSaida);	
+	}
+	
+	public static Integer getJanelaEntrada() {
+		
+		return null;
 	}
 
 }

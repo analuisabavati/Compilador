@@ -123,9 +123,9 @@ public class MnemonicoMetodos {
 		
 	}
 
-	public static List<Integer> execRD(List<Integer> pilhaDados) {
-		return pilhaDados;
-		
+	public static List<Integer> execRD(List<Integer> pilhaDados) {							// Verificar e faze método getJanelaEntrada();
+		Integer valor = getJanelaEntrada(); 				
+		return execLDC(pilhaDados, valor);
 	}
 
 	public static List<Integer> execPRN(List<Integer> pilhaDados) {
