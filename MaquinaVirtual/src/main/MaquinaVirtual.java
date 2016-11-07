@@ -13,10 +13,11 @@ import javax.swing.table.DefaultTableModel;
 
 import static main.MnemonicoParametros.*;
 import static main.ValidadorInstrucao.*;
+import static main.MnemonicoMetodos.*;
 
 public class MaquinaVirtual {
 
-	private final static int numeroMaximoElementosLinha = 3;
+	private static int numeroMaximoElementosLinha = 3;
 	private static String path;
 	private static boolean isListaInstrucoesVazia = true;
 	private static List<Instrucao> pilhaInstrucoes = new ArrayList<>();
@@ -152,99 +153,99 @@ public class MaquinaVirtual {
 		for (Instrucao instrucao : pilhaInstrucoes) {
 			switch (instrucao.getMnemonico()) {
 			case "LDC":
-				pilhaDados = MnemonicoMetodos.execLDC(pilhaDados, instrucao.getParametro1());
+				pilhaDados = execLDC(pilhaDados, instrucao.getParametro1());
 				break;
 
 			case "LDV":
-				pilhaDados = MnemonicoMetodos.execLDV(pilhaDados, instrucao.getParametro1());
+				pilhaDados = execLDV(pilhaDados, instrucao.getParametro1());
 				break;
 
 			case "ADD":
-				pilhaDados = MnemonicoMetodos.execADD(pilhaDados);
+				pilhaDados = execADD(pilhaDados);
 				break;
 
 			case "SUB":
-				pilhaDados = MnemonicoMetodos.execSUB(pilhaDados);
+				pilhaDados = execSUB(pilhaDados);
 				break;
 
 			case "MULT":
-				pilhaDados = MnemonicoMetodos.execMULT(pilhaDados);
+				pilhaDados = execMULT(pilhaDados);
 				break;
 
 			case "DIVI":
-				pilhaDados = MnemonicoMetodos.execDIVI(pilhaDados);
+				pilhaDados = execDIVI(pilhaDados);
 				break;
 
 			case "INV":
-				pilhaDados = MnemonicoMetodos.execINV(pilhaDados);
+				pilhaDados = execINV(pilhaDados);
 				break;
 
 			case "AND":
-				pilhaDados = MnemonicoMetodos.execAND(pilhaDados);
+				pilhaDados = execAND(pilhaDados);
 				break;
 
 			case "OR":
-				pilhaDados = MnemonicoMetodos.execOR(pilhaDados);
+				pilhaDados = execOR(pilhaDados);
 				break;
 
 			case "NEG":
-				pilhaDados = MnemonicoMetodos.execNEG(pilhaDados);
+				pilhaDados = execNEG(pilhaDados);
 				break;
 
 			case "CME":
-				pilhaDados = MnemonicoMetodos.execCME(pilhaDados);
+				pilhaDados = execCME(pilhaDados);
 				break;
 
 			case "CMA":
-				pilhaDados = MnemonicoMetodos.execCMA(pilhaDados);
+				pilhaDados = execCMA(pilhaDados);
 				break;
 
 			case "CEQ":
-				pilhaDados = MnemonicoMetodos.execCEQ(pilhaDados);
+				pilhaDados = execCEQ(pilhaDados);
 				break;
 
 			case "CMEQ":
-				pilhaDados = MnemonicoMetodos.execCMEQ(pilhaDados);
+				pilhaDados = execCMEQ(pilhaDados);
 				break;
 
 			case "CMAQ":
-				pilhaDados = MnemonicoMetodos.execCMAQ(pilhaDados);
+				pilhaDados = execCMAQ(pilhaDados);
 				break;
 
 			case "STR":
-				pilhaDados = MnemonicoMetodos.execSTR(pilhaDados, instrucao.getParametro1());
+				pilhaDados = execSTR(pilhaDados, instrucao.getParametro1());
 				break;
 
 			case "JMP":
-				pilhaDados = MnemonicoMetodos.execJMP(pilhaDados, instrucao.getParametro1());
+				pilhaDados = execJMP(pilhaDados, instrucao.getParametro1());
 				break;
 
 			case "JMFP":
-				pilhaDados = MnemonicoMetodos.execJMFP(pilhaDados, instrucao.getParametro1());
+				pilhaDados = execJMFP(pilhaDados, instrucao.getParametro1());
 				break;
 
 			case "RD":
-				pilhaDados = MnemonicoMetodos.execRD(pilhaDados);
+				pilhaDados = execRD(pilhaDados);
 				break;
 
 			case "PRN":
-				pilhaDados = MnemonicoMetodos.execPRN(pilhaDados);
+				pilhaDados = execPRN(pilhaDados);
 				break;
 
 			case "ALLOC":
-				pilhaDados = MnemonicoMetodos.execALLOC(pilhaDados, instrucao.getParametro1(), instrucao.getParametro2());
+				pilhaDados = execALLOC(pilhaDados, instrucao.getParametro1(), instrucao.getParametro2());
 				break;
 
 			case "DALLOC":
-				pilhaDados = MnemonicoMetodos.execDALLOC(pilhaDados, instrucao.getParametro1(), instrucao.getParametro2());
+				pilhaDados = execDALLOC(pilhaDados, instrucao.getParametro1(), instrucao.getParametro2());
 				break;
 
 			case "CALL":
-				pilhaDados = MnemonicoMetodos.execCALL(pilhaDados, instrucao.getParametro1());
+				pilhaDados = execCALL(pilhaDados, instrucao.getParametro1());
 				break;
 
 			case "RETURN":
-				pilhaDados = MnemonicoMetodos.execRETURN(pilhaDados);
+				pilhaDados = execRETURN(pilhaDados);
 				break;
 
 			default:
