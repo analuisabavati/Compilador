@@ -28,6 +28,7 @@ public class TelaPrincipal extends JFrame {
 
 	/*
 	 * TODO: getJanelaEntrada();
+	 * BreakPoints
 	 */
 	
 	private static List<Integer> breakPoints = new ArrayList<>();
@@ -274,7 +275,7 @@ public class TelaPrincipal extends JFrame {
 		frame.getContentPane().add(scrollJanelaSaida);
 	}
 
-	// Terminar
+	// TODO: Terminar
 	public static Integer getJanelaEntrada() {
 		janelaEntrada.setEditable(true);
 		janelaEntrada.enableInputMethods(true);
@@ -282,14 +283,19 @@ public class TelaPrincipal extends JFrame {
 	}
 
 	public static void adicionaBreakPoint(Integer numeroLinha) {
+		if (isLinhaBreakPoint(numeroLinha)) {
+			removeBreakPoint(numeroLinha);
+			// volta linha cor original
+		}
 		breakPoints.add(numeroLinha);
+		// pinta linha
 	}
 
-	public void removeBreakPoint(Integer numeroLinha) {
+	public static void removeBreakPoint(Integer numeroLinha) {
 		breakPoints.remove(numeroLinha);
 	}
 
-	public boolean isLinhaBreakPoint(Integer numeroLinha) {
+	public static boolean isLinhaBreakPoint(Integer numeroLinha) {
 		return breakPoints.contains(numeroLinha);
 	}
 
