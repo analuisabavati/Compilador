@@ -22,8 +22,6 @@ import javax.swing.JTextPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 public class TelaPrincipal extends JFrame {
@@ -31,6 +29,8 @@ public class TelaPrincipal extends JFrame {
 	/*
 	 * TODO: getJanelaEntrada();
 	 */
+	
+	private static List<Integer> breakPoints = new ArrayList<>();
 
 	private static final long serialVersionUID = 8206910973434962454L;
 	private static JTable tableInstrucoes = new JTable();
@@ -280,8 +280,6 @@ public class TelaPrincipal extends JFrame {
 		janelaEntrada.enableInputMethods(true);
 		return null;
 	}
-
-	private static List<Integer> breakPoints = new ArrayList<>();
 
 	public static void adicionaBreakPoint(Integer numeroLinha) {
 		breakPoints.add(numeroLinha);
