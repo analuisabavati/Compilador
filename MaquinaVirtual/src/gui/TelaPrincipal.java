@@ -5,6 +5,8 @@ import static main.MaquinaVirtual.montaDadosTabelaInstrucao;
 import static main.MaquinaVirtual.procurarArquivo;
 
 import java.awt.EventQueue;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -18,14 +20,16 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 public class TelaPrincipal extends JFrame {
-	
+
 	/*
-	 *  TODO: 
-	 *  getJanelaEntrada();
+	 * TODO: getJanelaEntrada();
 	 */
 
 	private static final long serialVersionUID = 8206910973434962454L;
@@ -133,16 +137,16 @@ public class TelaPrincipal extends JFrame {
 
 	private void inicializaJanelaEntrada(JScrollPane scrollJanelaEntrada) {
 		janelaEntrada = new JTextPane();
-		
+
 		scrollJanelaEntrada.setViewportView(janelaEntrada);
 	}
-	
+
 	private void inicializaJanelaSaida(JScrollPane scrollJanelaSaida) {
 		janelaSaida = new JTextArea();
 		janelaSaida.setEditable(false);
 		scrollJanelaSaida.setViewportView(janelaSaida);
 	}
-	
+
 	private JMenuBar montaBarraMenu() {
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -251,22 +255,44 @@ public class TelaPrincipal extends JFrame {
 	}
 
 	private static void preencheTabelaInstrucoes(JScrollPane scrollTableInstrucoes) throws Exception {
-		tableInstrucoes.setModel(montaDadosTabelaInstrucao());
+		DefaultTableModel modelTable = montaDadosTabelaInstrucao();
+		tableInstrucoes.setModel(modelTable);
 		scrollTableInstrucoes.setViewportView(tableInstrucoes);
 		frame.getContentPane().add(scrollTableInstrucoes);
+
+		tableInstrucoes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		tableInstrucoes.getSelectionModel().addListSelectionListener(event -> pegaLinhaClicada(modelTable));
+	}
+
+	public static void pegaLinhaClicada(DefaultTableModel modelTable) {
+		adicionaBreakPoint(Integer.parseInt(modelTable.getValueAt(tableInstrucoes.getSelectedRow(), 0).toString()));
 	}
 
 	public static void printJanelaSaida(Integer valor) {
 		janelaSaida.append(valor.toString() + "\n");
 		scrollJanelaSaida.setViewportView(janelaSaida);
-		frame.getContentPane().add(scrollJanelaSaida);	
+		frame.getContentPane().add(scrollJanelaSaida);
 	}
-	
+
+	// Terminar
 	public static Integer getJanelaEntrada() {
 		janelaEntrada.setEditable(true);
 		janelaEntrada.enableInputMethods(true);
-			
 		return null;
+	}
+
+	private static List<Integer> breakPoints = new ArrayList<>();
+
+	public static void adicionaBreakPoint(Integer numeroLinha) {
+		breakPoints.add(numeroLinha);
+	}
+
+	public void removeBreakPoint(Integer numeroLinha) {
+		breakPoints.remove(numeroLinha);
+	}
+
+	public boolean isLinhaBreakPoint(Integer numeroLinha) {
+		return breakPoints.contains(numeroLinha);
 	}
 
 }
