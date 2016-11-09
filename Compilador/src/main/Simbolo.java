@@ -5,7 +5,14 @@ public class Simbolo {
 	private String lexema;
 	private String tipo;
 	private String nivel;
+	private String rotulo;
 	
+	public String getRotulo() {
+		return rotulo;
+	}
+	public void setRotulo(String rotulo) {
+		this.rotulo = rotulo;
+	}
 	public String getLexema() {
 		return lexema;
 	}
