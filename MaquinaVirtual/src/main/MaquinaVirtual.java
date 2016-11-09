@@ -221,14 +221,12 @@ public class MaquinaVirtual {
 				pilhaDados = execSTR(pilhaDados, instrucao.getParametro1());
 				break;
 
-			case "JMP":																				// certo ??
-				//pilhaDados = execJMP(pilhaDados, instrucao.getParametro1());
+			case "JMP":																				
 				int indexJMP = pilhaInstrucoes.indexOf(instrucao.getParametro1().equals(instrucao.getLabel()));
 				instrucao = pilhaInstrucoes.get(indexJMP);
 				break;
 
-			case "JMPF":																	// certo ??
-			//	pilhaDados = execJMFP(pilhaDados, instrucao.getParametro1());
+			case "JMPF":																	
 				int indexJMPF = pilhaInstrucoes.indexOf(instrucao.getParametro1().equals(instrucao.getLabel()));
 				instrucao = pilhaInstrucoes.get(indexJMPF);
 				break;
