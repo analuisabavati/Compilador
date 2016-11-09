@@ -1,12 +1,9 @@
 package gui;
 
-import static main.MaquinaVirtual.executaInstrucoes;
-import static main.MaquinaVirtual.montaDadosTabelaInstrucao;
-import static main.MaquinaVirtual.procurarArquivo;
+import static main.MaquinaVirtual.*;
 
 import java.awt.EventQueue;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.swing.GroupLayout;
@@ -33,7 +30,7 @@ public class TelaPrincipal extends JFrame {
 	 * TODO: getJanelaEntrada(); BreakPoints
 	 */
 
-	private static List<Integer> breakPoints = new ArrayList<>();
+	
 
 	private static final long serialVersionUID = 8206910973434962454L;
 	private static JTable tableInstrucoes = new JTable();
@@ -284,7 +281,7 @@ public class TelaPrincipal extends JFrame {
 	}
 
 	public static void pegaLinhaClicada(DefaultTableModel modelTable) {
-		adicionaBreakPoint(Integer.parseInt(modelTable.getValueAt(tableInstrucoes.getSelectedRow(), 0).toString()));
+		verificaBreakPoint(Integer.parseInt(modelTable.getValueAt(tableInstrucoes.getSelectedRow(), 0).toString()));
 	}
 
 	public static void printJanelaSaida(Integer valor) {
@@ -296,7 +293,7 @@ public class TelaPrincipal extends JFrame {
 	public static void printJanelaBreakPoints() {
 		janelaBreakPoints.setText(null);
 		// Collections.sort(breakPoints);
-		for (Integer integer : breakPoints) {
+		for (Integer integer :  getBreakPoints()) {
 			janelaBreakPoints.setText(janelaBreakPoints.getText() + integer + "\n");
 		}
 		janelaBreakPoints.revalidate();
@@ -309,22 +306,15 @@ public class TelaPrincipal extends JFrame {
 		return null;
 	}
 
-	public static void adicionaBreakPoint(Integer numeroLinha) {
+	public static void verificaBreakPoint(Integer numeroLinha) {
 		if (isLinhaBreakPoint(numeroLinha)) {
 			removeBreakPoint(numeroLinha);
 			// volta linha cor original
 		} else {
-			breakPoints.add(numeroLinha);
+			insereBreakPoint(numeroLinha);
 			// pinta linha
 		}
 		printJanelaBreakPoints();
 	}
 
-	public static void removeBreakPoint(Integer numeroLinha) {
-		breakPoints.remove(numeroLinha);
-	}
-
-	public static boolean isLinhaBreakPoint(Integer numeroLinha) {
-		return breakPoints.contains(numeroLinha);
-	}
 }

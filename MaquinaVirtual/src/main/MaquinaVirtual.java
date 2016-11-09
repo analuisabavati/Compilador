@@ -23,6 +23,8 @@ public class MaquinaVirtual {
 	private static List<Instrucao> pilhaInstrucoes = new ArrayList<>();
 	private static int numeroLinha = 0;
 	
+	private static List<Integer> breakPoints = new ArrayList<>();
+	
 	/*
 	 * TODO: 
 	 * Conferir msg de erros 
@@ -43,7 +45,10 @@ public class MaquinaVirtual {
 			StringTokenizer conteudoLinha = new StringTokenizer(linhaArquivo, ", ");
 			verificaNumElementosLinha(conteudoLinha);
 			Instrucao instrucao = montaInstrucao(conteudoLinha);
-			instrucoes.add(instrucao);
+			instrucoes.add(instrucao); 
+			if (isLinhaBreakPoint(numeroLinha)) {
+				
+			}
 		}
 		leArquivo.close();
 		verificaStart(instrucoes);
@@ -283,6 +288,21 @@ public class MaquinaVirtual {
 		return Integer.parseInt(valor);
 	}
 	
+	public static List<Integer> getBreakPoints() {
+		return breakPoints;
+	}
+
+	public static void insereBreakPoint(Integer numeroLinha) {
+		breakPoints.add(numeroLinha);
+	}
+
+	public static void removeBreakPoint(Integer numeroLinha) {
+		breakPoints.remove(numeroLinha);
+	}
+
+	public static boolean isLinhaBreakPoint(Integer numeroLinha) {
+		return breakPoints.contains(numeroLinha);
+	}
 	
 	
 }
