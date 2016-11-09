@@ -6,6 +6,7 @@ import static main.MaquinaVirtual.procurarArquivo;
 
 import java.awt.EventQueue;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.GroupLayout;
@@ -45,11 +46,12 @@ public class TelaPrincipal extends JFrame {
 	private JLabel lblContedoDaPilha;
 	private static JScrollPane scrollJanelaSaida;
 	private JScrollPane scrollTableDados;
-	private JScrollPane scrollBreakPoints;
+	private JScrollPane scrollJanelaBreakPoints;
 	private JScrollPane scrollTableInstrucoes;
 	private JScrollPane scrollJanelaEntrada;
 	private static JTextArea janelaSaida;
 	private static JTextPane janelaEntrada;
+	private static JTextArea janelaBreakPoints; 
 
 	/**
 	 * Launch the application.
@@ -80,7 +82,7 @@ public class TelaPrincipal extends JFrame {
 		scrollTableDados = new JScrollPane();
 		scrollJanelaEntrada = new JScrollPane();
 		scrollJanelaSaida = new JScrollPane();
-		scrollBreakPoints = new JScrollPane();
+		scrollJanelaBreakPoints = new JScrollPane();
 
 		// Labels
 		lblInstruesASeremExecutadas = new JLabel("Instru\u00E7\u00F5es a serem executadas pela VM");
@@ -95,10 +97,13 @@ public class TelaPrincipal extends JFrame {
 		inicializaTabelaDados(scrollTableDados);
 		inicializaTabelaInstrucoes(scrollTableInstrucoes);
 		inicializaJanelaSaida(scrollJanelaSaida);
+		inicializaJanelaBreakPoints(scrollJanelaBreakPoints);
 
 		inicializaLayout(scrollTableInstrucoes, scrollTableDados, scrollJanelaEntrada, scrollJanelaSaida,
-				scrollBreakPoints, lblInstruesASeremExecutadas, lblJanelaEntrada, lblJanelaDeSaida, lblBreakPoints,
+				scrollJanelaBreakPoints, lblInstruesASeremExecutadas, lblJanelaEntrada, lblJanelaDeSaida, lblBreakPoints,
 				lblContedoDaPilha);
+		
+		
 	}
 
 	private void inicializaContentPane() {
@@ -146,6 +151,12 @@ public class TelaPrincipal extends JFrame {
 		janelaSaida = new JTextArea();
 		janelaSaida.setEditable(false);
 		scrollJanelaSaida.setViewportView(janelaSaida);
+	}
+	
+	private void inicializaJanelaBreakPoints(JScrollPane scrollBreakPoints) {	
+		janelaBreakPoints = new JTextArea();
+		janelaBreakPoints.setEditable(false);
+		scrollBreakPoints.setViewportView(janelaBreakPoints);
 	}
 
 	private JMenuBar montaBarraMenu() {
@@ -274,6 +285,15 @@ public class TelaPrincipal extends JFrame {
 		scrollJanelaSaida.setViewportView(janelaSaida);
 		frame.getContentPane().add(scrollJanelaSaida);
 	}
+	
+	public static void printJanelaBreakPoints() {
+		janelaBreakPoints.setText(null);
+		//Collections.sort(breakPoints);
+		for (Integer integer : breakPoints) {
+			janelaBreakPoints.setText(janelaBreakPoints.getText() + integer + "\n");
+		} 
+		janelaBreakPoints.revalidate();
+	}
 
 	// TODO: Terminar
 	public static Integer getJanelaEntrada() {
@@ -286,9 +306,11 @@ public class TelaPrincipal extends JFrame {
 		if (isLinhaBreakPoint(numeroLinha)) {
 			removeBreakPoint(numeroLinha);
 			// volta linha cor original
+		}  else {
+			breakPoints.add(numeroLinha);
+			// pinta linha
 		}
-		breakPoints.add(numeroLinha);
-		// pinta linha
+		printJanelaBreakPoints();
 	}
 
 	public static void removeBreakPoint(Integer numeroLinha) {
@@ -298,5 +320,4 @@ public class TelaPrincipal extends JFrame {
 	public static boolean isLinhaBreakPoint(Integer numeroLinha) {
 		return breakPoints.contains(numeroLinha);
 	}
-
 }
