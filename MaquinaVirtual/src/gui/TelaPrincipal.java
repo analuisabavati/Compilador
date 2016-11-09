@@ -23,15 +23,16 @@ import javax.swing.JTextPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 public class TelaPrincipal extends JFrame {
 
 	/*
-	 * TODO: getJanelaEntrada();
-	 * BreakPoints
+	 * TODO: getJanelaEntrada(); BreakPoints
 	 */
-	
+
 	private static List<Integer> breakPoints = new ArrayList<>();
 
 	private static final long serialVersionUID = 8206910973434962454L;
@@ -51,7 +52,7 @@ public class TelaPrincipal extends JFrame {
 	private JScrollPane scrollJanelaEntrada;
 	private static JTextArea janelaSaida;
 	private static JTextPane janelaEntrada;
-	private static JTextArea janelaBreakPoints; 
+	private static JTextArea janelaBreakPoints;
 
 	/**
 	 * Launch the application.
@@ -100,10 +101,9 @@ public class TelaPrincipal extends JFrame {
 		inicializaJanelaBreakPoints(scrollJanelaBreakPoints);
 
 		inicializaLayout(scrollTableInstrucoes, scrollTableDados, scrollJanelaEntrada, scrollJanelaSaida,
-				scrollJanelaBreakPoints, lblInstruesASeremExecutadas, lblJanelaEntrada, lblJanelaDeSaida, lblBreakPoints,
-				lblContedoDaPilha);
-		
-		
+				scrollJanelaBreakPoints, lblInstruesASeremExecutadas, lblJanelaEntrada, lblJanelaDeSaida,
+				lblBreakPoints, lblContedoDaPilha);
+
 	}
 
 	private void inicializaContentPane() {
@@ -152,8 +152,8 @@ public class TelaPrincipal extends JFrame {
 		janelaSaida.setEditable(false);
 		scrollJanelaSaida.setViewportView(janelaSaida);
 	}
-	
-	private void inicializaJanelaBreakPoints(JScrollPane scrollBreakPoints) {	
+
+	private void inicializaJanelaBreakPoints(JScrollPane scrollBreakPoints) {
 		janelaBreakPoints = new JTextArea();
 		janelaBreakPoints.setEditable(false);
 		scrollBreakPoints.setViewportView(janelaBreakPoints);
@@ -198,14 +198,15 @@ public class TelaPrincipal extends JFrame {
 				.setHorizontalGroup(
 						gl_contentPane.createParallelGroup(Alignment.LEADING).addGroup(
 								gl_contentPane
-										.createSequentialGroup().addContainerGap().addGroup(gl_contentPane
-												.createParallelGroup(Alignment.LEADING).addGroup(gl_contentPane
-														.createSequentialGroup().addGroup(gl_contentPane
-																.createParallelGroup(Alignment.TRAILING).addComponent(
-																		scrollTableInstrucoes, GroupLayout.DEFAULT_SIZE,
-																		408, Short.MAX_VALUE)
-																.addGroup(gl_contentPane
-																		.createSequentialGroup()
+										.createSequentialGroup().addContainerGap()
+										.addGroup(gl_contentPane
+												.createParallelGroup(
+														Alignment.LEADING)
+												.addGroup(gl_contentPane.createSequentialGroup()
+														.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+																.addComponent(scrollTableInstrucoes,
+																		GroupLayout.DEFAULT_SIZE, 408, Short.MAX_VALUE)
+																.addGroup(gl_contentPane.createSequentialGroup()
 																		.addGroup(gl_contentPane
 																				.createParallelGroup(Alignment.LEADING)
 																				.addComponent(scrollJanelaEntrada,
@@ -227,11 +228,11 @@ public class TelaPrincipal extends JFrame {
 																				.addComponent(scrollBreakPoints,
 																						GroupLayout.PREFERRED_SIZE, 84,
 																						GroupLayout.PREFERRED_SIZE))))
-														.addPreferredGap(ComponentPlacement.RELATED,
-																15, Short.MAX_VALUE))
+														.addPreferredGap(ComponentPlacement.RELATED, 15,
+																Short.MAX_VALUE))
 												.addGroup(gl_contentPane.createSequentialGroup()
-														.addComponent(lblInstruesASeremExecutadas).addPreferredGap(
-																ComponentPlacement.RELATED)))
+														.addComponent(lblInstruesASeremExecutadas)
+														.addPreferredGap(ComponentPlacement.RELATED)))
 										.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 												.addComponent(scrollTableDados, GroupLayout.PREFERRED_SIZE, 147,
 														GroupLayout.PREFERRED_SIZE)
@@ -273,7 +274,13 @@ public class TelaPrincipal extends JFrame {
 		frame.getContentPane().add(scrollTableInstrucoes);
 
 		tableInstrucoes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		tableInstrucoes.getSelectionModel().addListSelectionListener(event -> pegaLinhaClicada(modelTable));
+		tableInstrucoes.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent evt) {
+				if (evt.getValueIsAdjusting())
+					pegaLinhaClicada(modelTable);
+			}
+		});
 	}
 
 	public static void pegaLinhaClicada(DefaultTableModel modelTable) {
@@ -285,13 +292,13 @@ public class TelaPrincipal extends JFrame {
 		scrollJanelaSaida.setViewportView(janelaSaida);
 		frame.getContentPane().add(scrollJanelaSaida);
 	}
-	
+
 	public static void printJanelaBreakPoints() {
 		janelaBreakPoints.setText(null);
-		//Collections.sort(breakPoints);
+		// Collections.sort(breakPoints);
 		for (Integer integer : breakPoints) {
 			janelaBreakPoints.setText(janelaBreakPoints.getText() + integer + "\n");
-		} 
+		}
 		janelaBreakPoints.revalidate();
 	}
 
@@ -306,7 +313,7 @@ public class TelaPrincipal extends JFrame {
 		if (isLinhaBreakPoint(numeroLinha)) {
 			removeBreakPoint(numeroLinha);
 			// volta linha cor original
-		}  else {
+		} else {
 			breakPoints.add(numeroLinha);
 			// pinta linha
 		}
