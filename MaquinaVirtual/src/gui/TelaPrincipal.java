@@ -30,8 +30,6 @@ public class TelaPrincipal extends JFrame {
 	 * TODO: getJanelaEntrada(); BreakPoints
 	 */
 
-	
-
 	private static final long serialVersionUID = 8206910973434962454L;
 	private static JTable tableInstrucoes = new JTable();
 	private static JTable tableDados = new JTable();
@@ -119,6 +117,7 @@ public class TelaPrincipal extends JFrame {
 	private void inicializaBotaoContinuar(JMenuBar menuBar) {
 		JMenuItem menuContinuar = new JMenuItem("Continuar");
 		menuBar.add(menuContinuar);
+		menuContinuar.addActionListener(event -> setBotaoContinuarPressionado(true));
 	}
 
 	private void inicializaBotaoExecutar(JMenuBar menuBar) {
@@ -293,7 +292,7 @@ public class TelaPrincipal extends JFrame {
 	public static void printJanelaBreakPoints() {
 		janelaBreakPoints.setText(null);
 		// Collections.sort(breakPoints);
-		for (Integer integer :  getBreakPoints()) {
+		for (Integer integer : getBreakPoints()) {
 			janelaBreakPoints.setText(janelaBreakPoints.getText() + integer + "\n");
 		}
 		janelaBreakPoints.revalidate();

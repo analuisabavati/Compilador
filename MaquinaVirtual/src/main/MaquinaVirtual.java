@@ -22,7 +22,16 @@ public class MaquinaVirtual {
 	private static boolean isListaInstrucoesVazia = true;
 	private static List<Instrucao> pilhaInstrucoes = new ArrayList<>();
 	private static int numeroLinha = 0;
+	private static boolean botaoContinuarPressionado = false;
 	
+	public static boolean isBotaoContinuarPressionado() {
+		return botaoContinuarPressionado;
+	}
+
+	public static void setBotaoContinuarPressionado(boolean botaoContinuarPressionado) {
+		MaquinaVirtual.botaoContinuarPressionado = botaoContinuarPressionado;
+	}
+
 	private static List<Integer> breakPoints = new ArrayList<>();
 	
 	/*
@@ -46,14 +55,18 @@ public class MaquinaVirtual {
 			verificaNumElementosLinha(conteudoLinha);
 			Instrucao instrucao = montaInstrucao(conteudoLinha);
 			instrucoes.add(instrucao); 
-			if (isLinhaBreakPoint(numeroLinha)) {
-				
-			}
 		}
 		leArquivo.close();
 		verificaStart(instrucoes);
 		verificaHlt(instrucoes);
 		return instrucoes;
+	}
+
+	private static void esperaBotaoContinuar() {
+		while (!botaoContinuarPressionado) {
+			
+		}
+		
 	}
 
 	private static Instrucao montaInstrucao(StringTokenizer conteudoLinha) throws Exception {
@@ -151,11 +164,15 @@ public class MaquinaVirtual {
 	
 	public static DefaultTableModel executaInstrucoes() throws Exception {
 		if (isListaInstrucoesVazia) {
-			throw new Exception ("Erro na linha: "+numeroLinha+". Lista de instrucoes vazia! Selecione um arquivo.");
+			throw new Exception ("Lista de instrucoes vazia! Selecione um arquivo.");
 		}
 		List<Integer> pilhaDados = new ArrayList<>();
+		numeroLinha = 0;
 		 
 		for (Instrucao instrucao : pilhaInstrucoes) {
+			if (isLinhaBreakPoint(numeroLinha)) {
+				esperaBotaoContinuar();
+			}
 			switch (instrucao.getMnemonico()) {
 			case "LDC":
 				pilhaDados = execLDC(pilhaDados, instrucao.getParametro1());
@@ -258,6 +275,7 @@ public class MaquinaVirtual {
 			default:
 				break;
 			}
+			numeroLinha++;
 		}
 		
 		return atualizaTabelaDados(pilhaDados);
