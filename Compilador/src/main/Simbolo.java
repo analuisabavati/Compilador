@@ -6,7 +6,14 @@ public class Simbolo {
 	private String tipo;
 	private String nivel;
 	private String rotulo;
+	private String endereco;
 	
+	public String getEndereco() {
+		return endereco;
+	}
+	public void setEndereco(String endereco) {
+		this.endereco = endereco;
+	}
 	public String getRotulo() {
 		return rotulo;
 	}
