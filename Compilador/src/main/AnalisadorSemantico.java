@@ -11,9 +11,12 @@ public class AnalisadorSemantico {
 		return tabelaSimbolos;
 	}
 	
-	public void insereTabelaSimbolos(String lexema) {
+	public void insereTabelaSimbolos(String lexema, String tipo, String nivel, String rotulo) {
 		Simbolo simbolo = new Simbolo();
 		simbolo.setLexema(lexema);	
+		simbolo.setTipo(tipo);
+		simbolo.setNivel(nivel);
+		simbolo.setRotulo(rotulo);
 		tabelaSimbolos.add(simbolo);
 	}
 	
