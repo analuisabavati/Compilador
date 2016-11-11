@@ -34,11 +34,15 @@ public class AnalisadorLexico {
 		return pegaToken(linhaArquivo);
 	}
 
-	private static void trataLinhaVazia() {
+	private static void trataLinhaVazia() throws Exception {
 		do {
 			linhaArquivo = arquivoTratado.nextLine();	
 			numeroLinha++;
 		} while (linhaArquivo.trim().isEmpty() && arquivoTratado.hasNextLine());
+		
+		if (!arquivoTratado.hasNextLine()) {
+			throw new Exception("Chegou ao fim do arquivo. Não há mais tokens.");
+		}
 	}
 
 	private static Token pegaToken(String linha) throws Exception {

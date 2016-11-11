@@ -38,7 +38,7 @@ public class AnalisadorSintatico {
 			}
 		} catch (Exception e) {
 			if (e.getMessage().equals("Chegou ao fim do arquivo. Não há mais tokens.")) {
-				System.err.println("Erro no método analisadorSintatico(). Está faltando a palavra 'fim'.");
+				System.err.println("O arquivo chegou ao fim e não foi encontrada a palavra 'fim' ou um ponto final após a palavra 'fim'.");
 			} else {
 				System.err.println(e);
 			}
