@@ -31,6 +31,16 @@ public class AnalisadorSemantico {
 		}
 	}
 
+	public static boolean pesquisaDeclaracaoVariavelTabela(String lexema) {
+		for (int i = (tabelaSimbolos.size() - 1); i == 0; i--) {
+			if (tabelaSimbolos.get(i).getLexema().equals(lexema)
+					&& tabelaSimbolos.get(i).getTipoLexema().equals("nomedevariavel")) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public static boolean pesquisaDuplicidadeVariavelTabela(String lexema, Integer nivel) {
 		for (int i = (tabelaSimbolos.size() - 1); i == 0; i--) {
 			if (tabelaSimbolos.get(i).getLexema().equals(lexema) && nivel.equals(tabelaSimbolos.get(i).getNivel())) {
@@ -51,20 +61,49 @@ public class AnalisadorSemantico {
 		return false;
 	}
 
-	public static boolean existeChamadaFuncaoTabelaSimbolos(String lexema) {
+	public static boolean pesquisaDeclaracaoFuncaoVariavelTabela(String lexema) {
+		for (int i = (tabelaSimbolos.size() - 1); i == 0; i--) {
+			if (tabelaSimbolos.get(i).getLexema().equals(lexema)
+					&& tabelaSimbolos.get(i).getTipoLexema().equals("nomedevariavel")
+					|| tabelaSimbolos.get(i).getTipoLexema().equals("nomedefuncao")) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static boolean pesquisaDeclaracaoProcedimentoTabela(String lexema) {
+		for (int i = (tabelaSimbolos.size() - 1); i == 0; i--) {
+			if (tabelaSimbolos.get(i).getLexema().equals(lexema)
+					&& tabelaSimbolos.get(i).getTipoLexema().equals("nomedeprocedimento")) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static boolean pesquisaDeclaracaoFuncaoTabela(String lexema) {
+		for (int i = (tabelaSimbolos.size() - 1); i == 0; i--) {
+			if (tabelaSimbolos.get(i).getLexema().equals(lexema)
+					&& tabelaSimbolos.get(i).getTipoLexema().equals("nomedefuncao")) {
+				return true;
+			}
+		}
 		return false;
 	}
 
-	public static boolean existeDeclaracaoProcedimentoTabelaSimbolos(String lexema) {
-		return false;
+	public static void desempilhaNivelTabela(Integer nivel) {
+		for (int i = (tabelaSimbolos.size() - 1); i == 0; i--) {
+			if (tabelaSimbolos.get(i).getNivel().equals(nivel)) {
+				tabelaSimbolos.remove(i);
+			} else {
+				break;
+			}
+		}
 	}
-
-	public static boolean existeVariavelTabelaSimbolo(String lexema) {
-		return false;
+	
+	public static void colocaTipoRetornoFuncao(String tipo) {
+		String tipoVariavel = tipo.substring(1);
+		tabelaSimbolos.get(tabelaSimbolos.size() - 1).setTipo(tipoVariavel);
 	}
-
-	public static boolean naoExisteDeclaracaoProcedimentoTabelaSimbolos(String lexema) {
-		return !existeDeclaracaoProcedimentoTabelaSimbolos(lexema);
-	}
-
 }

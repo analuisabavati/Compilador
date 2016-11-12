@@ -54,6 +54,8 @@ public class AnalisadorSintatico {
 		token = analisaEtapaVariaveis(token);
 		token = analisaSubrotinas(token);
 		token = analisaComandos(token);
+		desempilhaNivelTabela(nivel);
+		nivel--;
 		return token;
 	}
 
@@ -82,24 +84,25 @@ public class AnalisadorSintatico {
 	private static Token analisaVariaveis(Token token) throws Exception {
 		do {
 			if (token.getSimbolo().equals("sidentificador")) {
-				if(!pesquisaDuplicidadeVariavelTabela(token.getLexema(), nivel)) {
-				insereTabelaSimbolos(token.getLexema(), null, nivel, null, "nomedevariavel");
-				token = lexico();
-				if (token.getSimbolo().equals("svirgula") || token.getSimbolo().equals("sdoispontos")) {
-					if (token.getSimbolo().equals("svirgula")) {
-						token = lexico();
-						if (token.getSimbolo().equals("sdoispontos")) {
-							throw new Exception("Erro no método analisaVariaveis(). Na linha " + token.getLinha()
-									+ " não é permitido ter dois pontos após uma vírgula. \n Token lido: "
-									+ token.getLexema());
+				if (!pesquisaDuplicidadeVariavelTabela(token.getLexema(), nivel)) {
+					insereTabelaSimbolos(token.getLexema(), null, nivel, null, "nomedevariavel");
+					token = lexico();
+					if (token.getSimbolo().equals("svirgula") || token.getSimbolo().equals("sdoispontos")) {
+						if (token.getSimbolo().equals("svirgula")) {
+							token = lexico();
+							if (token.getSimbolo().equals("sdoispontos")) {
+								throw new Exception("Erro no método analisaVariaveis(). Na linha " + token.getLinha()
+										+ " não é permitido ter dois pontos após uma vírgula. \n Token lido: "
+										+ token.getLexema());
+							}
 						}
+					} else {
+						throw new Exception("Erro no método analisaVariaveis(). Na linha " + token.getLinha()
+								+ " está faltando uma virgula ou dois pontos. \n Token lido: " + token.getLexema());
 					}
 				} else {
-					throw new Exception("Erro no método analisaVariaveis(). Na linha " + token.getLinha()
-							+ " está faltando uma virgula ou dois pontos. \n Token lido: " + token.getLexema());
-				}
-				} else {
-					throw new Exception("Erro na linha" + token.getLinha() +". Já existe uma variavel, função ou procedimento com esse nome.");
+					throw new Exception("Erro na linha" + token.getLinha()
+							+ ". Já existe uma variavel, função ou procedimento com esse nome.");
 				}
 			} else {
 				throw new Exception("Erro no método analisaVariaveis(). Na linha " + token.getLinha()
@@ -176,20 +179,20 @@ public class AnalisadorSintatico {
 		if (token.getSimbolo().equals("sabre_parenteses")) {
 			token = lexico();
 			if (token.getSimbolo().equals("sidentificador")) {
-				// TODO: if (existeVariavelNaTabelaSimbolos(token.getLexam()))
-				token = lexico();
-
-				if (token.getSimbolo().equals("sfecha_parenteses")) {
+				if (pesquisaDeclaracaoVariavelTabela(token.getLexema())) {
 					token = lexico();
-					return token;
+					if (token.getSimbolo().equals("sfecha_parenteses")) {
+						token = lexico();
+						return token;
+					} else {
+						throw new Exception("Erro no método analisaLeia(). Na linha " + token.getLinha()
+								+ " está faltando um fecha parenteses após identificador. \n Token lido: "
+								+ token.getLexema());
+					}
 				} else {
-					throw new Exception("Erro no método analisaLeia(). Na linha " + token.getLinha()
-							+ " está faltando um fecha parenteses após identificador. \n Token lido: "
-							+ token.getLexema());
+					throw new Exception(
+							"Erro na linha " + token.getLinha() + ". Não foi encontrada a variavel para leitura.");
 				}
-
-				// erro
-
 			} else {
 				throw new Exception("Erro no método analisaLeia(). Na linha " + token.getLinha()
 						+ " está faltando um identificador após abertura dos parenteses. \n Token lido: "
@@ -206,19 +209,20 @@ public class AnalisadorSintatico {
 		if (token.getSimbolo().equals("sabre_parenteses")) {
 			token = lexico();
 			if (token.getSimbolo().equals("sidentificador")) {
-				// TODO: if
-				// (existeChamadaFuncaoNaTabelaSimbolos(token.getLexam()))
-				token = lexico();
-				if (token.getSimbolo().equals("sfecha_parenteses")) {
+				if (pesquisaDeclaracaoFuncaoVariavelTabela(token.getLexema())) {
 					token = lexico();
-					return token;
+					if (token.getSimbolo().equals("sfecha_parenteses")) {
+						token = lexico();
+						return token;
+					} else {
+						throw new Exception("Erro no método analisaEscreva(). Na linha " + token.getLinha()
+								+ " está faltando um fecha parenteses após identificador. \n Token lido: "
+								+ token.getLexema());
+					}
 				} else {
-					throw new Exception("Erro no método analisaEscreva(). Na linha " + token.getLinha()
-							+ " está faltando um fecha parenteses após identificador. \n Token lido: "
-							+ token.getLexema());
+					throw new Exception("Erro na linha " + token.getLinha()
+							+ ". Não foi encontrada a variavel ou funcao para escrita.");
 				}
-				// erro
-
 			} else {
 				throw new Exception("Erro no método analisaEscreva(). Na linha " + token.getLinha()
 						+ " está faltando um identificador após abertura dos parenteses. \n Token lido: "
@@ -282,12 +286,11 @@ public class AnalisadorSintatico {
 	}
 
 	private static Token analisaDeclaracaoProcedimento(Token token) throws Exception {
-		token = lexico();
-		// nível := “L” (marca ou novo galho)
+		token = lexico();	
 		if (token.getSimbolo().equals("sidentificador")) {
-			// TODO: if
-			// naoExisteDeclaracaoProcedimentoNatabelaDeSimbolos(token.lexema)
-			// insereTabelaSimbolos(token.lexema,”procedimento”,nível)
+			if(!pesquisaDeclaracaoProcedimentoTabela(token.getLexema())) {
+			nivel++;
+			insereTabelaSimbolos(token.getLexema(), null, nivel, null, "nomedeprocedimento");
 			token = lexico();
 			if (token.getSimbolo().equals("sponto_virgula")) {
 				return analisaBloco(token);
@@ -295,29 +298,31 @@ public class AnalisadorSintatico {
 				throw new Exception("Erro no método analisaDeclaracaoProcedimento(). Na linha" + token.getLinha()
 						+ " está faltando um ponto e virgula. \n Token lido: " + token.getLexema());
 			}
-			// erro:
+			} else  {
+				throw new Exception("Erro na linha " + token.getLinha()+ ". Já existe um procedimento com esse nome");
+			}
 		} else {
 			throw new Exception("Erro no método analisaDeclaracaoProcedimento(). Na linha" + token.getLinha()
 					+ " está faltando um identificador. \n Token lido: " + token.getLexema());
 		}
-		// desempilha
 	}
 
 	private static Token analisaDeclaracaoFuncao(Token token) throws Exception {
-		token = lexico();
-		// TODO: nível := “L” (marca ou novo galho)
 		if (token.getSimbolo().equals("sidentificador")) {
-			// if naoExisteDeclaracaoFuncaoNaTabelaSimbolos
-			// insereTabela
+			if(!pesquisaDeclaracaoFuncaoTabela(token.getLexema())) {
+			token = lexico();
+			nivel++;
+			insereTabelaSimbolos(token.getLexema(), null, nivel, null, "nomedefuncao");
 			token = lexico();
 			if (token.getSimbolo().equals("sdoispontos")) {
 				token = lexico();
 				if ((token.getSimbolo().equals("sinteiro") || token.getSimbolo().equals("sbooleano"))) {
-					/*
-					 * se (token.símbolo = Sinteger) então TABSIMB[pc].tipo:=
-					 * “função inteiro” senão TABSIMB[pc].tipo:= “função
-					 * boolean”
-					 */
+					if(token.getSimbolo().equals("sinteiro")) {
+						colocaTipoRetornoFuncao("sinteiro");
+					}
+					if (token.getSimbolo().equals("sbooleano")) {
+						colocaTipoRetornoFuncao("sbooleano");
+					}
 					token = lexico();
 					if (token.getSimbolo().equals("sponto_virgula")) {
 						return analisaBloco(token);
@@ -331,12 +336,15 @@ public class AnalisadorSintatico {
 				throw new Exception("Erro no método analisaDeclaracaoFuncao(). Na linha" + token.getLinha()
 						+ " está faltando dois pontos após o identificador. \n Token lido: " + token.getLexema());
 			}
-			// erro
+			} else {
+				throw new Exception("Erro na linha " + token.getLinha()+ ". Já existe uma função com esse nome");
+			}
 		} else {
 			throw new Exception("Erro no método analisaDeclaracaoFuncao(). Na linha" + token.getLinha()
 					+ " está faltando um identificador. \n Token lido: " + token.getLexema());
 		}
-		// desempilha
+		desempilhaNivelTabela(nivel);
+		nivel--;
 		return token;
 	}
 
