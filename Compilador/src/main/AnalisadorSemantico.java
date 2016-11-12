@@ -5,13 +5,13 @@ import java.util.List;
 
 public class AnalisadorSemantico {
 
-	private List<Simbolo> tabelaSimbolos = new ArrayList<>();
+	private static List<Simbolo> tabelaSimbolos = new ArrayList<>();
 
 	public List<Simbolo> getTabelaSimbolos() {
 		return tabelaSimbolos;
 	}
 	
-	public void insereTabelaSimbolos(String lexema, String tipo, String nivel, String rotulo) {
+	public static void insereTabelaSimbolos(String lexema, String tipo, String nivel, String rotulo, String tipoLexema) {
 		Simbolo simbolo = new Simbolo();
 		simbolo.setLexema(lexema);	
 		simbolo.setTipo(tipo);
@@ -20,31 +20,31 @@ public class AnalisadorSemantico {
 		tabelaSimbolos.add(simbolo);
 	}
 	
-	public void colocaTipoVariaveis(String tipo) {
+	public static void colocaTipoVariaveis(String tipo) {
 		
 	}
 	
-	public boolean existeVariavelTabelaSimbolos(String lexema) {
+	public static boolean existeVariavelTabelaSimbolos(String lexema) {
 		return false;
 	}
 	
-	public boolean existeChamadaFuncaoTabelaSimbolos(String lexema) {
+	public static boolean existeChamadaFuncaoTabelaSimbolos(String lexema) {
 		return false;
 	}	
 	
-	public boolean existeDeclaracaoProcedimentoTabelaSimbolos(String lexema) {
+	public static boolean existeDeclaracaoProcedimentoTabelaSimbolos(String lexema) {
 		return false;
 	}
 	
-	public boolean existeVariavelTabelaSimbolo(String lexema) {
+	public static boolean existeVariavelTabelaSimbolo(String lexema) {
 		return false;
 	}
 	
-	public boolean naoExisteVariavelTabelaSimbolo(String lexema) {
+	public static boolean naoExisteVariavelTabelaSimbolo(String lexema) {
 		return !existeVariavelTabelaSimbolo(lexema);
 	}
 
-	public boolean naoExisteDeclaracaoProcedimentoTabelaSimbolos(String lexema) {
+	public static boolean naoExisteDeclaracaoProcedimentoTabelaSimbolos(String lexema) {
 		return !existeDeclaracaoProcedimentoTabelaSimbolos(lexema);
 	}
 	

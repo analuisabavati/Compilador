@@ -6,6 +6,9 @@ import static main.AnalisadorSemantico.*;
 public class AnalisadorSintatico {
 
 	public static void main(String[] args) {
+		
+		Integer nivel = 0;
+		
 		try {
 			AnalisadorLexico.main(null);
 			Token token = lexico();
@@ -13,7 +16,7 @@ public class AnalisadorSintatico {
 			if (token.getSimbolo().equals("sprograma")) {
 				token = lexico();
 				if (token.getSimbolo().equals("sidentificador")) {
-					// TODO: insereTabelaSimbolos(token.getLexema());
+					insereTabelaSimbolos(token.getLexema(), null, null, nivel.toString(), null, "programa");
 					token = lexico();
 					if (token.getSimbolo().equals("sponto_virgula")) {
 						token = analisaBloco(token);
@@ -44,6 +47,12 @@ public class AnalisadorSintatico {
 			}
 		}
 
+	}
+
+	private static void insereTabelaSimbolos(String lexema, Object object, Object object2, String string,
+			Object object3, String string2) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	private static Token analisaBloco(Token token) throws Exception {
@@ -410,11 +419,4 @@ public class AnalisadorSintatico {
 	private static Token analisaChamadaFuncao(Token token) throws Exception {
 		return lexico();
 	}
-
-	/* Metodos para teste */
-	private static void exibeToken(Token token) {
-		System.out.println(
-				"Linha: " + token.getLinha() + " Lexema: " + token.getLexema() + " Simbolo: " + token.getSimbolo());
-	}
-
 }
