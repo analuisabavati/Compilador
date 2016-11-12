@@ -5,10 +5,10 @@ import static main.AnalisadorSemantico.*;
 
 public class AnalisadorSintatico {
 
+	static Integer nivel = 0;
+
 	public static void main(String[] args) {
-		
-		Integer nivel = 0;
-		
+
 		try {
 			AnalisadorLexico.main(null);
 			Token token = lexico();
@@ -16,7 +16,7 @@ public class AnalisadorSintatico {
 			if (token.getSimbolo().equals("sprograma")) {
 				token = lexico();
 				if (token.getSimbolo().equals("sidentificador")) {
-					insereTabelaSimbolos(token.getLexema(), null, null, nivel.toString(), null, "programa");
+					insereTabelaSimbolos(token.getLexema(), null, nivel, null, "nomedeprograma");
 					token = lexico();
 					if (token.getSimbolo().equals("sponto_virgula")) {
 						token = analisaBloco(token);
@@ -41,18 +41,12 @@ public class AnalisadorSintatico {
 			}
 		} catch (Exception e) {
 			if (e.getMessage().equals("Chegou ao fim do arquivo. Não há mais tokens.")) {
-				System.err.println("O arquivo chegou ao fim e não foi encontrada a palavra 'fim' ou um ponto final após a palavra 'fim'.");
+				System.err.println(
+						"O arquivo chegou ao fim e não foi encontrada a palavra 'fim' ou um ponto final após a palavra 'fim'.");
 			} else {
 				System.err.println(e);
 			}
 		}
-
-	}
-
-	private static void insereTabelaSimbolos(String lexema, Object object, Object object2, String string,
-			Object object3, String string2) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	private static Token analisaBloco(Token token) throws Exception {
@@ -88,8 +82,8 @@ public class AnalisadorSintatico {
 	private static Token analisaVariaveis(Token token) throws Exception {
 		do {
 			if (token.getSimbolo().equals("sidentificador")) {
-				//TODO: if(naoExisteVariavelNaTabelaSimbolo) { 
-				// TODO: insereTabelaSimbolos(token.getLexema()); 
+				if(!pesquisaDuplicidadeVariavelTabela(token.getLexema(), nivel)) {
+				insereTabelaSimbolos(token.getLexema(), null, nivel, null, "nomedevariavel");
 				token = lexico();
 				if (token.getSimbolo().equals("svirgula") || token.getSimbolo().equals("sdoispontos")) {
 					if (token.getSimbolo().equals("svirgula")) {
@@ -104,7 +98,9 @@ public class AnalisadorSintatico {
 					throw new Exception("Erro no método analisaVariaveis(). Na linha " + token.getLinha()
 							+ " está faltando uma virgula ou dois pontos. \n Token lido: " + token.getLexema());
 				}
-				// else erro já existe na tab de simbolos
+				} else {
+					throw new Exception("Erro na linha" + token.getLinha() +". Já existe uma variavel, função ou procedimento com esse nome.");
+				}
 			} else {
 				throw new Exception("Erro no método analisaVariaveis(). Na linha " + token.getLinha()
 						+ " está faltando um identificador. \n Token lido: " + token.getLexema());
@@ -114,11 +110,11 @@ public class AnalisadorSintatico {
 	}
 
 	private static Token analisaTipo(Token token) throws Exception {
-		if (token.getSimbolo().equals("sinteiro") && token.getSimbolo().equals("sbooleano")) {
+		if (!token.getSimbolo().equals("sinteiro") && !token.getSimbolo().equals("sbooleano")) {
 			throw new Exception("Erro no método analisaTipo(). Na linha " + token.getLinha()
 					+ " é permitido apenas tipo inteiro ou booleano. \n Token lido: " + token.getLexema());
 		}
-		// TODO: colocaTipoVariaveis(token.getSimbolo())
+		colocaTipoVariaveis(token.getSimbolo());
 		return lexico();
 	}
 
@@ -180,9 +176,9 @@ public class AnalisadorSintatico {
 		if (token.getSimbolo().equals("sabre_parenteses")) {
 			token = lexico();
 			if (token.getSimbolo().equals("sidentificador")) {
-				//TODO: if (existeVariavelNaTabelaSimbolos(token.getLexam()))
+				// TODO: if (existeVariavelNaTabelaSimbolos(token.getLexam()))
 				token = lexico();
-				
+
 				if (token.getSimbolo().equals("sfecha_parenteses")) {
 					token = lexico();
 					return token;
@@ -191,9 +187,9 @@ public class AnalisadorSintatico {
 							+ " está faltando um fecha parenteses após identificador. \n Token lido: "
 							+ token.getLexema());
 				}
-				
-				// erro 
-				
+
+				// erro
+
 			} else {
 				throw new Exception("Erro no método analisaLeia(). Na linha " + token.getLinha()
 						+ " está faltando um identificador após abertura dos parenteses. \n Token lido: "
@@ -210,7 +206,8 @@ public class AnalisadorSintatico {
 		if (token.getSimbolo().equals("sabre_parenteses")) {
 			token = lexico();
 			if (token.getSimbolo().equals("sidentificador")) {
-				//TODO: if (existeChamadaFuncaoNaTabelaSimbolos(token.getLexam()))
+				// TODO: if
+				// (existeChamadaFuncaoNaTabelaSimbolos(token.getLexam()))
 				token = lexico();
 				if (token.getSimbolo().equals("sfecha_parenteses")) {
 					token = lexico();
@@ -221,7 +218,7 @@ public class AnalisadorSintatico {
 							+ token.getLexema());
 				}
 				// erro
-				
+
 			} else {
 				throw new Exception("Erro no método analisaEscreva(). Na linha " + token.getLinha()
 						+ " está faltando um identificador após abertura dos parenteses. \n Token lido: "
@@ -286,10 +283,11 @@ public class AnalisadorSintatico {
 
 	private static Token analisaDeclaracaoProcedimento(Token token) throws Exception {
 		token = lexico();
-		// nível := “L” (marca ou novo galho) 
+		// nível := “L” (marca ou novo galho)
 		if (token.getSimbolo().equals("sidentificador")) {
-			// TODO: if naoExisteDeclaracaoProcedimentoNatabelaDeSimbolos(token.lexema)
-			 // insereTabelaSimbolos(token.lexema,”procedimento”,nível)
+			// TODO: if
+			// naoExisteDeclaracaoProcedimentoNatabelaDeSimbolos(token.lexema)
+			// insereTabelaSimbolos(token.lexema,”procedimento”,nível)
 			token = lexico();
 			if (token.getSimbolo().equals("sponto_virgula")) {
 				return analisaBloco(token);
@@ -297,7 +295,7 @@ public class AnalisadorSintatico {
 				throw new Exception("Erro no método analisaDeclaracaoProcedimento(). Na linha" + token.getLinha()
 						+ " está faltando um ponto e virgula. \n Token lido: " + token.getLexema());
 			}
-			// erro: 
+			// erro:
 		} else {
 			throw new Exception("Erro no método analisaDeclaracaoProcedimento(). Na linha" + token.getLinha()
 					+ " está faltando um identificador. \n Token lido: " + token.getLexema());
@@ -316,11 +314,10 @@ public class AnalisadorSintatico {
 				token = lexico();
 				if ((token.getSimbolo().equals("sinteiro") || token.getSimbolo().equals("sbooleano"))) {
 					/*
-					se (token.símbolo = Sinteger)
-					 então TABSIMB[pc].tipo:=
-					 “função inteiro”
-					 senão TABSIMB[pc].tipo:=
-					 “função boolean” */
+					 * se (token.símbolo = Sinteger) então TABSIMB[pc].tipo:=
+					 * “função inteiro” senão TABSIMB[pc].tipo:= “função
+					 * boolean”
+					 */
 					token = lexico();
 					if (token.getSimbolo().equals("sponto_virgula")) {
 						return analisaBloco(token);
@@ -334,7 +331,7 @@ public class AnalisadorSintatico {
 				throw new Exception("Erro no método analisaDeclaracaoFuncao(). Na linha" + token.getLinha()
 						+ " está faltando dois pontos após o identificador. \n Token lido: " + token.getLexema());
 			}
-			//erro
+			// erro
 		} else {
 			throw new Exception("Erro no método analisaDeclaracaoFuncao(). Na linha" + token.getLinha()
 					+ " está faltando um identificador. \n Token lido: " + token.getLexema());
@@ -380,12 +377,10 @@ public class AnalisadorSintatico {
 	private static Token analisaFator(Token token) throws Exception {
 		if (token.getSimbolo().equals("sidentificador")) {
 			/*
-			 * Se pesquisa_tabela(token.lexema,nível,ind)
- 				Então Se (TabSimb[ind].tipo = “função inteiro”) ou
-				 (TabSimb[ind].tipo = “função booleano”)
-				 Então Analisa_chamada_função
-				 Senão Léxico(token)
-				 Senão ERRO
+			 * Se pesquisa_tabela(token.lexema,nível,ind) Então Se
+			 * (TabSimb[ind].tipo = “função inteiro”) ou (TabSimb[ind].tipo =
+			 * “função booleano”) Então Analisa_chamada_função Senão
+			 * Léxico(token) Senão ERRO
 			 */
 			token = analisaChamadaFuncao(token);
 			return token;
