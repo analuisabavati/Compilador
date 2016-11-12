@@ -6,13 +6,13 @@ public class Simbolo {
 	private String tipo;
 	private String nivel;
 	private String rotulo;
-	private String endereco;
+	private String tipoLexema;
 	
-	public String getEndereco() {
-		return endereco;
+	public String getTipoLexema() {
+		return tipoLexema;
 	}
-	public void setEndereco(String endereco) {
-		this.endereco = endereco;
+	public void setTipoLexama(String tipoLexema) {
+		this.tipoLexema = tipoLexema;
 	}
 	public String getRotulo() {
 		return rotulo;
