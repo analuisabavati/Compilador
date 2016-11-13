@@ -5,7 +5,8 @@ import static main.AnalisadorSemantico.*;
 
 public class AnalisadorSintatico {
 
-	static Integer nivel = 0;
+	private static Integer nivel = 0;
+	private static String tokenAnterior = "";
 
 	public static void main(String[] args) {
 
@@ -145,6 +146,7 @@ public class AnalisadorSintatico {
 
 	private static Token analisaComandoSimples(Token token) throws Exception {
 		if (token.getSimbolo().equals("sidentificador")) {
+			tokenAnterior = token.getLexema();
 			return analisaAtribuicaoChamadaProcedimento(token);
 		} else if (token.getSimbolo().equals("sse")) {
 			return analisaSe(token);
@@ -384,13 +386,15 @@ public class AnalisadorSintatico {
 
 	private static Token analisaFator(Token token) throws Exception {
 		if (token.getSimbolo().equals("sidentificador")) {
-			/*
-			 * Se pesquisa_tabela(token.lexema,nível,ind) Então Se
-			 * (TabSimb[ind].tipo = “função inteiro”) ou (TabSimb[ind].tipo =
-			 * “função booleano”) Então Analisa_chamada_função Senão
-			 * Léxico(token) Senão ERRO
-			 */
-			token = analisaChamadaFuncao(token);
+			String tipo = pesquisa_tabela(token.getLexema());
+			if (tipo == null) {
+				throw new Exception("Erro na linha " + token.getLinha()+ " . Função "+token.getLexema()+" inexistente.");
+			}
+			if (tipo.equals("inteiro") ||  tipo.equals("boleano")) {
+				token = analisaChamadaFuncao(token, tipo);
+			} else {
+				token = lexico();
+			}
 			return token;
 		} else if (token.getSimbolo().equals("snumero")) {
 			return lexico();
@@ -419,7 +423,8 @@ public class AnalisadorSintatico {
 		return token;
 	}
 
-	private static Token analisaChamadaFuncao(Token token) throws Exception {
+	private static Token analisaChamadaFuncao(Token token, String tipo) throws Exception {
+		
 		return lexico();
 	}
 }

@@ -10,6 +10,10 @@ public class AnalisadorSemantico {
 	public List<Simbolo> getTabelaSimbolos() {
 		return tabelaSimbolos;
 	}
+	
+	public Simbolo getSimboloTopoTabela() {
+		return tabelaSimbolos.get(tabelaSimbolos.size() - 1);
+	}
 
 	public static void insereTabelaSimbolos(String lexema, String tipo, Integer nivel, String rotulo,
 			String tipoLexema) {
@@ -106,4 +110,14 @@ public class AnalisadorSemantico {
 		String tipoVariavel = tipo.substring(1);
 		tabelaSimbolos.get(tabelaSimbolos.size() - 1).setTipo(tipoVariavel);
 	}
+	
+	public static String pesquisa_tabela(String lexema) {
+		for (int i = (tabelaSimbolos.size() - 1); i == 0; i--) {
+			if (tabelaSimbolos.get(i).getLexema().equals(lexema) &&  tabelaSimbolos.get(i).getTipoLexema().equals("nomedefuncao")) {
+				return tabelaSimbolos.get(i).getTipo();
+			}
+		}	
+		return null;
+	}
+
 }
