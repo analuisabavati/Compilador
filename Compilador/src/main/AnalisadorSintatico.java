@@ -33,21 +33,19 @@ public class AnalisadorSintatico {
 						if (token.getSimbolo().equals("sponto")) {
 							System.out.println("Arquivo lido com sucesso!");
 						} else {
-							throw new Exception("Erro no método analisadorSintatico(). Na linha " + token.getLinha()
-									+ " está faltando um ponto final após a palavra 'fim'. \n Token lido: "
-									+ token.getLexema());
+							throw new Exception("Erro. Espera-se um ponto final após a plavra 'fim'");
 						}
 					} else {
-						throw new Exception("Erro no método analisadorSintatico(). Na linha " + token.getLinha()
-								+ " está faltando um ponto e virgula no final. \n Token lido: " + token.getLexema());
+						throw new Exception("Erro na linha " + token.getLinha()
+								+ " . Espera-se um ponto e virgula no final após o identificador. \n Ultimo token lido: " + token.getLexema());
 					}
 				} else {
-					throw new Exception("Erro no método analisadorSintatico(). Na linha " + token.getLinha()
-							+ " está faltando um identificador. \n Token lido: " + token.getLexema());
+					throw new Exception("Erro na linha " + token.getLinha()
+					+ " . Espera-se identificador após a palavra reservada 'programa'. \n Ultimo token lido: " + token.getLexema());
 				}
 			} else {
-				throw new Exception("Erro no método analisadorSintatico(). Na linha " + token.getLinha()
-						+ " está faltando a palavra 'programa'. \n Token lido: " + token.getLexema());
+				throw new Exception("Erro na linha " + token.getLinha()
+				+ " . Espera-se que um programa começe com a palavra 'programa'. \n Ultimo token lido: " + token.getLexema());
 			}
 		} catch (Exception e) {
 			if (e.getMessage().equals("Chegou ao fim do arquivo. Não há mais tokens.")) {
@@ -78,14 +76,13 @@ public class AnalisadorSintatico {
 					if (token.getSimbolo().equals("sponto_virgula")) {
 						token = lexico();
 					} else {
-						throw new Exception("Erro no método analisaEtapaVariaveis(). Na linha " + token.getLinha()
-								+ " está faltando um ponto e virgula após o último identificador. \n Token lido: "
-								+ token.getLexema());
+						throw new Exception("Erro na linha " + token.getLinha()
+						+ " . Espera-se um ponto e virgula após o último identificador. \n Ultimo token lido: " + token.getLexema());
 					}
 				} while (token.getSimbolo().equals("sidentificador"));
 			} else {
-				throw new Exception("Erro no método analisaEtapaVariaveis(). Na linha " + token.getLinha()
-						+ "está faltando um identificador após a palavra 'var'.  \n Token lido: " + token.getLexema());
+				throw new Exception("Erro na linha " + token.getLinha()
+				+ " . Espera-se um identificador após a palavra 'var'. \n Ultimo token lido: " + token.getLexema());
 			}
 		}
 		return token;
