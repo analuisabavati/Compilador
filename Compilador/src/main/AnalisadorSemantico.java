@@ -33,14 +33,15 @@ public class AnalisadorSemantico {
 		tabelaSimbolos.add(simbolo);
 	}
 	
-// Arrumar metodo
 	public static void colocaTipoVariaveis(String tipo) { 
 		String tipoVariavel = tipo.substring(1);
-		for (int i = getUltimaPosicaoLista(); i == 0 || NOME_DE_FUNCAO.equals(tabelaSimbolos.get(i).getTipoLexema())
-				|| NOME_DE_PROCEDIMENTO.equals(tabelaSimbolos.get(i).getTipoLexema()); i--) {
+		for (int i = getUltimaPosicaoLista(); i == 0 ; i--) {
+			if (NOME_DE_FUNCAO.equals(tabelaSimbolos.get(i).getTipoLexema()) || NOME_DE_PROCEDIMENTO.equals(tabelaSimbolos.get(i).getTipoLexema())) {
+				break;
+			}
 			if (tabelaSimbolos.get(i).getTipo() == null) {
 				tabelaSimbolos.get(i).setTipo(tipoVariavel);
-			}
+			}	
 		}
 	}
 
