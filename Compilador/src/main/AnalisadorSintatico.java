@@ -18,7 +18,6 @@ public class AnalisadorSintatico {
 	private static Token tokenAnterior;
 
 	public static void main(String[] args) {
-
 		try {
 			AnalisadorLexico.main(null);
 			Token token = lexico();
