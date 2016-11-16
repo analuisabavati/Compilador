@@ -24,7 +24,7 @@ public class Operadores {
 		precedenciaOperadores.put("OR", 1);
 	}
 	
-	public int getPrecedenciaOperadores(String operador) {
+	public static int getPrecedenciaOperadores(String operador) {
 		return precedenciaOperadores.get(operador);
 	}
 	

@@ -7,7 +7,8 @@ import static main.AnalisadorSemantico.*;
 public class AnalisadorSintatico {
 
 	private static Integer nivel = 0;
-	private static Token tokenAnterior;
+	private static Token tokenAnteriorAtribuicao = null;
+	private static Token tokenAnteriorExpressao = null;
 
 	public static void main(String[] args) {
 		try {
@@ -145,7 +146,7 @@ public class AnalisadorSintatico {
 
 	private static Token analisaComandoSimples(Token token) throws Exception {
 		if (token.getSimbolo().equals("sidentificador")) {
-			tokenAnterior = token;
+			tokenAnteriorAtribuicao = token;
 			return analisaAtribuicaoChamadaProcedimento(token);
 		} else if (token.getSimbolo().equals("sse")) {
 			return analisaSe(token);
@@ -163,11 +164,11 @@ public class AnalisadorSintatico {
 	private static Token analisaAtribuicaoChamadaProcedimento(Token token) throws Exception {
 		token = lexico();
 		if (token.getSimbolo().equals("satribuicao")) {
-			if (pesquisaDeclaracaoVariavelTabela(tokenAnterior.getLexema())) {
+			if (pesquisaDeclaracaoVariavelTabela(tokenAnteriorAtribuicao.getLexema())) {
 				return analisaAtribuicao(token);
 			} else {
 				throw new Exception("Erro na linha " + token.getLinha()
-				+ " A variavel "+tokenAnterior.getLexema()+" não foi declarada.");
+				+ " A variavel "+tokenAnteriorAtribuicao.getLexema()+" não foi declarada.");
 			}
 		} else {
 			return analisaChamadaProcedimento(token);
@@ -179,11 +180,12 @@ public class AnalisadorSintatico {
 		token = analisaExpressao(token);
 		
 		String tipoExpressao = analisaPosfixo();
-		if (!tipoExpressao.equals(getSimbolo(getSimbolo(tokenAnterior.getSimbolo()).getLexema()))) {
+		if (!tipoExpressao.equals(getSimbolo(getSimbolo(tokenAnteriorAtribuicao.getSimbolo()).getLexema()))) {
 			throw new Exception("Erro na linha " + token.getLinha()
-			+ " . Incompatibilidade do tipo de retorno da expressao com o tipo da variavel "+token.getLexema());
+			+ " . Incompatibilidade do tipo de retorno da expressao com o tipo da variavel "+tokenAnteriorAtribuicao.getLexema());
 		}
 		
+		tokenAnteriorExpressao = null;
 		return token;
 	}
 
@@ -252,10 +254,12 @@ public class AnalisadorSintatico {
 		token = analisaExpressao(token);
 	
 		verificaTipoBooleano(analisaPosfixo(), token); 
+		tokenAnteriorExpressao = null;
 		
 		if (token.getSimbolo().equals("sfaca")) {
 			token = lexico();
 			token = analisaComandoSimples(token);
+			
 			return token;
 		} else {
 			throw new Exception("Erro no método analisaEnquanto(). Na linha " + token.getLinha()
@@ -270,6 +274,7 @@ public class AnalisadorSintatico {
 		token = analisaExpressao(token);
 		
 		verificaTipoBooleano(analisaPosfixo(), token); 
+		tokenAnteriorExpressao = null;
 		
 		if (token.getSimbolo().equals("sentao")) {
 			token = lexico();
@@ -278,6 +283,7 @@ public class AnalisadorSintatico {
 				token = lexico();
 				token = analisaComandoSimples(token);
 			}
+			
 			return token;
 		} else {
 			throw new Exception("Erro no método analisaSe(). Na linha " + token.getLinha()
@@ -287,7 +293,7 @@ public class AnalisadorSintatico {
 
 	private static Token analisaSubrotinas(Token token) throws Exception {
 		if (token.getSimbolo().equals("sprocedimento") || token.getSimbolo().equals("sfuncao")) {
-
+			// geracao de codigo
 		}
 		while (token.getSimbolo().equals("sprocedimento") || token.getSimbolo().equals("sfuncao")) {
 			if (token.getSimbolo().equals("sprocedimento")) {
@@ -312,6 +318,7 @@ public class AnalisadorSintatico {
 			if (!pesquisaDeclaracaoProcedimentoTabela(token.getLexema())) {
 				nivel++;
 				insereTabelaSimbolos(token.getLexema(), null, nivel, null, "nomedeprocedimento");
+				
 				token = lexico();
 				if (token.getSimbolo().equals("sponto_virgula")) {
 					return analisaBloco(token);
@@ -329,19 +336,19 @@ public class AnalisadorSintatico {
 	}
 
 	private static Token analisaDeclaracaoFuncao(Token token) throws Exception {
+		token = lexico();
 		if (token.getSimbolo().equals("sidentificador")) {
 			if (!pesquisaDeclaracaoFuncaoTabela(token.getLexema())) {
-				token = lexico();
 				nivel++;
 				insereTabelaSimbolos(token.getLexema(), null, nivel, null, "nomedefuncao");
+			
 				token = lexico();
 				if (token.getSimbolo().equals("sdoispontos")) {
 					token = lexico();
 					if ((token.getSimbolo().equals("sinteiro") || token.getSimbolo().equals("sbooleano"))) {
 						if (token.getSimbolo().equals("sinteiro")) {
 							colocaTipoRetornoFuncao("sinteiro");
-						}
-						if (token.getSimbolo().equals("sbooleano")) {
+						} else if (token.getSimbolo().equals("sbooleano")) {
 							colocaTipoRetornoFuncao("sbooleano");
 						}
 						token = lexico();
@@ -374,6 +381,8 @@ public class AnalisadorSintatico {
 		if (token.getSimbolo().equals("smaior") || token.getSimbolo().equals("smaiorig")
 				|| token.getSimbolo().equals("sig") || token.getSimbolo().equals("smenor")
 				|| token.getSimbolo().equals("smenorig") || token.getSimbolo().equals("sdif")) {
+			tokenAnteriorExpressao = token;
+			adicionaPilhaPosfixo(token.getLexema());
 			token = lexico();
 			token = analisaExpressaoSimples(token);
 		}
@@ -382,11 +391,15 @@ public class AnalisadorSintatico {
 
 	private static Token analisaExpressaoSimples(Token token) throws Exception {
 		if (token.getSimbolo().equals("smais") || token.getSimbolo().equals("smenos")) {
+			adicionaPilhaPosfixo(token.getLexema());
+			tokenAnteriorExpressao = token;
 			token = lexico();
 		}
 		token = analisaTermo(token);
 		while (token.getSimbolo().equals("smais") || token.getSimbolo().equals("smenos")
 				|| token.getSimbolo().equals("sou")) {
+			tokenAnteriorExpressao = token;
+			adicionaPilhaPosfixo(token.getLexema());
 			token = lexico();
 			token = analisaTermo(token);
 		}
@@ -397,6 +410,8 @@ public class AnalisadorSintatico {
 		token = analisaFator(token);
 		while (token.getSimbolo().equals("smult") || token.getSimbolo().equals("sdiv")
 				|| token.getSimbolo().equals("se")) {
+			adicionaPilhaPosfixo(token.getLexema());
+			tokenAnteriorExpressao = token;
 			token = lexico();
 			token = analisaFator(token);
 		}
@@ -413,24 +428,36 @@ public class AnalisadorSintatico {
 			if (tipo.equals("inteiro") || tipo.equals("boleano")) {
 				token = analisaChamadaFuncao(tipo);
 			} else {
+				adicionaFilaPosfixo(token.getLexema());
+				tokenAnteriorExpressao = token;
 				token = lexico();
 			}
 			return token;
 		} else if (token.getSimbolo().equals("snumero")) {
+			adicionaFilaPosfixo(token.getLexema());
+			tokenAnteriorExpressao = token;
 			return lexico();
 		} else if (token.getSimbolo().equals("snao")) {
+			adicionaPilhaPosfixo(token.getLexema());
+			tokenAnteriorExpressao = token;
 			token = lexico();
 			return analisaFator(token);
 		} else if (token.getSimbolo().equals("sabre_parenteses")) {
+			adicionaPilhaPosfixo(token.getLexema());
+			tokenAnteriorExpressao = token;
 			token = lexico();
 			token = analisaExpressao(token);
 			if (token.getSimbolo().equals("sfecha_parenteses")) {
+				desempilhaPilhaParenteses();
+				tokenAnteriorExpressao = token;
 				return lexico();
 			} else {
 				throw new Exception("Erro no método analisaFator(). Na linha " + token.getLinha()
 						+ " está faltando um fecha parenteses, após expressão. \n Token lido: " + token.getLexema());
 			}
 		} else if (token.getLexema().equals("verdadeiro") || token.getLexema().equals("falso")) {
+			adicionaFilaPosfixo(token.getLexema());
+			tokenAnteriorExpressao = token;
 			return lexico();
 		} else {
 			throw new Exception("Erro no método analisaFator(). Na linha " + token.getLinha()
@@ -440,19 +467,19 @@ public class AnalisadorSintatico {
 	}
 
 	private static Token analisaChamadaProcedimento(Token token) throws Exception {
-		if(!pesquisaDeclaracaoProcedimentoTabela(tokenAnterior.getLexema())) {
-			throw new Exception("Erro na linha " + tokenAnterior.getLinha() + 
-					". Procedimento "+ tokenAnterior.getLexema()+ " não declarado.");
+		if(!pesquisaDeclaracaoProcedimentoTabela(tokenAnteriorAtribuicao.getLexema())) {
+			throw new Exception("Erro na linha " + tokenAnteriorAtribuicao.getLinha() + 
+					". Procedimento "+ tokenAnteriorAtribuicao.getLexema()+ " não declarado.");
 		}
 		return token;
 	}
 
 	private static Token analisaChamadaFuncao(String tipo) throws Exception {
-		final String tipoTokenAnterior = pesquisa_tabela(tokenAnterior.getLexema());
+		String tipoTokenAnterior = pesquisa_tabela(tokenAnteriorAtribuicao.getLexema());
 		if (tipo.equals(tipoTokenAnterior)) {
 			return lexico();
 		}
-		throw new Exception("Erro na linha " + tokenAnterior.getLinha() + ". Tipos não compativeis, variável de tipo "
+		throw new Exception("Erro na linha " + tokenAnteriorAtribuicao.getLinha() + ". Tipos não compativeis, variável de tipo "
 				+ tipoTokenAnterior + " é diferente do tipo de retorno da função (" + tipo + ").");
 	}
 	

@@ -2,6 +2,7 @@ package main;
 
 import java.util.ArrayList;
 import java.util.List;
+import static main.Operadores.*;
 
 public class AnalisadorSemantico {
 	
@@ -18,14 +19,47 @@ public class AnalisadorSemantico {
 		return tabelaSimbolos.size() - 1;
 	}
 
-	public List<Simbolo> getTabelaSimbolos() {
+	public static List<Simbolo> getTabelaSimbolos() {
 		return tabelaSimbolos;
 	}
 	
-	public Simbolo getSimboloTopoTabela() {
+	public static void desempilhaPilhaParenteses() {
+		int i = pilhaPosfixo.size() - 1;
+		while (i >= 0) {
+			if (!pilhaPosfixo.get(i).equals("(")){
+				adicionaFilaPosfixo(pilhaPosfixo.remove(i));	
+			} else {
+				pilhaPosfixo.remove(i);
+				break;
+			}
+			i--;
+		}
+	}
+	
+	public static  Simbolo getSimboloTopoTabela() {
 		return tabelaSimbolos.get(getUltimaPosicaoLista());
 	}
 	
+	public static void adicionaFilaPosfixo(String lexema) {
+		filaPosfixo.add(lexema);
+	}
+	
+	public static void adicionaPilhaPosfixo(String lexemaParametro) {
+		int i = pilhaPosfixo.size() - 1;
+		int predenciaParametro = getPrecedenciaOperadores(lexemaParametro);
+		int predenciaPilha;
+		while (i >= 0) {
+			predenciaPilha = getPrecedenciaOperadores(pilhaPosfixo.get(i));
+			if(predenciaPilha >= predenciaParametro){
+				adicionaFilaPosfixo(pilhaPosfixo.remove(i));	
+			}else {
+				break;
+			}
+			i--;
+		}
+		pilhaPosfixo.add(lexemaParametro);
+	}
+
 	public static Simbolo getSimbolo(String lexema) {
 		for (int i = getUltimaPosicaoLista(); i == 0; i--) {
 			if (tabelaSimbolos.get(i).getLexema().equals(lexema)
@@ -151,6 +185,7 @@ public class AnalisadorSemantico {
 	 */
 	public static String analisaPosfixo() {
 		//TODO:  print fila pos fixo
+		
 		return null;
 	}
 	
