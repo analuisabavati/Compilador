@@ -237,8 +237,25 @@ public class AnalisadorSemantico {
 		}
 		System.out.print("\n");
 		
-		filaPosfixo.removeAll(filaPosfixo);
+		int i = 0;		
+		while(i <= getUltimaPosicaoLista()) {
+			if (getPrecedenciaOperadores(pilhaPosfixo.get(i)) != null) {
+				switch (pilhaPosfixo.get(i)) {
+				case "nao":
+					//pilhaPosfixo.get(i - 1)
+					//pilhaPosfixo.set(pilhaPosfixo.get(i - 1), element);
+					break;
 
+				default:
+					break;
+				}
+			}
+			
+			i++;
+		}
+
+		
+		filaPosfixo.removeAll(filaPosfixo);
 		return null;
 	}
 
@@ -259,4 +276,5 @@ public class AnalisadorSemantico {
 		}
 		return false;
 	}
+
 }
