@@ -168,7 +168,7 @@ public class AnalisadorSintatico {
 				return analisaAtribuicao(token);
 			} else {
 				throw new Exception("Erro na linha " + token.getLinha()
-				+ " A variavel "+tokenAnteriorAtribuicao.getLexema()+" não foi declarada.");
+				+ ". A variavel "+tokenAnteriorAtribuicao.getLexema()+" não foi declarada.");
 			}
 		} else {
 			return analisaChamadaProcedimento(token);
@@ -180,10 +180,10 @@ public class AnalisadorSintatico {
 		token = analisaExpressao(token);
 		
 		String tipoExpressao = analisaPosfixo();
-		if (!tipoExpressao.equals(getSimbolo(getSimbolo(tokenAnteriorAtribuicao.getSimbolo()).getLexema()))) {
+		/*if (!tipoExpressao.equals(getSimbolo(getSimbolo(tokenAnteriorAtribuicao.getSimbolo()).getLexema()))) {
 			throw new Exception("Erro na linha " + token.getLinha()
 			+ " . Incompatibilidade do tipo de retorno da expressao com o tipo da variavel "+tokenAnteriorAtribuicao.getLexema());
-		}
+		}*/
 		
 		tokenAnteriorExpressao = null;
 		return token;
@@ -382,7 +382,7 @@ public class AnalisadorSintatico {
 				|| token.getSimbolo().equals("sig") || token.getSimbolo().equals("smenor")
 				|| token.getSimbolo().equals("smenorig") || token.getSimbolo().equals("sdif")) {
 			tokenAnteriorExpressao = token;
-			adicionaPilhaPosfixo(token.getLexema());
+			adicionaPilhaPosfixo(token.getLexema(), false);
 			token = lexico();
 			token = analisaExpressaoSimples(token);
 		}
@@ -391,15 +391,17 @@ public class AnalisadorSintatico {
 
 	private static Token analisaExpressaoSimples(Token token) throws Exception {
 		if (token.getSimbolo().equals("smais") || token.getSimbolo().equals("smenos")) {
-			adicionaPilhaPosfixo(token.getLexema());
+			boolean isUnario = verificaUnario(tokenAnteriorExpressao);
+			adicionaPilhaPosfixo(token.getLexema(), isUnario);
 			tokenAnteriorExpressao = token;
 			token = lexico();
 		}
 		token = analisaTermo(token);
 		while (token.getSimbolo().equals("smais") || token.getSimbolo().equals("smenos")
 				|| token.getSimbolo().equals("sou")) {
+			boolean isUnario = verificaUnario(tokenAnteriorExpressao);
+			adicionaPilhaPosfixo(token.getLexema(), isUnario);
 			tokenAnteriorExpressao = token;
-			adicionaPilhaPosfixo(token.getLexema());
 			token = lexico();
 			token = analisaTermo(token);
 		}
@@ -410,7 +412,7 @@ public class AnalisadorSintatico {
 		token = analisaFator(token);
 		while (token.getSimbolo().equals("smult") || token.getSimbolo().equals("sdiv")
 				|| token.getSimbolo().equals("se")) {
-			adicionaPilhaPosfixo(token.getLexema());
+			adicionaPilhaPosfixo(token.getLexema(), false);
 			tokenAnteriorExpressao = token;
 			token = lexico();
 			token = analisaFator(token);
@@ -420,30 +422,28 @@ public class AnalisadorSintatico {
 
 	private static Token analisaFator(Token token) throws Exception {
 		if (token.getSimbolo().equals("sidentificador")) {
-			String tipo = pesquisa_tabela(token.getLexema());
-			if (tipo == null) {
-				throw new Exception(
-						"Erro na linha " + token.getLinha() + " . Função " + token.getLexema() + " inexistente.");
-			}
-			if (tipo.equals("inteiro") || tipo.equals("boleano")) {
-				token = analisaChamadaFuncao(tipo);
+			if(pesquisa_tabela(token.getLexema())) {
+				String tipo = getTipoFuncao(token.getLexema());
+				if (tipo.equals("inteiro") || tipo.equals("boleano")) {
+					token = analisaChamadaFuncao(tipo);
+				} 
 			} else {
 				adicionaFilaPosfixo(token.getLexema());
 				tokenAnteriorExpressao = token;
 				token = lexico();
-			}
+			} 
 			return token;
 		} else if (token.getSimbolo().equals("snumero")) {
 			adicionaFilaPosfixo(token.getLexema());
 			tokenAnteriorExpressao = token;
 			return lexico();
 		} else if (token.getSimbolo().equals("snao")) {
-			adicionaPilhaPosfixo(token.getLexema());
+			adicionaPilhaPosfixo(token.getLexema(), true);
 			tokenAnteriorExpressao = token;
 			token = lexico();
 			return analisaFator(token);
 		} else if (token.getSimbolo().equals("sabre_parenteses")) {
-			adicionaPilhaPosfixo(token.getLexema());
+			adicionaPilhaPosfixo(token.getLexema(), false);
 			tokenAnteriorExpressao = token;
 			token = lexico();
 			token = analisaExpressao(token);
@@ -475,12 +475,14 @@ public class AnalisadorSintatico {
 	}
 
 	private static Token analisaChamadaFuncao(String tipo) throws Exception {
-		String tipoTokenAnterior = pesquisa_tabela(tokenAnteriorAtribuicao.getLexema());
+		String tipoTokenAnterior = getTipoFuncao(tokenAnteriorAtribuicao.getLexema());
 		if (tipo.equals(tipoTokenAnterior)) {
 			return lexico();
 		}
 		throw new Exception("Erro na linha " + tokenAnteriorAtribuicao.getLinha() + ". Tipos não compativeis, variável de tipo "
 				+ tipoTokenAnterior + " é diferente do tipo de retorno da função (" + tipo + ").");
 	}
+	
+	
 	
 }

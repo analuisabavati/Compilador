@@ -40,9 +40,10 @@ public class AnalisadorLexico {
 			numeroLinha++;
 		} while (linhaArquivo.trim().isEmpty() && arquivoTratado.hasNextLine());
 		
-		if (!arquivoTratado.hasNextLine()) {
+		if (linhaArquivo.trim().isEmpty()) {
 			throw new Exception("Chegou ao fim do arquivo. Não há mais tokens.");
 		}
+		
 	}
 
 	private static Token pegaToken(String linha) throws Exception {
