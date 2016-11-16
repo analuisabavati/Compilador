@@ -236,7 +236,7 @@ public class AnalisadorSemantico {
 			System.out.print(string);
 		}
 		System.out.print("\n");
-		
+		/*
 		int i = 0;		
 		while(i <= getUltimaPosicaoLista()) {
 			if (getPrecedenciaOperadores(pilhaPosfixo.get(i)) != null) {
@@ -252,7 +252,7 @@ public class AnalisadorSemantico {
 			}
 			
 			i++;
-		}
+		}*/
 
 		
 		filaPosfixo.removeAll(filaPosfixo);
