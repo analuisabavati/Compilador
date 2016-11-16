@@ -221,7 +221,7 @@ public class AnalisadorSemantico {
 	}
 
 	/*
-	 * Retorna o tipo da expressao
+	 * TODO: Retorna o tipo da expressao
 	 */
 	public static String analisaPosfixo() {
 		if(!pilhaPosfixo.isEmpty()) {
@@ -236,26 +236,9 @@ public class AnalisadorSemantico {
 			System.out.print(string);
 		}
 		System.out.print("\n");
-		/*
-		int i = 0;		
-		while(i <= getUltimaPosicaoLista()) {
-			if (getPrecedenciaOperadores(pilhaPosfixo.get(i)) != null) {
-				switch (pilhaPosfixo.get(i)) {
-				case "nao":
-					//pilhaPosfixo.get(i - 1)
-					//pilhaPosfixo.set(pilhaPosfixo.get(i - 1), element);
-					break;
-
-				default:
-					break;
-				}
-			}
-			
-			i++;
-		}*/
-
 		
 		filaPosfixo.removeAll(filaPosfixo);
+		
 		return null;
 	}
 
@@ -271,9 +254,7 @@ public class AnalisadorSemantico {
 			return true;
 		} else if ("(".equals(tokenAnteriorExpressao.getSimbolo())) {
 			return true;
-		} else if (getPrecedenciaOperadores(tokenAnteriorExpressao.getSimbolo()) != null) {
-			return true;
-		}
+		} 
 		return false;
 	}
 
