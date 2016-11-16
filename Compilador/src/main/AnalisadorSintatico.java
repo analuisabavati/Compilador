@@ -1,16 +1,8 @@
 package main;
 
 import static main.AnalisadorLexico.lexico;
-import static main.AnalisadorSemantico.colocaTipoRetornoFuncao;
-import static main.AnalisadorSemantico.colocaTipoVariaveis;
-import static main.AnalisadorSemantico.desempilhaNivelTabela;
-import static main.AnalisadorSemantico.insereTabelaSimbolos;
-import static main.AnalisadorSemantico.pesquisaDeclaracaoFuncaoTabela;
-import static main.AnalisadorSemantico.pesquisaDeclaracaoFuncaoVariavelTabela;
-import static main.AnalisadorSemantico.pesquisaDeclaracaoProcedimentoTabela;
-import static main.AnalisadorSemantico.pesquisaDeclaracaoVariavelTabela;
-import static main.AnalisadorSemantico.pesquisaDuplicidadeVariavelTabela;
-import static main.AnalisadorSemantico.pesquisa_tabela;
+import static main.AnalisadorSemantico.*;
+
 
 public class AnalisadorSintatico {
 
@@ -61,6 +53,8 @@ public class AnalisadorSintatico {
 		token = analisaEtapaVariaveis(token);
 		token = analisaSubrotinas(token);
 		token = analisaComandos(token);
+		
+		// TODO : verificar nivel maior que zero
 		desempilhaNivelTabela(nivel);
 		nivel--;
 		return token;
@@ -169,7 +163,12 @@ public class AnalisadorSintatico {
 	private static Token analisaAtribuicaoChamadaProcedimento(Token token) throws Exception {
 		token = lexico();
 		if (token.getSimbolo().equals("satribuicao")) {
-			return analisaAtribuicao(token);
+			if (pesquisaDeclaracaoVariavelTabela(tokenAnterior.getLexema())) {
+				return analisaAtribuicao(token);
+			} else {
+				throw new Exception("Erro na linha " + token.getLinha()
+				+ " A variavel "+tokenAnterior.getLexema()+" não foi declarada.");
+			}
 		} else {
 			return analisaChamadaProcedimento(token);
 		}
@@ -178,6 +177,13 @@ public class AnalisadorSintatico {
 	private static Token analisaAtribuicao(Token token) throws Exception {
 		token = lexico();
 		token = analisaExpressao(token);
+		
+		String tipoExpressao = analisaPosfixo();
+		if (!tipoExpressao.equals(getSimbolo(getSimbolo(tokenAnterior.getSimbolo()).getLexema()))) {
+			throw new Exception("Erro na linha " + token.getLinha()
+			+ " . Incompatibilidade do tipo de retorno da expressao com o tipo da variavel "+token.getLexema());
+		}
+		
 		return token;
 	}
 
@@ -244,6 +250,9 @@ public class AnalisadorSintatico {
 	private static Token analisaEnquanto(Token token) throws Exception {
 		token = lexico();
 		token = analisaExpressao(token);
+	
+		verificaTipoBooleano(analisaPosfixo(), token); 
+		
 		if (token.getSimbolo().equals("sfaca")) {
 			token = lexico();
 			token = analisaComandoSimples(token);
@@ -254,9 +263,14 @@ public class AnalisadorSintatico {
 		}
 	}
 
+	
+
 	private static Token analisaSe(Token token) throws Exception {
 		token = lexico();
 		token = analisaExpressao(token);
+		
+		verificaTipoBooleano(analisaPosfixo(), token); 
+		
 		if (token.getSimbolo().equals("sentao")) {
 			token = lexico();
 			token = analisaComandoSimples(token);
@@ -425,7 +439,11 @@ public class AnalisadorSintatico {
 		}
 	}
 
-	private static Token analisaChamadaProcedimento(Token token) {
+	private static Token analisaChamadaProcedimento(Token token) throws Exception {
+		if(!pesquisaDeclaracaoProcedimentoTabela(tokenAnterior.getLexema())) {
+			throw new Exception("Erro na linha " + tokenAnterior.getLinha() + 
+					". Procedimento "+ tokenAnterior.getLexema()+ " não declarado.");
+		}
 		return token;
 	}
 
@@ -437,4 +455,5 @@ public class AnalisadorSintatico {
 		throw new Exception("Erro na linha " + tokenAnterior.getLinha() + ". Tipos não compativeis, variável de tipo "
 				+ tipoTokenAnterior + " é diferente do tipo de retorno da função (" + tipo + ").");
 	}
+	
 }

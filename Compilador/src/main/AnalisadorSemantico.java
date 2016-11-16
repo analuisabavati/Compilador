@@ -4,12 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AnalisadorSemantico {
-
-	private static List<Simbolo> tabelaSimbolos = new ArrayList<>();
+	
 	private static final String NOME_DE_VARIAVEL = "nomedevariavel";
 	private static final String NOME_DE_PROCEDIMENTO = "nomedeprocedimento";
 	private static final String NOME_DE_FUNCAO = "nomedefuncao";
 	
+	private static List<Simbolo> tabelaSimbolos = new ArrayList<>();
+	
+	private static List<String> pilhaPosfixo = new ArrayList<>();
+	private static List<String> filaPosfixo = new ArrayList<>();
+
 	private static int getUltimaPosicaoLista() {
 		return tabelaSimbolos.size() - 1;
 	}
@@ -20,6 +24,16 @@ public class AnalisadorSemantico {
 	
 	public Simbolo getSimboloTopoTabela() {
 		return tabelaSimbolos.get(getUltimaPosicaoLista());
+	}
+	
+	public static Simbolo getSimbolo(String lexema) {
+		for (int i = getUltimaPosicaoLista(); i == 0; i--) {
+			if (tabelaSimbolos.get(i).getLexema().equals(lexema)
+					&& NOME_DE_VARIAVEL.equals(tabelaSimbolos.get(i).getTipoLexema())) {
+				return tabelaSimbolos.get(i);
+			}
+		}
+		return null;
 	}
 
 	public static void insereTabelaSimbolos(String lexema, String tipo, Integer nivel, String rotulo,
@@ -36,7 +50,8 @@ public class AnalisadorSemantico {
 	public static void colocaTipoVariaveis(String tipo) { 
 		String tipoVariavel = tipo.substring(1);
 		for (int i = getUltimaPosicaoLista(); i == 0 ; i--) {
-			if (NOME_DE_FUNCAO.equals(tabelaSimbolos.get(i).getTipoLexema()) || NOME_DE_PROCEDIMENTO.equals(tabelaSimbolos.get(i).getTipoLexema())) {
+			if (NOME_DE_FUNCAO.equals(tabelaSimbolos.get(i).getTipoLexema()) 
+					|| NOME_DE_PROCEDIMENTO.equals(tabelaSimbolos.get(i).getTipoLexema())) {
 				break;
 			}
 			if (tabelaSimbolos.get(i).getTipo() == null) {
@@ -108,7 +123,8 @@ public class AnalisadorSemantico {
 
 	public static void desempilhaNivelTabela(Integer nivel) {
 		for (int i = getUltimaPosicaoLista(); i == 0; i--) {
-			if (tabelaSimbolos.get(i).getNivel().equals(nivel)) {
+			if (tabelaSimbolos.get(i).getNivel().equals(nivel) && (NOME_DE_PROCEDIMENTO.equals(tabelaSimbolos.get(i).getTipoLexema())
+					|| NOME_DE_FUNCAO.equals(tabelaSimbolos.get(i).getTipoLexema()))) {
 				tabelaSimbolos.remove(i);
 			} else {
 				break;
@@ -130,4 +146,19 @@ public class AnalisadorSemantico {
 		return null;
 	}
 
+	/*
+	 * Retorna o tipo da expressao
+	 */
+	public static String analisaPosfixo() {
+		//TODO:  print fila pos fixo
+		return null;
+	}
+	
+
+	public static void verificaTipoBooleano(String tipo, Token token) throws Exception {
+		if(!"booleano".equals(tipo)) {
+			throw new Exception("Erro na linha " + token.getLinha()
+			+ " . Espera-se que o tipo de retorno da expressao seja booleano.");
+		}
+	}
 }
