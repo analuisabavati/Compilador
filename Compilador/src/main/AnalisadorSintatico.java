@@ -382,7 +382,7 @@ public class AnalisadorSintatico {
 				|| token.getSimbolo().equals("sig") || token.getSimbolo().equals("smenor")
 				|| token.getSimbolo().equals("smenorig") || token.getSimbolo().equals("sdif")) {
 			tokenAnteriorExpressao = token;
-			adicionaPilhaPosfixo(token.getLexema(), false);
+			adicionaPilhaPosfixo(token, false);
 			token = lexico();
 			token = analisaExpressaoSimples(token);
 		}
@@ -392,7 +392,7 @@ public class AnalisadorSintatico {
 	private static Token analisaExpressaoSimples(Token token) throws Exception {
 		if (token.getSimbolo().equals("smais") || token.getSimbolo().equals("smenos")) {
 			boolean isUnario = verificaUnario(tokenAnteriorExpressao);
-			adicionaPilhaPosfixo(token.getLexema(), isUnario);
+			adicionaPilhaPosfixo(token, isUnario);
 			tokenAnteriorExpressao = token;
 			token = lexico();
 		}
@@ -400,7 +400,7 @@ public class AnalisadorSintatico {
 		while (token.getSimbolo().equals("smais") || token.getSimbolo().equals("smenos")
 				|| token.getSimbolo().equals("sou")) {
 			boolean isUnario = verificaUnario(tokenAnteriorExpressao);
-			adicionaPilhaPosfixo(token.getLexema(), isUnario);
+			adicionaPilhaPosfixo(token, isUnario);
 			tokenAnteriorExpressao = token;
 			token = lexico();
 			token = analisaTermo(token);
@@ -412,7 +412,7 @@ public class AnalisadorSintatico {
 		token = analisaFator(token);
 		while (token.getSimbolo().equals("smult") || token.getSimbolo().equals("sdiv")
 				|| token.getSimbolo().equals("se")) {
-			adicionaPilhaPosfixo(token.getLexema(), false);
+			adicionaPilhaPosfixo(token, false);
 			tokenAnteriorExpressao = token;
 			token = lexico();
 			token = analisaFator(token);
@@ -428,22 +428,22 @@ public class AnalisadorSintatico {
 					token = analisaChamadaFuncao(tipo);
 				} 
 			} else {
-				adicionaFilaPosfixo(token.getLexema());
+				adicionaFilaPosfixo(token);
 				tokenAnteriorExpressao = token;
 				token = lexico();
 			} 
 			return token;
 		} else if (token.getSimbolo().equals("snumero")) {
-			adicionaFilaPosfixo(token.getLexema());
+			adicionaFilaPosfixo(token);
 			tokenAnteriorExpressao = token;
 			return lexico();
 		} else if (token.getSimbolo().equals("snao")) {
-			adicionaPilhaPosfixo(token.getLexema(), true);
+			adicionaPilhaPosfixo(token, true);
 			tokenAnteriorExpressao = token;
 			token = lexico();
 			return analisaFator(token);
 		} else if (token.getSimbolo().equals("sabre_parenteses")) {
-			adicionaPilhaPosfixo(token.getLexema(), false);
+			adicionaPilhaPosfixo(token, false);
 			tokenAnteriorExpressao = token;
 			token = lexico();
 			token = analisaExpressao(token);
@@ -456,7 +456,7 @@ public class AnalisadorSintatico {
 						+ " está faltando um fecha parenteses, após expressão. \n Token lido: " + token.getLexema());
 			}
 		} else if (token.getLexema().equals("verdadeiro") || token.getLexema().equals("falso")) {
-			adicionaFilaPosfixo(token.getLexema());
+			adicionaFilaPosfixo(token);
 			tokenAnteriorExpressao = token;
 			return lexico();
 		} else {

@@ -12,8 +12,8 @@ public class AnalisadorSemantico {
 
 	private static List<Simbolo> tabelaSimbolos = new ArrayList<>();
 
-	private static List<String> pilhaPosfixo = new ArrayList<>();
-	private static List<String> filaPosfixo = new ArrayList<>();
+	private static List<Token> pilhaPosfixo = new ArrayList<>();
+	private static List<Token> filaPosfixo = new ArrayList<>();
 
 	private static int getUltimaPosicaoLista() {
 		return tabelaSimbolos.size() - 1;
@@ -26,7 +26,7 @@ public class AnalisadorSemantico {
 	public static void desempilhaPilhaParenteses() {
 		int i = pilhaPosfixo.size() - 1;
 		while (i >= 0) {
-			if (!pilhaPosfixo.get(i).equals("(")) {
+			if (!pilhaPosfixo.get(i).getLexema().equals("(")) {
 				adicionaFilaPosfixo(pilhaPosfixo.remove(i));
 			} else {
 				pilhaPosfixo.remove(i);
@@ -40,20 +40,20 @@ public class AnalisadorSemantico {
 		return tabelaSimbolos.get(getUltimaPosicaoLista());
 	}
 
-	public static void adicionaFilaPosfixo(String lexema) {
-		filaPosfixo.add(lexema);
+	public static void adicionaFilaPosfixo(Token token) {
+		filaPosfixo.add(token);
 	}
 
-	public static void adicionaPilhaPosfixo(String lexemaParametro, boolean isUnario) {
+	public static void adicionaPilhaPosfixo(Token token, boolean isUnario) {
 		int i = pilhaPosfixo.size() - 1;
 		int predenciaParametro = isUnario ? getPrecedenciaOperadores("unario")
-				: getPrecedenciaOperadores(lexemaParametro);
+				: getPrecedenciaOperadores(token.getLexema());
 		int predenciaPilha;
-		if ("(".equals(lexemaParametro)) {
-			pilhaPosfixo.add(lexemaParametro);
+		if ("(".equals(token.getLexema())) {
+			pilhaPosfixo.add(token);
 		} else {
 			while (i >= 0) {
-				predenciaPilha = getPrecedenciaOperadores(pilhaPosfixo.get(i));
+				predenciaPilha = getPrecedenciaOperadores(pilhaPosfixo.get(i).getLexema());
 				if (predenciaPilha >= predenciaParametro) {
 					adicionaFilaPosfixo(pilhaPosfixo.remove(i));
 				} else {
@@ -61,7 +61,7 @@ public class AnalisadorSemantico {
 				}
 				i--;
 			}
-			pilhaPosfixo.add(lexemaParametro);
+			pilhaPosfixo.add(token);
 		}
 	}
 
@@ -232,8 +232,8 @@ public class AnalisadorSemantico {
 			}
 		}
 		
-		for (String string : filaPosfixo) {
-			System.out.print(string);
+		for (Token token : filaPosfixo) {
+			System.out.print(token.getLexema());
 		}
 		System.out.print("\n");
 		
