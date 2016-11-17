@@ -15,6 +15,12 @@ public class AnalisadorSemantico {
 	private static List<Token> pilhaPosfixo = new ArrayList<>();
 	private static List<Token> filaPosfixo = new ArrayList<>();
 
+	public static void zeraVariaveis() {
+		tabelaSimbolos.clear();
+		pilhaPosfixo.clear();
+		filaPosfixo.clear();
+	}
+	
 	private static int getUltimaPosicaoLista() {
 		return tabelaSimbolos.size() - 1;
 	}

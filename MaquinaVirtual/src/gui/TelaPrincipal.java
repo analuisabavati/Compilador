@@ -88,7 +88,7 @@ public class TelaPrincipal extends JFrame {
 		lblContedoDaPilha = new JLabel("Conte\u00FAdo da Pilha");
 
 		inicializaContentPane();
-		inicializaBarraBotoes(scrollTableInstrucoes);
+		inicializaBarraMenu(scrollTableInstrucoes);
 		inicializaJanelaEntrada(scrollJanelaEntrada);
 		inicializaTabelaDados(scrollTableDados);
 		inicializaTabelaInstrucoes(scrollTableInstrucoes);
@@ -107,7 +107,7 @@ public class TelaPrincipal extends JFrame {
 		setContentPane(contentPane);
 	}
 
-	private void inicializaBarraBotoes(JScrollPane scrollTableInstrucoes) {
+	private void inicializaBarraMenu(JScrollPane scrollTableInstrucoes) {
 		JMenuBar menuBar = montaBarraMenu();
 		inicializaBotaoAbrirArquivo(scrollTableInstrucoes, menuBar);
 		inicializaBotaoExecutar(menuBar);

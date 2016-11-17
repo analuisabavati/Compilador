@@ -13,6 +13,9 @@ public class AnalisadorLexico {
 	private static String linhaArquivo = null;
 
 	public static void main(String[] args) throws Exception {
+		indexCaractereLinha = 0;
+		numeroLinha = 0;
+		linhaArquivo = null;
 		gravaArquivoFonteTratado();
 		arquivoTratado = abreArquivoFonte(pathArquivoTratado);
 		if (arquivoTratado.hasNextLine()) {

@@ -7,11 +7,30 @@ import java.io.PrintWriter;
 import java.util.Scanner;
 
 public class ArquivoUtil {
-
-	private final static String pathArquivo = "C:\\Users\\13022165\\Downloads\\teste.txt";
-	protected final static String pathArquivoTratado = "C:\\Users\\13022165\\Downloads\\arquivoTratado.txt";
+	
+	public static String pathArquivo = "C:\\Users\\AnaLuisa\\Desktop\\teste.txt";
+	protected final static String pathArquivoTratado = "C:\\Users\\AnaLuisa\\Desktop\\arquivoTratado.txt";
 	private static int numeroLinha = 0;
 
+	public static void salvaArquivoFonte(String[] conteudoArquivoFonte) throws Exception {
+		PrintWriter arquivo = new PrintWriter(pathArquivo);
+		arquivo.print("");
+		for (String string : conteudoArquivoFonte) {
+			arquivo.write(string);
+			arquivo.write("\n");
+		}
+		arquivo.close();
+	}
+	
+	public static String exibeArquivoFonte() throws Exception {
+		Scanner leArquivo = abreArquivoFonte(pathArquivo);
+		String linhaArquivo = "";
+		while (leArquivo.hasNextLine()) {
+			 linhaArquivo = linhaArquivo + leArquivo.nextLine() + "\n";
+		}
+		return linhaArquivo;
+	}
+	
 	public static void gravaArquivoFonteTratado() throws Exception {
 		Scanner leArquivo = abreArquivoFonte(pathArquivo);
 
