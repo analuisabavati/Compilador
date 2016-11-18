@@ -50,18 +50,11 @@ public class AnalisadorSemantico {
 		filaPosfixo.add(token);
 	}
 
-	public static void adicionaPilhaPosfixo(Token token, boolean isUnario) {
+	public static void adicionaPilhaPosfixo(Token token) {
 		int i = pilhaPosfixo.size() - 1;
-		int predenciaParametro = isUnario ? getPrecedenciaOperadores("unario")
+		int predenciaParametro = token.isUnario() ? getPrecedenciaOperadores("unario")
 				: getPrecedenciaOperadores(token.getLexema());
 		int predenciaPilha;
-		
-		if (isUnario && !token.getSimbolo().equals("snao")) {
-			Token tokenZero = new Token();
-			tokenZero.setLexema("0");
-			tokenZero.setSimbolo("snumero");
-			filaPosfixo.add(tokenZero);
-		}
 		
 		if ("(".equals(token.getLexema())) {
 			pilhaPosfixo.add(token);

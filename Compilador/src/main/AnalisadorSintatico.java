@@ -386,7 +386,8 @@ public class AnalisadorSintatico {
 				|| token.getSimbolo().equals("sig") || token.getSimbolo().equals("smenor")
 				|| token.getSimbolo().equals("smenorig") || token.getSimbolo().equals("sdif")) {
 			tokenAnteriorExpressao = token;
-			adicionaPilhaPosfixo(token, false);
+			token.setUnario(false);
+			adicionaPilhaPosfixo(token);
 			token = lexico();
 			token = analisaExpressaoSimples(token);
 		}
@@ -395,16 +396,16 @@ public class AnalisadorSintatico {
 
 	private static Token analisaExpressaoSimples(Token token) throws Exception {
 		if (token.getSimbolo().equals("smais") || token.getSimbolo().equals("smenos")) {
-			boolean isUnario = verificaUnario(tokenAnteriorExpressao);
-			adicionaPilhaPosfixo(token, isUnario);
+			token.setUnario(verificaUnario(tokenAnteriorExpressao));
+			adicionaPilhaPosfixo(token);
 			tokenAnteriorExpressao = token;
 			token = lexico();
 		}
 		token = analisaTermo(token);
 		while (token.getSimbolo().equals("smais") || token.getSimbolo().equals("smenos")
 				|| token.getSimbolo().equals("sou")) {
-			boolean isUnario = verificaUnario(tokenAnteriorExpressao);
-			adicionaPilhaPosfixo(token, isUnario);
+			token.setUnario(verificaUnario(tokenAnteriorExpressao));
+			adicionaPilhaPosfixo(token);
 			tokenAnteriorExpressao = token;
 			token = lexico();
 			token = analisaTermo(token);
@@ -416,7 +417,8 @@ public class AnalisadorSintatico {
 		token = analisaFator(token);
 		while (token.getSimbolo().equals("smult") || token.getSimbolo().equals("sdiv")
 				|| token.getSimbolo().equals("se")) {
-			adicionaPilhaPosfixo(token, false);
+			token.setUnario(false);
+			adicionaPilhaPosfixo(token);
 			tokenAnteriorExpressao = token;
 			token = lexico();
 			token = analisaFator(token);
@@ -442,12 +444,14 @@ public class AnalisadorSintatico {
 			tokenAnteriorExpressao = token;
 			return lexico();
 		} else if (token.getSimbolo().equals("snao")) {
-			adicionaPilhaPosfixo(token, true);
+			token.setUnario(true);
+			adicionaPilhaPosfixo(token);
 			tokenAnteriorExpressao = token;
 			token = lexico();
 			return analisaFator(token);
 		} else if (token.getSimbolo().equals("sabre_parenteses")) {
-			adicionaPilhaPosfixo(token, false);
+			token.setUnario(false);
+			adicionaPilhaPosfixo(token);
 			tokenAnteriorExpressao = token;
 			token = lexico();
 			token = analisaExpressao(token);
