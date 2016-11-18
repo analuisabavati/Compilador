@@ -94,22 +94,24 @@ public class AnalisadorSintatico {
 						if (token.getSimbolo().equals("svirgula")) {
 							token = lexico();
 							if (token.getSimbolo().equals("sdoispontos")) {
-								throw new Exception("Erro no método analisaVariaveis(). Na linha " + token.getLinha()
-										+ " não é permitido ter dois pontos após uma vírgula. \n Token lido: "
+								throw new Exception("Erro na linha " + token.getLinha()
+										+ " . Espera-se um identificador após uma virgula.\n Ultimo token lido: "
 										+ token.getLexema());
 							}
 						}
 					} else {
-						throw new Exception("Erro no método analisaVariaveis(). Na linha " + token.getLinha()
-								+ " está faltando uma virgula ou dois pontos. \n Token lido: " + token.getLexema());
+						throw new Exception("Erro na linha " + token.getLinha()
+						+ " . Espera-se uma virgula ou dois pontos após um identificador.\n Ultimo token lido: "
+						+ token.getLexema());
 					}
 				} else {
 					throw new Exception("Erro na linha" + token.getLinha()
 							+ ". Já existe uma variavel, função ou procedimento com esse nome.");
 				}
 			} else {
-				throw new Exception("Erro no método analisaVariaveis(). Na linha " + token.getLinha()
-						+ " está faltando um identificador. \n Token lido: " + token.getLexema());
+				throw new Exception("Erro na linha " + token.getLinha()
+				+ " . Espera-se um identificador.\n Ultimo token lido: "
+				+ token.getLexema());
 			}
 		} while (!token.getSimbolo().equals("sdoispontos"));
 		return analisaTipo(lexico());
@@ -117,8 +119,8 @@ public class AnalisadorSintatico {
 
 	private static Token analisaTipo(Token token) throws Exception {
 		if (!token.getSimbolo().equals("sinteiro") && !token.getSimbolo().equals("sbooleano")) {
-			throw new Exception("Erro no método analisaTipo(). Na linha " + token.getLinha()
-					+ " é permitido apenas tipo inteiro ou booleano. \n Token lido: " + token.getLexema());
+			throw new Exception("Erro na linha " + token.getLinha()
+					+ ". Apenas é permitido apenas tipo inteiro ou booleano. \n Token lido: " + token.getLexema());
 		}
 		colocaTipoVariaveis(token.getSimbolo());
 		return lexico();
