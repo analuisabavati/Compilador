@@ -78,15 +78,16 @@ public class TelaPrincipal extends JFrame {
 		}
 	}
 
-	private void inicializaEditor() {
+	private void inicializaErro() {
 		textAreaErro = new JTextArea();
 		scrollPaneErro.setViewportView(textAreaErro);
 		textAreaErro.setEditable(false);
 	}
 
-	private void inicializaErro() {
+	private void inicializaEditor() {
 		textAreaEditor = new JTextArea();
 		scrollPaneEditor.setViewportView(textAreaEditor);
+		textAreaEditor.setBorder(new BordaNumerada());
 	}
 
 	private void inicializaBarraMenu() {
@@ -104,6 +105,7 @@ public class TelaPrincipal extends JFrame {
 			procurarArquivo(frame);
 			try {
 				preencheEditor(exibeArquivoFonte());
+				textAreaEditor.setBorder(new BordaNumerada());
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
@@ -140,7 +142,7 @@ public class TelaPrincipal extends JFrame {
 			} catch (Exception e) {
 				if (e.getMessage().equals("Chegou ao fim do arquivo. Não há mais tokens.")) {
 					textAreaErro.setText(
-							"O arquivo chegou ao fim e não foi encontrada a palavra 'fim' ou um ponto final após a palavra 'fim'.");
+							"Erro: O arquivo chegou ao fim e não foi encontrada a palavra 'fim' ou um ponto final após a palavra 'fim'.");
 				} else {
 					textAreaErro.setText(e.getMessage());
 				}

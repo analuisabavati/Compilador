@@ -29,7 +29,7 @@ public class AnalisadorSintatico {
 					if (token.getSimbolo().equals("sponto")) {
 						throw new Exception("Arquivo compilado com sucesso!");
 					} else {
-						throw new Exception("Erro. Espera-se um ponto final após a plavra 'fim'");
+						throw new Exception("Erro: Espera-se um ponto final após a palavra 'fim'");
 					}
 				} else {
 					throw new Exception("Erro na linha " + token.getLinha()

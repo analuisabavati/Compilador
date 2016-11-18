@@ -55,6 +55,14 @@ public class AnalisadorSemantico {
 		int predenciaParametro = isUnario ? getPrecedenciaOperadores("unario")
 				: getPrecedenciaOperadores(token.getLexema());
 		int predenciaPilha;
+		
+		if (isUnario && !token.getSimbolo().equals("snao")) {
+			Token tokenZero = new Token();
+			tokenZero.setLexema("0");
+			tokenZero.setSimbolo("snumero");
+			filaPosfixo.add(tokenZero);
+		}
+		
 		if ("(".equals(token.getLexema())) {
 			pilhaPosfixo.add(token);
 		} else {
