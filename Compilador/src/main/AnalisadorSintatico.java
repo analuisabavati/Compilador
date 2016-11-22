@@ -433,6 +433,7 @@ public class AnalisadorSintatico {
 			if (pesquisa_tabela(token.getLexema())) {
 				String tipo = getTipoFuncao(token.getLexema());
 				if (tipo.equals("inteiro") || tipo.equals("boleano")) {
+					adicionaFilaPosfixo(token);
 					token = analisaChamadaFuncao(tipo);
 				}
 			} else {
