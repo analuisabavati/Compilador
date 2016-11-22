@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class ArquivoUtil {
 	
 	public static String pathArquivo = "C:\\Users\\AnaLuisa\\Desktop";
-	protected final static String pathArquivoTratado = "C:\\Users\\13022165\\Desktop\\arquivoTratado.txt";
+	protected final static String pathArquivoTratado = "C:\\Users\\AnaLuisa\\Desktop\\arquivoTratado.txt";
 	private static int numeroLinha = 0;
 
 	public static void salvaArquivoFonte(String[] conteudoArquivoFonte) throws Exception {

@@ -242,8 +242,7 @@ public class AnalisadorSemantico {
 
 		List<String> filaCompatibilidadeTipo = new ArrayList<>();
 
-		int i = 0;
-		while (i < filaPosfixo.size()) {
+		for(int i = 0; i < filaPosfixo.size(); i++) {
 			Token token = filaPosfixo.get(i);
 			switch (token.getSimbolo()) {
 			case "snumero":

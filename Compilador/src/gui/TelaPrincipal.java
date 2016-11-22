@@ -54,7 +54,7 @@ public class TelaPrincipal extends JFrame {
 	 */
 	public TelaPrincipal() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 686, 539);
+		setBounds(100, 100, 686, 572);
 
 		lblEditor = new JLabel("Editor:");
 		lblErro = new JLabel("Console:");
@@ -158,26 +158,30 @@ public class TelaPrincipal extends JFrame {
 		setContentPane(contentPane);
 
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
-		gl_contentPane.setHorizontalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING).addGroup(gl_contentPane
-				.createSequentialGroup().addGap(55)
-				.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addComponent(scrollPaneEditor, GroupLayout.PREFERRED_SIZE, 524, GroupLayout.PREFERRED_SIZE)
+		gl_contentPane.setHorizontalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGap(55)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addComponent(scrollPaneErro, GroupLayout.PREFERRED_SIZE, 526, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblErro).addComponent(lblEditor))
-				.addContainerGap(79, Short.MAX_VALUE)));
-		gl_contentPane
-				.setVerticalGroup(
-						gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addGroup(
-										gl_contentPane.createSequentialGroup().addGap(14).addComponent(lblEditor)
-												.addPreferredGap(ComponentPlacement.RELATED)
-												.addComponent(scrollPaneEditor, GroupLayout.DEFAULT_SIZE, 338,
-														Short.MAX_VALUE)
-												.addGap(18).addComponent(lblErro)
-												.addPreferredGap(ComponentPlacement.RELATED)
-												.addComponent(scrollPaneErro, GroupLayout.PREFERRED_SIZE, 45,
-														GroupLayout.PREFERRED_SIZE)
-												.addContainerGap()));
+						.addComponent(lblErro)
+						.addComponent(scrollPaneEditor, GroupLayout.PREFERRED_SIZE, 524, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblEditor))
+					.addContainerGap(79, Short.MAX_VALUE))
+		);
+		gl_contentPane.setVerticalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGap(14)
+					.addComponent(lblEditor)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(scrollPaneEditor, GroupLayout.PREFERRED_SIZE, 361, GroupLayout.PREFERRED_SIZE)
+					.addGap(18)
+					.addComponent(lblErro)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(scrollPaneErro, GroupLayout.PREFERRED_SIZE, 56, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+		);
 		contentPane.setLayout(gl_contentPane);
 	}
 }
