@@ -69,6 +69,7 @@ public class TelaPrincipal extends JFrame {
 	}
 
 	public static void procurarArquivo(JFrame janela) {
+		textAreaErro.setText("");
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
 		int result = fileChooser.showOpenDialog(janela);
@@ -121,6 +122,7 @@ public class TelaPrincipal extends JFrame {
 		menuBar.add(botaoSalvarAlteracoes);
 		botaoSalvarAlteracoes.addActionListener(event -> {
 			try {
+				textAreaErro.setText("");
 				salvaArquivo();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -138,6 +140,7 @@ public class TelaPrincipal extends JFrame {
 		menuBar.add(botaoCompilar);
 		botaoCompilar.addActionListener(event -> {
 			try {
+				textAreaErro.setText("");
 				analisadorSintatico();
 			} catch (Exception e) {
 				if (e.getMessage().equals("Chegou ao fim do arquivo. Não há mais tokens.")) {

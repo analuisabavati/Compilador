@@ -242,7 +242,7 @@ public class AnalisadorSemantico {
 
 		List<String> filaCompatibilidadeTipo = new ArrayList<>();
 
-		for(int i = 0; i < filaPosfixo.size(); i++) {
+		for (int i = 0; i < filaPosfixo.size(); i++) {
 			Token token = filaPosfixo.get(i);
 			switch (token.getSimbolo()) {
 			case "snumero":
@@ -253,9 +253,9 @@ public class AnalisadorSemantico {
 				break;
 			case "snao":
 				if (filaCompatibilidadeTipo.get(filaCompatibilidadeTipo.size() - 1).equals("inteiro")) {
-					
+
 				} else {
-					
+
 				}
 				break;
 			case "smais":
@@ -282,7 +282,7 @@ public class AnalisadorSemantico {
 					}
 				}
 				break;
-			case "semnos":
+			case "smenos":
 				if (token.isUnario()) {
 					if (filaCompatibilidadeTipo.get(filaCompatibilidadeTipo.size() - 1).equals("inteiro")) {
 
@@ -484,16 +484,17 @@ public class AnalisadorSemantico {
 
 		filaPosfixo.removeAll(filaPosfixo);
 
-		return null;
+		System.out.println("Tipo da retorno da expressão: " + filaCompatibilidadeTipo.get(0));
+
+		return filaCompatibilidadeTipo.get(0);
 
 	}
 
 	public static void verificaTipoBooleano(String tipo, Token token) throws Exception {
-		/*
-		 * if (!"booleano".equals(tipo)) { throw new Exception("Erro na linha "
-		 * + token.getLinha() +
-		 * " . Espera-se que o tipo de retorno da expressao seja booleano."); }
-		 */
+		if (!"booleano".equals(tipo)) {
+			throw new Exception("Erro na linha " + token.getLinha()
+					+ " . Espera-se que o tipo de retorno da expressao seja booleano.");
+		}
 	}
 
 	public static boolean verificaUnario(Token tokenAnteriorExpressao) {
@@ -517,6 +518,5 @@ public class AnalisadorSemantico {
 		}
 		return null;
 	}
-	
 
 }
