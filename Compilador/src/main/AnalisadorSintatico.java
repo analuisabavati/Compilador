@@ -1,6 +1,5 @@
 package main;
 
-
 import static main.AnalisadorLexico.lexico;
 import static main.AnalisadorSemantico.adicionaFilaPosfixo;
 import static main.AnalisadorSemantico.adicionaPilhaPosfixo;
