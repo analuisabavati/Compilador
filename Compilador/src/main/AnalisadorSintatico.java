@@ -495,9 +495,15 @@ public class AnalisadorSintatico {
 					token = analisaChamadaFuncao(tipo);
 				}
 			} else {
-				adicionaFilaPosfixo(token);
-				tokenAnteriorExpressao = token;
-				token = lexico();
+				//Alterei aqui! Verificar visibilidade da variavel
+				if (pesquisaDeclaracaoVariavelTabela(token.getLexema())) {
+					adicionaFilaPosfixo(token);
+					tokenAnteriorExpressao = token;
+					token = lexico();
+				} else {
+					throw new Exception(
+							"Erro na linha " + token.getLinha() + ". A variável "+token.getLexema()+" não foi declarada ou não está visível.");
+				}
 			}
 			return token;
 		} else if (token.getSimbolo().equals("snumero")) {
@@ -544,6 +550,7 @@ public class AnalisadorSintatico {
 	}
 
 	private static Token analisaChamadaFuncao(String tipo) throws Exception {
+		//Alterei aqui! Verificar se o token que esta sofrendo atribuição é tbm uma variavel
 		String tipoTokenAnterior = getTipoFuncao(tokenAnteriorAtribuicao.getLexema());
 		if (tipo.equals(tipoTokenAnterior)) {
 			return lexico();
