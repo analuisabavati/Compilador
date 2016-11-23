@@ -10,6 +10,7 @@ public class Operadores {
 		precedenciaOperadores.put("(", 0);
 		precedenciaOperadores.put(")", 0);
 		precedenciaOperadores.put("unario", 7);
+		precedenciaOperadores.put("nao", 7);
 		precedenciaOperadores.put("*", 6);
 		precedenciaOperadores.put("div", 6);		
 		precedenciaOperadores.put("+", 5);

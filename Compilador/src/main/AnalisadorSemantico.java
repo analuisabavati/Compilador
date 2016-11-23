@@ -10,10 +10,10 @@ public class AnalisadorSemantico {
 	private static final String NOME_DE_PROCEDIMENTO = "nomedeprocedimento";
 	private static final String NOME_DE_FUNCAO = "nomedefuncao";
 
-	private static List<Simbolo> tabelaSimbolos = new ArrayList<>();
+	public static List<Simbolo> tabelaSimbolos = new ArrayList<>();
 
-	private static List<Token> pilhaPosfixo = new ArrayList<>();
-	private static List<Token> filaPosfixo = new ArrayList<>();
+	public static List<Token> pilhaPosfixo = new ArrayList<>();
+	public static List<Token> filaPosfixo = new ArrayList<>();
 
 	public static void zeraVariaveis() {
 		tabelaSimbolos.clear();
@@ -72,18 +72,18 @@ public class AnalisadorSemantico {
 		}
 	}
 
-	public static Simbolo getSimbolo(String lexema) {
+	public static Simbolo getSimboloVariavelFuncao(String lexema) {
 		int i = getUltimaPosicaoLista();
 		while (i >= 0) {
 			if (tabelaSimbolos.get(i).getLexema().equals(lexema)
-					&& NOME_DE_VARIAVEL.equals(tabelaSimbolos.get(i).getTipoLexema())) {
+					&& (NOME_DE_VARIAVEL.equals(tabelaSimbolos.get(i).getTipoLexema()) || NOME_DE_FUNCAO.equals(tabelaSimbolos.get(i).getTipoLexema()))) {
 				return tabelaSimbolos.get(i);
 			}
 			i--;
 		}
 		return null;
 	}
-
+	
 	public static void insereTabelaSimbolos(String lexema, String tipo, Integer nivel, String rotulo,
 			String tipoLexema) {
 		Simbolo simbolo = new Simbolo();
@@ -519,4 +519,5 @@ public class AnalisadorSemantico {
 		return null;
 	}
 
+	
 }
