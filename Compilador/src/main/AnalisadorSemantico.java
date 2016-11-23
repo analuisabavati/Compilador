@@ -188,16 +188,18 @@ public class AnalisadorSemantico {
 	public static void desempilhaNivelTabela(Integer nivel) {
 		int i = getUltimaPosicaoLista();
 		while (i >= 0) {
-			if (tabelaSimbolos.get(i).getNivel().equals(nivel)) {
+			if (tabelaSimbolos.get(i).getNivel() == nivel && 
+					NOME_DE_VARIAVEL.equals(tabelaSimbolos.get(i).getTipoLexema())){
 				tabelaSimbolos.remove(i);
-			}
-			if (NOME_DE_PROCEDIMENTO.equals(tabelaSimbolos.get(i).getTipoLexema())
+			} else if (tabelaSimbolos.get(i).getNivel() > (nivel) && (NOME_DE_PROCEDIMENTO.equals(tabelaSimbolos.get(i).getTipoLexema())
+					|| NOME_DE_FUNCAO.equals(tabelaSimbolos.get(i).getTipoLexema()) 
+					|| NOME_DE_VARIAVEL.equals(tabelaSimbolos.get(i).getTipoLexema()))) {
+				tabelaSimbolos.remove(i);
+			} else if ((tabelaSimbolos.get(i).getNivel() <= nivel) && (NOME_DE_PROCEDIMENTO.equals(tabelaSimbolos.get(i).getTipoLexema())
 					|| NOME_DE_FUNCAO.equals(tabelaSimbolos.get(i).getTipoLexema())
-					|| NOME_DE_PROGRAMA.equals(tabelaSimbolos.get(i).getTipoLexema())) {
-
+					|| NOME_DE_PROGRAMA.equals(tabelaSimbolos.get(i).getTipoLexema()))) {
 				break;
 			}
-
 			i--;
 		}
 	}
