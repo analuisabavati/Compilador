@@ -58,7 +58,7 @@ public class AnalisadorSintatico {
 							if (e.getMessage().equals("Não é permitido continuar o código após o 'fim.'.")){
 								throw new Exception("Não é permitido continuar o código após o 'fim.'.");
 							} else {
-								throw new Exception("Arquivo lido com sucesso");
+								throw new Exception("Arquivo lido com sucesso.");
 							}	
 						}
 					} else {
@@ -88,7 +88,6 @@ public class AnalisadorSintatico {
 		token = analisaSubrotinas(token);
 		token = analisaComandos(token);
 
-		// TODO : verificar nivel maior que zero
 		desempilhaNivelTabela(nivel);
 		nivel--;
 		return token;
@@ -430,8 +429,6 @@ public class AnalisadorSintatico {
 			throw new Exception("Erro no método analisaDeclaracaoFuncao(). Na linha" + token.getLinha()
 					+ " está faltando um identificador. \n Token lido: " + token.getLexema());
 		}
-		desempilhaNivelTabela(nivel);
-		nivel--;		
 		
 		System.out.println("Lista Retorno: ");
 		for (Retorno retorno : listaRetorno) {

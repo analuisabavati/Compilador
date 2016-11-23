@@ -9,7 +9,6 @@ public class AnalisadorSemantico {
 	private static final String NOME_DE_VARIAVEL = "nomedevariavel";
 	private static final String NOME_DE_PROCEDIMENTO = "nomedeprocedimento";
 	private static final String NOME_DE_FUNCAO = "nomedefuncao";
-	private static final String NOME_DE_PROGRAMA = "nomedeprograma";
 
 	public static List<Simbolo> tabelaSimbolos = new ArrayList<>();
 
@@ -191,13 +190,9 @@ public class AnalisadorSemantico {
 			if (tabelaSimbolos.get(i).getNivel() == nivel && 
 					NOME_DE_VARIAVEL.equals(tabelaSimbolos.get(i).getTipoLexema())){
 				tabelaSimbolos.remove(i);
-			} else if (tabelaSimbolos.get(i).getNivel() > (nivel) && (NOME_DE_PROCEDIMENTO.equals(tabelaSimbolos.get(i).getTipoLexema())
-					|| NOME_DE_FUNCAO.equals(tabelaSimbolos.get(i).getTipoLexema()) 
-					|| NOME_DE_VARIAVEL.equals(tabelaSimbolos.get(i).getTipoLexema()))) {
+			} else if (tabelaSimbolos.get(i).getNivel() > nivel) {
 				tabelaSimbolos.remove(i);
-			} else if ((tabelaSimbolos.get(i).getNivel() <= nivel) && (NOME_DE_PROCEDIMENTO.equals(tabelaSimbolos.get(i).getTipoLexema())
-					|| NOME_DE_FUNCAO.equals(tabelaSimbolos.get(i).getTipoLexema())
-					|| NOME_DE_PROGRAMA.equals(tabelaSimbolos.get(i).getTipoLexema()))) {
+			} else {
 				break;
 			}
 			i--;
@@ -517,8 +512,8 @@ public class AnalisadorSemantico {
 		int i = getUltimaPosicaoLista();
 		while (i >= 0) {
 			if (tabelaSimbolos.get(i).getLexema().equals(lexema)
-					&& NOME_DE_VARIAVEL.equals(tabelaSimbolos.get(i).getTipoLexema())
-					|| NOME_DE_FUNCAO.equals(tabelaSimbolos.get(i).getTipoLexema())) {
+					&& (NOME_DE_VARIAVEL.equals(tabelaSimbolos.get(i).getTipoLexema())
+					|| NOME_DE_FUNCAO.equals(tabelaSimbolos.get(i).getTipoLexema()))) {
 				return tabelaSimbolos.get(i).getTipo();
 			}
 			i--;
