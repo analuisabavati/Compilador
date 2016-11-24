@@ -10,7 +10,7 @@ public class ArquivoUtil {
 	
 	public static String pathArquivo = "C:\\Users\\AnaLuisa\\Desktop";
 	protected final static String pathArquivoTratado = "C:\\Users\\AnaLuisa\\Desktop\\arquivoTratado.txt";
-	private static int numeroLinha = 0;
+	public static int numeroLinhaArquivoUtil = 1;
 
 	public static void salvaArquivoFonte(String[] conteudoArquivoFonte) throws Exception {
 		PrintWriter arquivo = new PrintWriter(pathArquivo);
@@ -56,7 +56,7 @@ public class ArquivoUtil {
 				novaLinha = trataComentarioBarraAsterisco(novaLinha);
 			}
 			
-			numeroLinha++;
+			numeroLinhaArquivoUtil++;
 			if(!novaLinha.trim().isEmpty()) {
 				System.out.println(novaLinha);
 				gravarArq.println(novaLinha);
@@ -87,7 +87,7 @@ public class ArquivoUtil {
 		while (indexCaractereLinha < linhaArquivo.length()) {
 			caractereLinha = linhaArquivo.charAt(indexCaractereLinha);
 			if (caractereLinha == '}') {
-				throw new Exception("Erro na linha " + numeroLinha
+				throw new Exception("Erro na linha " + numeroLinhaArquivoUtil
 						+ ". Formato de comentario invalido!");
 			}
 			while (caractereLinha == '{') {
@@ -97,7 +97,7 @@ public class ArquivoUtil {
 						if (indexCaractereLinha == linhaArquivo.length()) {
 							throw new Exception(
 									"Erro! Comentario nao fechado na linha "
-											+ numeroLinha);
+											+ numeroLinhaArquivoUtil);
 						}
 						caractereLinha = linhaArquivo
 								.charAt(indexCaractereLinha);
@@ -114,6 +114,7 @@ public class ArquivoUtil {
 		return novaLinha;
 	}
 
+	//TODO: ARRUMAR
 	public static String trataComentarioBarraAsterisco(String linhaArquivo)
 			throws Exception {
 		int indexCaractereLinha = 0;
@@ -126,12 +127,12 @@ public class ArquivoUtil {
 			caractereLinha = linhaArquivo.charAt(indexCaractereLinha);
 			if ((caractereLinha == '*')
 					&& (linhaArquivo.charAt(indexCaractereLinha + 1) == '/')) {
-				throw new Exception("Erro na linha " + numeroLinha
+				throw new Exception("Erro na linha " + numeroLinhaArquivoUtil
 						+ ". Formato de comentario invalido!");
 			}
 			while ((caractereLinha == '/') && (proximoCaractereLinha == '*')) {
 				if ((indexCaractereLinha + 2) >= linhaArquivo.length()) {
-					throw new Exception("Erro na linha " + numeroLinha
+					throw new Exception("Erro na linha " + numeroLinhaArquivoUtil
 							+ ". Comentario aberto e nao fechado!");
 				}
 				indexCaractereLinha += 2;

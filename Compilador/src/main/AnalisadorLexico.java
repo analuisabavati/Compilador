@@ -13,6 +13,7 @@ public class AnalisadorLexico {
 	private static String linhaArquivo = null;
 
 	public static void main(String[] args) throws Exception {
+		numeroLinhaArquivoUtil =  1;
 		indexCaractereLinha = 0;
 		numeroLinha = 0;
 		linhaArquivo = null;
