@@ -216,10 +216,9 @@ public class AnalisadorSemantico {
 		return false;
 	}
 
-	public static String getTipoFuncao(String lexema) {
+	public static String getTipoFuncaoVariavel(String lexema) {
 		int i = getUltimaPosicaoLista();
 		while (i >= 0) {
-			//Alterei aqui! Aceita nome de variavel tbm
 			if (tabelaSimbolos.get(i).getLexema().equals(lexema) 
 					&& (NOME_DE_FUNCAO.equals(tabelaSimbolos.get(i).getTipoLexema()) ||
 							NOME_DE_VARIAVEL.equals(tabelaSimbolos.get(i).getTipoLexema()))) {

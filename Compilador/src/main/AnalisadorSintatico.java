@@ -9,7 +9,7 @@ import static main.AnalisadorSemantico.colocaTipoVariaveis;
 import static main.AnalisadorSemantico.desempilhaNivelTabela;
 import static main.AnalisadorSemantico.desempilhaPilhaParenteses;
 import static main.AnalisadorSemantico.getSimboloVariavelFuncao;
-import static main.AnalisadorSemantico.getTipoFuncao;
+import static main.AnalisadorSemantico.getTipoFuncaoVariavel;
 import static main.AnalisadorSemantico.insereTabelaSimbolos;
 import static main.AnalisadorSemantico.pesquisaDeclaracaoFuncaoTabela;
 import static main.AnalisadorSemantico.pesquisaDeclaracaoFuncaoVariavelTabela;
@@ -168,14 +168,14 @@ public class AnalisadorSintatico {
 						token = analisaComandoSimples(token);
 					}
 				} else {
-					throw new Exception("Erro no método analisaComandos(). Na linha " + token.getLinha()
-							+ " está faltando ponto e virgula. \n Token lido: " + token.getLexema());
+					throw new Exception("Erro na linha " + token.getLinha()
+							+ ". Espera-se um ponto e virgula após um comando. \nUltimo token lido: " + token.getLexema());
 				}
 			}
 			return lexico();
 		} else {
-			throw new Exception("Erro no método analisaComandos(). Na linha " + token.getLinha()
-					+ " está faltando a palavra 'inicio'. \n Token lido: " + token.getLexema());
+			throw new Exception("Erro na linha " + token.getLinha()
+					+ ". Espera-se a palavra 'inicio' para iniciar um comando. \nUltimo token lido: " + token.getLexema());
 		}
 	}
 
@@ -190,10 +190,22 @@ public class AnalisadorSintatico {
 			} 
 			return analisaSe(token);
 		} else if (token.getSimbolo().equals("senquanto")) {
+			if(inFuncao && listaRetorno.get(listaRetorno.size() - 1).isRetornado()) {
+				throw new Exception("Erro na linha " + token.getLinha() + ". Comando "
+						+ tokenAnteriorAtribuicao.getLexema() + " inalcançável. Já existe um retorno.");
+			}
 			return analisaEnquanto(token);
 		} else if (token.getSimbolo().equals("sleia")) {
+			if(inFuncao && listaRetorno.get(listaRetorno.size() - 1).isRetornado()) {
+				throw new Exception("Erro na linha " + token.getLinha() + ". Comando "
+						+ tokenAnteriorAtribuicao.getLexema() + " inalcançável. Já existe um retorno.");
+			}
 			return analisaLeia(token);
 		} else if (token.getSimbolo().equals("sescreva")) {
+			if(inFuncao && listaRetorno.get(listaRetorno.size() - 1).isRetornado()) {
+				throw new Exception("Erro na linha " + token.getLinha() + ". Comando "
+						+ tokenAnteriorAtribuicao.getLexema() + " inalcançável. Já existe um retorno.");
+			}
 			return analisaEscreva(token);
 		} else {
 			return analisaComandos(token);
@@ -205,12 +217,19 @@ public class AnalisadorSintatico {
 		if (token.getSimbolo().equals("satribuicao")) {
 			if (pesquisaDeclaracaoFuncaoVariavelTabela(tokenAnteriorAtribuicao.getLexema())) {
 				if(inFuncao && listaRetorno.get(0).getComando().equals(tokenAnteriorAtribuicao.getLexema())) {
-					listaRetorno.get(listaRetorno.size() -1).setRetornado(true);
+					if (listaRetorno.get(listaRetorno.size() -1).isRetornado()) {
+						throw new Exception("Erro na linha " + token.getLinha() + ". Comando "
+								+ tokenAnteriorAtribuicao.getLexema() + " inalcançável. Já existe um retorno.");
+					}
 					colocaTrueNiveisAcimaTabelaRetorno(nivelRetorno);
+				} else 	if(inFuncao && !listaRetorno.get(0).getComando().equals(tokenAnteriorAtribuicao.getLexema()) 
+						&& listaRetorno.get(0).isRetornado()) {
+					throw new Exception("Erro na linha " + token.getLinha() + ". Comando "
+							+ tokenAnteriorAtribuicao.getLexema() + " inalcançável. Já existe um retorno.");
 				}
 				return analisaAtribuicao(token);
 			} else {
-				throw new Exception("Erro na linha " + token.getLinha() + ". A variavel "
+				throw new Exception("Erro na linha " + token.getLinha() + ". A variavel ou função"
 						+ tokenAnteriorAtribuicao.getLexema() + " não foi declarada.");
 			}
 		} else {
@@ -246,8 +265,8 @@ public class AnalisadorSintatico {
 						token = lexico();
 						return token;
 					} else {
-						throw new Exception("Erro no método analisaLeia(). Na linha " + token.getLinha()
-								+ " está faltando um fecha parenteses após identificador. \n Token lido: "
+						throw new Exception("Erro na linha " + token.getLinha()
+								+ ". Espera-se um fecha parenteses após uma variável ou função. \nÚltimo token lido: "
 								+ token.getLexema());
 					}
 				} else {
@@ -255,13 +274,13 @@ public class AnalisadorSintatico {
 							"Erro na linha " + token.getLinha() + ". Não foi encontrada a variavel para leitura.");
 				}
 			} else {
-				throw new Exception("Erro no método analisaLeia(). Na linha " + token.getLinha()
-						+ " está faltando um identificador após abertura dos parenteses. \n Token lido: "
+				throw new Exception("Erro na linha " + token.getLinha()
+						+ ". Espera-se uma variável ou função após abertura dos parenteses. \nÚltimo token lido: "
 						+ token.getLexema());
 			}
 		} else {
-			throw new Exception("Erro no método analisaLeia(). Na linha " + token.getLinha()
-					+ " está faltando abre parenteses após a palavra leia. \n Token lido: " + token.getLexema());
+			throw new Exception("Erro na linha " + token.getLinha()
+					+ ". Espera-se um abre parenteses após a palavra leia. \nÚltimo token lido: " + token.getLexema());
 		}
 	}
 
@@ -334,7 +353,10 @@ public class AnalisadorSintatico {
 				} 
 				token = lexico();
 				token = analisaComandoSimples(token);
-				if(inFuncao) { 
+				if(inFuncao) {
+					if(listaRetorno.get(listaRetorno.size() - 1).isRetornado()) {
+						validaNivelIgualInferior(nivelRetorno);
+					}
 					nivelRetorno--;
 				}
 			}
@@ -344,6 +366,31 @@ public class AnalisadorSintatico {
 			throw new Exception("Erro no método analisaSe(). Na linha " + token.getLinha()
 					+ " está faltando a palavra 'entao'. \n Token lido: " + token.getLexema());
 		}
+	}
+
+	private static void validaNivelIgualInferior(int nivelRetorno) {
+		int i = listaRetorno.size() - 1;
+		
+		boolean seSenaoTrue = false;
+		
+		while (i >= 0) {
+			if(listaRetorno.get(i).getNivel() == nivelRetorno &&
+					listaRetorno.get(i).getComando().equals("se") && listaRetorno.get(i).isRetornado()) {
+				seSenaoTrue = true;
+			}
+			if (seSenaoTrue && listaRetorno.get(i).getNivel() == (nivelRetorno - 1) && !listaRetorno.get(i).isRetornado()) {
+				listaRetorno.get(i).setRetornado(true);
+				int tamListaRetorno = listaRetorno.size() - 1;
+				while (tamListaRetorno > i) {
+					listaRetorno.remove(tamListaRetorno);
+					tamListaRetorno = listaRetorno.size() - 1;
+				}
+				
+			} 
+			i--;
+		}
+		
+		
 	}
 
 	private static Token analisaSubrotinas(Token token) throws Exception {
@@ -489,7 +536,7 @@ public class AnalisadorSintatico {
 	private static Token analisaFator(Token token) throws Exception {
 		if (token.getSimbolo().equals("sidentificador")) {
 			if (pesquisa_tabela(token.getLexema())) {
-				String tipo = getTipoFuncao(token.getLexema());
+				String tipo = getTipoFuncaoVariavel(token.getLexema());
 				if (tipo.equals("inteiro") || tipo.equals("boleano")) {
 					adicionaFilaPosfixo(token);
 					token = analisaChamadaFuncao(tipo);
@@ -550,8 +597,7 @@ public class AnalisadorSintatico {
 	}
 
 	private static Token analisaChamadaFuncao(String tipo) throws Exception {
-		//Alterei aqui! Verificar se o token que esta sofrendo atribuição é tbm uma variavel
-		String tipoTokenAnterior = getTipoFuncao(tokenAnteriorAtribuicao.getLexema());
+		String tipoTokenAnterior = getTipoFuncaoVariavel(tokenAnteriorAtribuicao.getLexema());
 		if (tipo.equals(tipoTokenAnterior)) {
 			return lexico();
 		}
@@ -561,12 +607,15 @@ public class AnalisadorSintatico {
 	}
 
 	public static void colocaTrueNiveisAcimaTabelaRetorno(int nivel) {
-		int i = 0;
-		while(i < listaRetorno.size() - 1) {
+		int i = listaRetorno.size() - 1;
+		while(i > 0) {
 			if(listaRetorno.get(i).getNivel() > nivel) {
 				listaRetorno.get(i).setRetornado(true);
+			} else if(listaRetorno.get(i).getNivel() == nivel) {
+				listaRetorno.get(i).setRetornado(true);
+				break;
 			}
-			i++;
+			i--;
 		}
 	}
 }
