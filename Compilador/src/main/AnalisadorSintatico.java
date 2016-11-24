@@ -36,7 +36,10 @@ public class AnalisadorSintatico {
 	public static void analisadorSintatico() throws Exception {
 
 		zeraVariaveis();
+		inFuncao = false;
+		listaRetorno.clear();
 		nivel = 0;
+		nivelRetorno = 0;
 		tokenAnteriorAtribuicao = null;
 		tokenAnteriorExpressao = null;
 
@@ -192,7 +195,7 @@ public class AnalisadorSintatico {
 		} else if (token.getSimbolo().equals("senquanto")) {
 			if(inFuncao && listaRetorno.get(listaRetorno.size() - 1).isRetornado()) {
 				throw new Exception("Erro na linha " + token.getLinha() + ". Comando "
-						+ tokenAnteriorAtribuicao.getLexema() + " inalcançável. Já existe um retorno.");
+						+ token.getLexema() + " inalcançável. Já existe um retorno.");
 			}
 			return analisaEnquanto(token);
 		} else if (token.getSimbolo().equals("sleia")) {
@@ -204,7 +207,7 @@ public class AnalisadorSintatico {
 		} else if (token.getSimbolo().equals("sescreva")) {
 			if(inFuncao && listaRetorno.get(listaRetorno.size() - 1).isRetornado()) {
 				throw new Exception("Erro na linha " + token.getLinha() + ". Comando "
-						+ tokenAnteriorAtribuicao.getLexema() + " inalcançável. Já existe um retorno.");
+						+ token.getLexema() + " inalcançável. Já existe um retorno.");
 			}
 			return analisaEscreva(token);
 		} else {
@@ -368,31 +371,6 @@ public class AnalisadorSintatico {
 		}
 	}
 
-	private static void validaNivelIgualInferior(int nivelRetorno) {
-		int i = listaRetorno.size() - 1;
-		
-		boolean seSenaoTrue = false;
-		
-		while (i >= 0) {
-			if(listaRetorno.get(i).getNivel() == nivelRetorno &&
-					listaRetorno.get(i).getComando().equals("se") && listaRetorno.get(i).isRetornado()) {
-				seSenaoTrue = true;
-			}
-			if (seSenaoTrue && listaRetorno.get(i).getNivel() == (nivelRetorno - 1) && !listaRetorno.get(i).isRetornado()) {
-				listaRetorno.get(i).setRetornado(true);
-				int tamListaRetorno = listaRetorno.size() - 1;
-				while (tamListaRetorno > i) {
-					listaRetorno.remove(tamListaRetorno);
-					tamListaRetorno = listaRetorno.size() - 1;
-				}
-				
-			} 
-			i--;
-		}
-		
-		
-	}
-
 	private static Token analisaSubrotinas(Token token) throws Exception {
 		if (token.getSimbolo().equals("sprocedimento") || token.getSimbolo().equals("sfuncao")) {
 			// geracao de codigo
@@ -480,6 +458,11 @@ public class AnalisadorSintatico {
 		System.out.println("Lista Retorno: ");
 		for (Retorno retorno : listaRetorno) {
 			System.out.println(retorno.toString());
+		}
+		
+		if(!listaRetorno.get(0).isRetornado()) {
+			throw new Exception("Erro na função: " + listaRetorno.get(0).getComando()
+					+ " . Retorno inválido!");
 		}
 		
 		listaRetorno.removeAll(listaRetorno);
@@ -608,12 +591,36 @@ public class AnalisadorSintatico {
 
 	public static void colocaTrueNiveisAcimaTabelaRetorno(int nivel) {
 		int i = listaRetorno.size() - 1;
-		while(i > 0) {
+		while(i >= 0) {
 			if(listaRetorno.get(i).getNivel() > nivel) {
 				listaRetorno.get(i).setRetornado(true);
 			} else if(listaRetorno.get(i).getNivel() == nivel) {
 				listaRetorno.get(i).setRetornado(true);
 				break;
+			}
+			i--;
+		}
+	}
+	
+	private static void validaNivelIgualInferior(int nivelRetorno) throws Exception {
+		int i = listaRetorno.size() - 1;	
+		boolean seSenaoTrue = false;
+		while (i >= 0) {
+			if(listaRetorno.get(i).getNivel() == nivelRetorno &&
+					listaRetorno.get(i).getComando().equals("se") && listaRetorno.get(i).isRetornado()) {
+				seSenaoTrue = true;
+			}
+			if (seSenaoTrue && listaRetorno.get(i).getNivel() == (nivelRetorno - 1) && !listaRetorno.get(i).isRetornado()) {
+				listaRetorno.get(i).setRetornado(true);
+				int tamListaRetorno = listaRetorno.size() - 1;
+				while (tamListaRetorno > i) {
+					listaRetorno.remove(tamListaRetorno);
+					tamListaRetorno = listaRetorno.size() - 1;
+				}
+				
+			} else if (seSenaoTrue && listaRetorno.get(i).getNivel() == (nivelRetorno - 1) && listaRetorno.get(i).isRetornado()){
+				throw new Exception("Erro na linha " + tokenAnteriorAtribuicao.getLinha() + ". Comando "
+						+ tokenAnteriorAtribuicao.getLexema() + " inalcançável. Já existe um retorno.");
 			}
 			i--;
 		}
