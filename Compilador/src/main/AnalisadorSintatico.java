@@ -262,18 +262,44 @@ public class AnalisadorSintatico {
 			throws Exception {
 		token = lexico();
 		if (token.getSimbolo().equals("satribuicao")) {
-			if (pesquisaDeclaracaoFuncaoVariavelTabela(tokenAnteriorAtribuicao
-					.getLexema())) {
-				if (inFuncao
-						&& listaRetorno.get(0).getComando()
-								.equals(tokenAnteriorAtribuicao.getLexema())) {
-					if (listaRetorno.get(listaRetorno.size() - 1).isRetornado()) {
-						throw new Exception("Erro na linha " + token.getLinha()
-								+ ". Comando "
-								+ tokenAnteriorAtribuicao.getLexema()
-								+ " inalcançável. Já existe um retorno.");
+			if (pesquisaDeclaracaoFuncaoVariavelTabela(tokenAnteriorAtribuicao.getLexema())) {
+				//Alterei aqui! Verificar se nivel eh maior que zero (consultar ultima posicao) ou se eh zero (consultar posicao zero).
+				if (inFuncao && listaRetorno.get(0).getComando().equals(tokenAnteriorAtribuicao.getLexema())) {
+					if(nivelRetorno > 0) {
+						if (listaRetorno.get(listaRetorno.size() - 1).isRetornado()) {
+							throw new Exception("Erro na linha " + token.getLinha()
+									+ ". Comando "
+									+ tokenAnteriorAtribuicao.getLexema()
+									+ " inalcançável. Já existe um retorno.");
+						}
+					} else if (nivelRetorno == 0) {
+						if (listaRetorno.get(0).isRetornado()) {
+							throw new Exception("Erro na linha " + token.getLinha()
+									+ ". Comando "
+									+ tokenAnteriorAtribuicao.getLexema()
+									+ " inalcançável. Já existe um retorno.");
+						}
 					}
 					colocaTrueNiveisAcimaTabelaRetorno(nivelRetorno);
+				//Alterei os dois else if a seguir. Verificar nivel.
+				} else if (inFuncao && !listaRetorno.get(0).getComando().equals(tokenAnteriorAtribuicao.getLexema())
+						&& pesquisaDeclaracaoVariavelTabela(tokenAnteriorAtribuicao.getLexema())) {
+					if (nivelRetorno > 0) {
+						if (listaRetorno.get(listaRetorno.size() - 1).isRetornado()) {
+							throw new Exception("Erro na linha " + token.getLinha() + ". Comando "+ tokenAnteriorAtribuicao.getLexema()	
+									+ " inalcançável. Já existe um retorno.");
+						}
+					} else if (nivelRetorno == 0) {
+						if (listaRetorno.get(0).isRetornado()) {
+							throw new Exception("Erro na linha " + token.getLinha() + ". Comando "+ tokenAnteriorAtribuicao.getLexema()	
+									+ " inalcançável. Já existe um retorno.");
+						}
+					}
+				} else if (inFuncao && !listaRetorno.get(0).getComando().equals(tokenAnteriorAtribuicao.getLexema())
+						&& pesquisaDeclaracaoFuncaoTabela(tokenAnteriorAtribuicao.getLexema())) {
+					throw new Exception("Erro na linha " + token.getLinha()	+ ". Retorno para uma função incorreta.");
+				}
+				/*
 				} else if (inFuncao && !listaRetorno.get(0).getComando().equals(tokenAnteriorAtribuicao.getLexema())
 						&& listaRetorno.get(0).isRetornado() && pesquisaDeclaracaoVariavelTabela(tokenAnteriorAtribuicao.getLexema())) {
 					throw new Exception("Erro na linha " + token.getLinha() + ". Comando "+ tokenAnteriorAtribuicao.getLexema()	
@@ -282,6 +308,7 @@ public class AnalisadorSintatico {
 						&& pesquisaDeclaracaoFuncaoTabela(tokenAnteriorAtribuicao.getLexema())) {
 					throw new Exception("Erro na linha " + token.getLinha()	+ ". Retorno para uma função incorreta.");
 				}
+				*/
 				return analisaAtribuicao(token);
 			} else {
 				throw new Exception("Erro na linha " + token.getLinha() + ". A variavel ou função "
@@ -297,8 +324,7 @@ public class AnalisadorSintatico {
 		token = analisaExpressao(token);
 
 		String tipoExpressao = analisaPosfixo();
-		String tipoTokenAnterior = getSimboloVariavelFuncao(
-				tokenAnteriorAtribuicao.getLexema()).getTipo();
+		String tipoTokenAnterior = getSimboloVariavelFuncao(tokenAnteriorAtribuicao.getLexema()).getTipo();
 
 		if (!tipoExpressao.equals(tipoTokenAnterior)) {
 			throw new Exception(
@@ -561,11 +587,11 @@ public class AnalisadorSintatico {
 		for (Retorno retorno : listaRetorno) {
 			System.out.println(retorno.toString());
 		}
-
+		/*
 		if (!listaRetorno.get(0).isRetornado()) {
 			throw new Exception("Erro na função: "
 					+ listaRetorno.get(0).getComando() + " . Retorno inválido!");
-		}
+		}*/
 
 		listaRetorno.removeAll(listaRetorno);
 		inFuncao = false;
