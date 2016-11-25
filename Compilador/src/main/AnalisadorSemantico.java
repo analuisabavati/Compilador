@@ -6,9 +6,9 @@ import static main.Operadores.*;
 
 public class AnalisadorSemantico {
 
-	private static final String NOME_DE_VARIAVEL = "nomedevariavel";
-	private static final String NOME_DE_PROCEDIMENTO = "nomedeprocedimento";
-	private static final String NOME_DE_FUNCAO = "nomedefuncao";
+	public static final String NOME_DE_VARIAVEL = "nomedevariavel";
+	public static final String NOME_DE_PROCEDIMENTO = "nomedeprocedimento";
+	public static final String NOME_DE_FUNCAO = "nomedefuncao";
 
 	public static List<Simbolo> tabelaSimbolos = new ArrayList<>();
 
@@ -151,14 +151,15 @@ public class AnalisadorSemantico {
 		int i = getUltimaPosicaoLista();
 		while (i >= 0) {
 			if (tabelaSimbolos.get(i).getLexema().equals(lexema)
-					&& NOME_DE_VARIAVEL.equals(tabelaSimbolos.get(i).getTipoLexema())
-					|| NOME_DE_FUNCAO.equals(tabelaSimbolos.get(i).getTipoLexema())) {
+					&& (NOME_DE_VARIAVEL.equals(tabelaSimbolos.get(i).getTipoLexema())
+					|| NOME_DE_FUNCAO.equals(tabelaSimbolos.get(i).getTipoLexema()))) {
 				return true;
 			}
 			i--;
 		}
 		return false;
 	}
+	
 
 	public static boolean pesquisaDeclaracaoProcedimentoTabela(String lexema) {
 		int i = getUltimaPosicaoLista();
