@@ -30,6 +30,7 @@ public class AnalisadorSintatico {
 	private static Token tokenAnteriorExpressao = null;
 
 	private static List<List<Retorno>> listaFuncoesDeclaradas = new ArrayList<>();
+	//Deletar listaRetorno?
 	private static List<Retorno> listaRetorno = new ArrayList<>();
 	private static int nivelRetorno = 0;
 	private static boolean inFuncao = false;
