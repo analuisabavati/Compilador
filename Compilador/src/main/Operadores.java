@@ -21,8 +21,8 @@ public class Operadores {
 		precedenciaOperadores.put(">=", 4);
 		precedenciaOperadores.put("=", 3);
 		precedenciaOperadores.put("!=", 3);
-		precedenciaOperadores.put("AND", 2);
-		precedenciaOperadores.put("OR", 1);
+		precedenciaOperadores.put("e", 2);
+		precedenciaOperadores.put("ou", 1);
 	}
 	
 	public static Integer getPrecedenciaOperadores(String operador) {
