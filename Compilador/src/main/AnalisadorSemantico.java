@@ -292,7 +292,7 @@ public class AnalisadorSemantico {
 
 					} else {
 						throw new Exception("Erro na linha " + token.getLinha() + ". "
-								+ "Não foi possivel aplicar o unário mais (+) em um booleano " + token.getLexema()
+								+ "Não foi possivel aplicar o unário menos (-) em um booleano " + token.getLexema()
 								+ ".");
 					}
 				} else {

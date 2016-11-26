@@ -504,6 +504,9 @@ public class AnalisadorSintatico {
 			if (!pesquisaDeclaracaoProcedimentoTabela(token.getLexema())) {
 				//Alterei aqui. Adicionei inProcedimento.
 				inProcedimento = true;
+				if(inFuncao) {
+					inFuncao = false;
+				}
 				controleProcedimento++;
 				nivel++;
 				insereTabelaSimbolos(token.getLexema(), null, nivel, null, "nomedeprocedimento");
@@ -514,6 +517,9 @@ public class AnalisadorSintatico {
 					controleProcedimento--;
 					if(controleProcedimento == 0) {
 						inProcedimento = false;
+					}
+					if(listaFuncoesDeclaradas.size() > 0) {
+						inFuncao = true;
 					}
 					return token;
 					//Alterei aqui!
@@ -548,6 +554,9 @@ public class AnalisadorSintatico {
 				insereTabelaSimbolos(token.getLexema(), null, nivel, null, "nomedefuncao");
 
 				inFuncao = true;
+				if(inProcedimento) {
+					inProcedimento = false;
+				}
 				List<Retorno> listaFuncao = new ArrayList<>();
 				listaFuncao.add(new Retorno(token.getLexema(), false, nivelRetorno));
 				listaFuncoesDeclaradas.add(listaFuncao);
@@ -615,6 +624,9 @@ public class AnalisadorSintatico {
 		//listaRetorno.removeAll(listaRetorno);
 		if(listaFuncoesDeclaradas.size() == 0) {
 			inFuncao = false;
+		}
+		if(controleProcedimento > 0) {
+			inProcedimento = true;
 		}
 		return token;
 	}
