@@ -39,6 +39,7 @@ public class AnalisadorSintatico {
 
 		zeraVariaveis();
 		inFuncao = false;
+		listaFuncoesDeclaradas.clear();
 		listaRetorno.clear();
 		nivel = 0;
 		nivelRetorno = 0;
@@ -225,26 +226,25 @@ public class AnalisadorSintatico {
 		} else if (token.getSimbolo().equals("sse")) {
 			if (inFuncao) {
 				nivelRetorno++;
-				listaRetorno.add(new Retorno(token.getLexema(), false,
-						nivelRetorno));
+				listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).add(new Retorno(token.getLexema(), false, nivelRetorno));
 			}
 			return analisaSe(token);
 		} else if (token.getSimbolo().equals("senquanto")) {
-			if (inFuncao && listaRetorno.get(listaRetorno.size() - 1).isRetornado()) {
+			if (inFuncao && listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).size() - 1).isRetornado()) {
 				throw new Exception("Erro na linha " + token.getLinha()
 						+ ". Comando " + token.getLexema()
 						+ " inalcançável. Já existe um retorno.");
 			}
 			return analisaEnquanto(token);
 		} else if (token.getSimbolo().equals("sleia")) {
-			if (inFuncao && listaRetorno.get(listaRetorno.size() - 1).isRetornado()) {
+			if (inFuncao && listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).size() - 1).isRetornado()) {
 				throw new Exception("Erro na linha " + token.getLinha()
 						+ ". Comando " + tokenAnteriorAtribuicao.getLexema()
 						+ " inalcançável. Já existe um retorno.");
 			}
 			return analisaLeia(token);
 		} else if (token.getSimbolo().equals("sescreva")) {
-			if (inFuncao && listaRetorno.get(listaRetorno.size() - 1).isRetornado()) {
+			if (inFuncao && listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).size() - 1).isRetornado()) {
 				throw new Exception("Erro na linha " + token.getLinha()
 						+ ". Comando " + token.getLexema()
 						+ " inalcançável. Já existe um retorno.");
@@ -260,16 +260,16 @@ public class AnalisadorSintatico {
 		if (token.getSimbolo().equals("satribuicao")) {
 			if (pesquisaDeclaracaoFuncaoVariavelTabela(tokenAnteriorAtribuicao.getLexema())) {
 				//Alterei aqui! Verificar se nivel eh maior que zero (consultar ultima posicao) ou se eh zero (consultar posicao zero).
-				if (inFuncao && listaRetorno.get(0).getComando().equals(tokenAnteriorAtribuicao.getLexema())) {
+				if (inFuncao && listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(0).getComando().equals(tokenAnteriorAtribuicao.getLexema())) {
 					if(nivelRetorno > 0) {
-						if (listaRetorno.get(listaRetorno.size() - 1).isRetornado()) {
+						if (listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).size() - 1).isRetornado()) {
 							throw new Exception("Erro na linha " + token.getLinha()
 									+ ". Comando "
 									+ tokenAnteriorAtribuicao.getLexema()
 									+ " inalcançável. Já existe um retorno.");
 						}
 					} else if (nivelRetorno == 0) {
-						if (listaRetorno.get(0).isRetornado()) {
+						if (listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(0).isRetornado()) {
 							throw new Exception("Erro na linha " + token.getLinha()
 									+ ". Comando "
 									+ tokenAnteriorAtribuicao.getLexema()
@@ -278,20 +278,20 @@ public class AnalisadorSintatico {
 					}
 					colocaTrueNiveisAcimaTabelaRetorno(nivelRetorno);
 				//Alterei os dois else if a seguir. Verificar nivel.
-				} else if (inFuncao && !listaRetorno.get(0).getComando().equals(tokenAnteriorAtribuicao.getLexema())
+				} else if (inFuncao && !listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(0).getComando().equals(tokenAnteriorAtribuicao.getLexema())
 						&& pesquisaDeclaracaoVariavelTabela(tokenAnteriorAtribuicao.getLexema())) {
 					if (nivelRetorno > 0) {
-						if (listaRetorno.get(listaRetorno.size() - 1).isRetornado()) {
+						if (listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).size() - 1).isRetornado()) {
 							throw new Exception("Erro na linha " + token.getLinha() + ". Comando "+ tokenAnteriorAtribuicao.getLexema()	
 									+ " inalcançável. Já existe um retorno.");
 						}
 					} else if (nivelRetorno == 0) {
-						if (listaRetorno.get(0).isRetornado()) {
+						if (listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(0).isRetornado()) {
 							throw new Exception("Erro na linha " + token.getLinha() + ". Comando "+ tokenAnteriorAtribuicao.getLexema()	
 									+ " inalcançável. Já existe um retorno.");
 						}
 					}
-				} else if (inFuncao && !listaRetorno.get(0).getComando().equals(tokenAnteriorAtribuicao.getLexema())
+				} else if (inFuncao && !listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(0).getComando().equals(tokenAnteriorAtribuicao.getLexema())
 						&& pesquisaDeclaracaoFuncaoTabela(tokenAnteriorAtribuicao.getLexema())) {
 					throw new Exception("Erro na linha " + token.getLinha()	+ ". Retorno para uma função incorreta.");
 				//Alterei aqui! Adicionei condição de retorno de função para procedimento.	
@@ -451,13 +451,12 @@ public class AnalisadorSintatico {
 			if (token.getSimbolo().equals("ssenao")) {
 				if (inFuncao) {
 					nivelRetorno++;
-					listaRetorno.add(new Retorno(token.getLexema(), false,
-							nivelRetorno));
+					listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).add(new Retorno(token.getLexema(), false, nivelRetorno));
 				}
 				token = lexico();
 				token = analisaComandoSimples(token);
 				if (inFuncao) {
-					if (listaRetorno.get(listaRetorno.size() - 1).isRetornado()) {
+					if (listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).size() - 1).isRetornado()) {
 						validaNivelIgualInferior(nivelRetorno);
 					}
 					nivelRetorno--;
@@ -543,7 +542,10 @@ public class AnalisadorSintatico {
 				insereTabelaSimbolos(token.getLexema(), null, nivel, null, "nomedefuncao");
 
 				inFuncao = true;
-				listaRetorno.add(new Retorno(token.getLexema(), false, nivelRetorno));
+				List<Retorno> listaFuncao = new ArrayList<>();
+				listaFuncao.add(new Retorno(token.getLexema(), false, nivelRetorno));
+				listaFuncoesDeclaradas.add(listaFuncao);
+				//listaRetorno.add(new Retorno(token.getLexema(), false, nivelRetorno));
 
 				token = lexico();
 				if (token.getSimbolo().equals("sdoispontos")) {
@@ -583,19 +585,31 @@ public class AnalisadorSintatico {
 							+ " está faltando um identificador. \n Token lido: "
 							+ token.getLexema());
 		}
+		
+		System.out.println("Lista Retorno: ");
+		for (Retorno retorno : listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1)) {
+			System.out.println(retorno.toString());
+		}
+		
+		listaFuncoesDeclaradas.remove(listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1));
 
+		/*
 		System.out.println("Lista Retorno: ");
 		for (Retorno retorno : listaRetorno) {
 			System.out.println(retorno.toString());
-		}
+		} 
+		*/
 		/* Descomentar essa condição!
 		if (!listaRetorno.get(0).isRetornado()) {
 			throw new Exception("Erro na função: "
 					+ listaRetorno.get(0).getComando() + " . Retorno inválido!");
-		}*/
+		}
+		*/
 
-		listaRetorno.removeAll(listaRetorno);
-		inFuncao = false;
+		//listaRetorno.removeAll(listaRetorno);
+		if(listaFuncoesDeclaradas.size() == 0) {
+			inFuncao = false;
+		}
 		return token;
 	}
 
@@ -727,42 +741,41 @@ public class AnalisadorSintatico {
 	}
 
 	public static void colocaTrueNiveisAcimaTabelaRetorno(int nivel) {
-		int i = listaRetorno.size() - 1;
+		int i = listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).size() - 1;
 		while (i >= 0) {
-			if (listaRetorno.get(i).getNivel() > nivel) {
-				listaRetorno.get(i).setRetornado(true);
-			} else if (listaRetorno.get(i).getNivel() == nivel) {
-				listaRetorno.get(i).setRetornado(true);
+			if (listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(i).getNivel() > nivel) {
+				listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(i).setRetornado(true);
+			} else if (listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(i).getNivel() == nivel) {
+				listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(i).setRetornado(true);
 				break;
 			}
 			i--;
 		}
 	}
 
-	private static void validaNivelIgualInferior(int nivelRetorno)
-			throws Exception {
-		int i = listaRetorno.size() - 1;
+	private static void validaNivelIgualInferior(int nivelRetorno) throws Exception {
+		int i = listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).size() - 1;
 		boolean seSenaoTrue = false;
 		while (i >= 0) {
-			if (listaRetorno.get(i).getNivel() == nivelRetorno
-					&& listaRetorno.get(i).getComando().equals("se")
-					&& listaRetorno.get(i).isRetornado()) {
+			if (listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(i).getNivel() == nivelRetorno
+					&& listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(i).getComando().equals("se")
+					&& listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(i).isRetornado()) {
 				seSenaoTrue = true;
 			}
 			if (seSenaoTrue
-					&& listaRetorno.get(i).getNivel() == (nivelRetorno - 1)
-					&& !listaRetorno.get(i).isRetornado()) {
-				listaRetorno.get(i).setRetornado(true);
-				int tamListaRetorno = listaRetorno.size() - 1;
+					&& listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(i).getNivel() == (nivelRetorno - 1)
+					&& !listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(i).isRetornado()) {
+				listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(i).setRetornado(true);
+				int tamListaRetorno = listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).size() - 1;
 				while (tamListaRetorno > i) {
-					listaRetorno.remove(tamListaRetorno);
-					tamListaRetorno = listaRetorno.size() - 1;
+					listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).remove(tamListaRetorno);
+					tamListaRetorno = listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).size() - 1;
 				}
 				break;
 
 			} else if (seSenaoTrue
-					&& listaRetorno.get(i).getNivel() == (nivelRetorno - 1)
-					&& listaRetorno.get(i).isRetornado()) {
+					&& listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(i).getNivel() == (nivelRetorno - 1)
+					&& listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(i).isRetornado()) {
 				throw new Exception("Erro na linha "
 						+ tokenAnteriorAtribuicao.getLinha() + ". Comando "
 						+ tokenAnteriorAtribuicao.getLexema()
