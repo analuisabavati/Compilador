@@ -29,9 +29,11 @@ public class AnalisadorSintatico {
 	private static Token tokenAnteriorAtribuicao = null;
 	private static Token tokenAnteriorExpressao = null;
 
+	private static List<List<Retorno>> listaFuncoesDeclaradas = new ArrayList<>();
 	private static List<Retorno> listaRetorno = new ArrayList<>();
 	private static int nivelRetorno = 0;
 	private static boolean inFuncao = false;
+	private static boolean inProcedimento = false;
 
 	public static void analisadorSintatico() throws Exception {
 
@@ -141,8 +143,7 @@ public class AnalisadorSintatico {
 					insereTabelaSimbolos(token.getLexema(), null, nivel, null,
 							"nomedevariavel");
 					token = lexico();
-					if (token.getSimbolo().equals("svirgula")
-							|| token.getSimbolo().equals("sdoispontos")) {
+					if (token.getSimbolo().equals("svirgula") || token.getSimbolo().equals("sdoispontos")) {
 						if (token.getSimbolo().equals("svirgula")) {
 							token = lexico();
 							if (token.getSimbolo().equals("sdoispontos")) {
@@ -178,8 +179,7 @@ public class AnalisadorSintatico {
 	}
 
 	private static Token analisaTipo(Token token) throws Exception {
-		if (!token.getSimbolo().equals("sinteiro")
-				&& !token.getSimbolo().equals("sbooleano")) {
+		if (!token.getSimbolo().equals("sinteiro") && !token.getSimbolo().equals("sbooleano")) {
 			throw new Exception(
 					"Erro na linha "
 							+ token.getLinha()
@@ -230,24 +230,21 @@ public class AnalisadorSintatico {
 			}
 			return analisaSe(token);
 		} else if (token.getSimbolo().equals("senquanto")) {
-			if (inFuncao
-					&& listaRetorno.get(listaRetorno.size() - 1).isRetornado()) {
+			if (inFuncao && listaRetorno.get(listaRetorno.size() - 1).isRetornado()) {
 				throw new Exception("Erro na linha " + token.getLinha()
 						+ ". Comando " + token.getLexema()
 						+ " inalcançável. Já existe um retorno.");
 			}
 			return analisaEnquanto(token);
 		} else if (token.getSimbolo().equals("sleia")) {
-			if (inFuncao
-					&& listaRetorno.get(listaRetorno.size() - 1).isRetornado()) {
+			if (inFuncao && listaRetorno.get(listaRetorno.size() - 1).isRetornado()) {
 				throw new Exception("Erro na linha " + token.getLinha()
 						+ ". Comando " + tokenAnteriorAtribuicao.getLexema()
 						+ " inalcançável. Já existe um retorno.");
 			}
 			return analisaLeia(token);
 		} else if (token.getSimbolo().equals("sescreva")) {
-			if (inFuncao
-					&& listaRetorno.get(listaRetorno.size() - 1).isRetornado()) {
+			if (inFuncao && listaRetorno.get(listaRetorno.size() - 1).isRetornado()) {
 				throw new Exception("Erro na linha " + token.getLinha()
 						+ ". Comando " + token.getLexema()
 						+ " inalcançável. Já existe um retorno.");
@@ -258,8 +255,7 @@ public class AnalisadorSintatico {
 		}
 	}
 
-	private static Token analisaAtribuicaoChamadaProcedimento(Token token)
-			throws Exception {
+	private static Token analisaAtribuicaoChamadaProcedimento(Token token) throws Exception {
 		token = lexico();
 		if (token.getSimbolo().equals("satribuicao")) {
 			if (pesquisaDeclaracaoFuncaoVariavelTabela(tokenAnteriorAtribuicao.getLexema())) {
@@ -298,6 +294,9 @@ public class AnalisadorSintatico {
 				} else if (inFuncao && !listaRetorno.get(0).getComando().equals(tokenAnteriorAtribuicao.getLexema())
 						&& pesquisaDeclaracaoFuncaoTabela(tokenAnteriorAtribuicao.getLexema())) {
 					throw new Exception("Erro na linha " + token.getLinha()	+ ". Retorno para uma função incorreta.");
+				//Alterei aqui! Adicionei condição de retorno de função para procedimento.	
+				} else if (inProcedimento && pesquisaDeclaracaoFuncaoTabela(tokenAnteriorAtribuicao.getLexema())) {
+					throw new Exception("Erro na linha " + token.getLinha() + ". Não pode haver retorno de função em procedimento.");
 				}
 				/*
 				} else if (inFuncao && !listaRetorno.get(0).getComando().equals(tokenAnteriorAtribuicao.getLexema())
@@ -475,12 +474,10 @@ public class AnalisadorSintatico {
 	}
 
 	private static Token analisaSubrotinas(Token token) throws Exception {
-		if (token.getSimbolo().equals("sprocedimento")
-				|| token.getSimbolo().equals("sfuncao")) {
+		if (token.getSimbolo().equals("sprocedimento") || token.getSimbolo().equals("sfuncao")) {
 			// geracao de codigo
 		}
-		while (token.getSimbolo().equals("sprocedimento")
-				|| token.getSimbolo().equals("sfuncao")) {
+		while (token.getSimbolo().equals("sprocedimento") || token.getSimbolo().equals("sfuncao")) {
 			if (token.getSimbolo().equals("sprocedimento")) {
 				token = analisaDeclaracaoProcedimento(token);
 			} else {
@@ -499,18 +496,25 @@ public class AnalisadorSintatico {
 		return token;
 	}
 
-	private static Token analisaDeclaracaoProcedimento(Token token)
-			throws Exception {
+	private static Token analisaDeclaracaoProcedimento(Token token) throws Exception {
+		
 		token = lexico();
 		if (token.getSimbolo().equals("sidentificador")) {
 			if (!pesquisaDeclaracaoProcedimentoTabela(token.getLexema())) {
+				//Alterei aqui. Adicionei inProcedimento.
+				inProcedimento = true;
 				nivel++;
-				insereTabelaSimbolos(token.getLexema(), null, nivel, null,
-						"nomedeprocedimento");
+				insereTabelaSimbolos(token.getLexema(), null, nivel, null, "nomedeprocedimento");
 
 				token = lexico();
 				if (token.getSimbolo().equals("sponto_virgula")) {
+					analisaBloco(token);
+					inProcedimento = false;
+					return token;
+					//Alterei aqui!
+					/* Antes da alteracao:
 					return analisaBloco(token);
+					*/
 				} else {
 					throw new Exception(
 							"Erro no método analisaDeclaracaoProcedimento(). Na linha"
@@ -536,18 +540,15 @@ public class AnalisadorSintatico {
 		if (token.getSimbolo().equals("sidentificador")) {
 			if (!pesquisaDeclaracaoFuncaoTabela(token.getLexema())) {
 				nivel++;
-				insereTabelaSimbolos(token.getLexema(), null, nivel, null,
-						"nomedefuncao");
+				insereTabelaSimbolos(token.getLexema(), null, nivel, null, "nomedefuncao");
 
 				inFuncao = true;
-				listaRetorno.add(new Retorno(token.getLexema(), false,
-						nivelRetorno));
+				listaRetorno.add(new Retorno(token.getLexema(), false, nivelRetorno));
 
 				token = lexico();
 				if (token.getSimbolo().equals("sdoispontos")) {
 					token = lexico();
-					if ((token.getSimbolo().equals("sinteiro") || token
-							.getSimbolo().equals("sbooleano"))) {
+					if ((token.getSimbolo().equals("sinteiro") || token.getSimbolo().equals("sbooleano"))) {
 						if (token.getSimbolo().equals("sinteiro")) {
 							colocaTipoRetornoFuncao("sinteiro");
 						} else if (token.getSimbolo().equals("sbooleano")) {
@@ -587,7 +588,7 @@ public class AnalisadorSintatico {
 		for (Retorno retorno : listaRetorno) {
 			System.out.println(retorno.toString());
 		}
-		/*
+		/* Descomentar essa condição!
 		if (!listaRetorno.get(0).isRetornado()) {
 			throw new Exception("Erro na função: "
 					+ listaRetorno.get(0).getComando() + " . Retorno inválido!");
@@ -600,12 +601,8 @@ public class AnalisadorSintatico {
 
 	private static Token analisaExpressao(Token token) throws Exception {
 		token = analisaExpressaoSimples(token);
-		if (token.getSimbolo().equals("smaior")
-				|| token.getSimbolo().equals("smaiorig")
-				|| token.getSimbolo().equals("sig")
-				|| token.getSimbolo().equals("smenor")
-				|| token.getSimbolo().equals("smenorig")
-				|| token.getSimbolo().equals("sdif")) {
+		if (token.getSimbolo().equals("smaior") || token.getSimbolo().equals("smaiorig") || token.getSimbolo().equals("sig")
+				|| token.getSimbolo().equals("smenor") || token.getSimbolo().equals("smenorig") || token.getSimbolo().equals("sdif")) {
 			tokenAnteriorExpressao = token;
 			token.setUnario(false);
 			adicionaPilhaPosfixo(token);
@@ -616,17 +613,14 @@ public class AnalisadorSintatico {
 	}
 
 	private static Token analisaExpressaoSimples(Token token) throws Exception {
-		if (token.getSimbolo().equals("smais")
-				|| token.getSimbolo().equals("smenos")) {
+		if (token.getSimbolo().equals("smais") || token.getSimbolo().equals("smenos")) {
 			token.setUnario(true);
 			adicionaPilhaPosfixo(token);
 			tokenAnteriorExpressao = token;
 			token = lexico();
 		}
 		token = analisaTermo(token);
-		while (token.getSimbolo().equals("smais")
-				|| token.getSimbolo().equals("smenos")
-				|| token.getSimbolo().equals("sou")) {
+		while (token.getSimbolo().equals("smais") || token.getSimbolo().equals("smenos") || token.getSimbolo().equals("sou")) {
 			token.setUnario(false);
 			adicionaPilhaPosfixo(token);
 			tokenAnteriorExpressao = token;
@@ -638,9 +632,7 @@ public class AnalisadorSintatico {
 
 	private static Token analisaTermo(Token token) throws Exception {
 		token = analisaFator(token);
-		while (token.getSimbolo().equals("smult")
-				|| token.getSimbolo().equals("sdiv")
-				|| token.getSimbolo().equals("se")) {
+		while (token.getSimbolo().equals("smult") || token.getSimbolo().equals("sdiv") || token.getSimbolo().equals("se")) {
 			token.setUnario(false);
 			adicionaPilhaPosfixo(token);
 			tokenAnteriorExpressao = token;
@@ -698,8 +690,7 @@ public class AnalisadorSintatico {
 								+ " está faltando um fecha parenteses, após expressão. \n Token lido: "
 								+ token.getLexema());
 			}
-		} else if (token.getLexema().equals("verdadeiro")
-				|| token.getLexema().equals("falso")) {
+		} else if (token.getLexema().equals("verdadeiro") || token.getLexema().equals("falso")) {
 			adicionaFilaPosfixo(token);
 			tokenAnteriorExpressao = token;
 			return lexico();
@@ -714,8 +705,7 @@ public class AnalisadorSintatico {
 
 	private static Token analisaChamadaProcedimento(Token token)
 			throws Exception {
-		if (!pesquisaDeclaracaoProcedimentoTabela(tokenAnteriorAtribuicao
-				.getLexema())) {
+		if (!pesquisaDeclaracaoProcedimentoTabela(tokenAnteriorAtribuicao.getLexema())) {
 			throw new Exception("Erro na linha "
 					+ tokenAnteriorAtribuicao.getLinha() + ". Procedimento "
 					+ tokenAnteriorAtribuicao.getLexema() + " não declarado.");
