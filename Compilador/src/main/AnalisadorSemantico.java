@@ -311,51 +311,31 @@ public class AnalisadorSemantico {
 				}
 				break;
 			case "smult":
-				if (token.isUnario()) {
-					if (filaCompatibilidadeTipo.get(filaCompatibilidadeTipo.size() - 1).equals("inteiro")) {
-
-					} else {
-						throw new Exception("Erro na linha " + token.getLinha() + ". "
-								+ "Não foi possivel aplicar o unário mais (+) em um booleano " + token.getLexema()
-								+ ".");
-					}
-				} else {
-					if (filaCompatibilidadeTipo.get(filaCompatibilidadeTipo.size() - 1).equals("inteiro")) {
-						if (filaCompatibilidadeTipo.get(filaCompatibilidadeTipo.size() - 2).equals("inteiro")) {
-							filaCompatibilidadeTipo.remove(filaCompatibilidadeTipo.size() - 1);
-							filaCompatibilidadeTipo.set(filaCompatibilidadeTipo.size() - 1, "inteiro");
-						} else {
-							throw new Exception("Erro na linha " + token.getLinha() + ". "
-									+ "Operação de multiplicação com tipos incompativeis.");
-						}
+				if (filaCompatibilidadeTipo.get(filaCompatibilidadeTipo.size() - 1).equals("inteiro")) {
+					if (filaCompatibilidadeTipo.get(filaCompatibilidadeTipo.size() - 2).equals("inteiro")) {
+						filaCompatibilidadeTipo.remove(filaCompatibilidadeTipo.size() - 1);
+						filaCompatibilidadeTipo.set(filaCompatibilidadeTipo.size() - 1, "inteiro");
 					} else {
 						throw new Exception("Erro na linha " + token.getLinha() + ". "
 								+ "Operação de multiplicação com tipos incompativeis.");
 					}
+				} else {
+					throw new Exception("Erro na linha " + token.getLinha() + ". "
+							+ "Operação de multiplicação com tipos incompativeis.");
 				}
 				break;
 			case "sdiv":
-				if (token.isUnario()) {
-					if (filaCompatibilidadeTipo.get(filaCompatibilidadeTipo.size() - 1).equals("inteiro")) {
-
-					} else {
-						throw new Exception("Erro na linha " + token.getLinha() + ". "
-								+ "Não foi possivel aplicar o unário mais (+) em um booleano " + token.getLexema()
-								+ ".");
-					}
-				} else {
-					if (filaCompatibilidadeTipo.get(filaCompatibilidadeTipo.size() - 1).equals("inteiro")) {
-						if (filaCompatibilidadeTipo.get(filaCompatibilidadeTipo.size() - 2).equals("inteiro")) {
-							filaCompatibilidadeTipo.remove(filaCompatibilidadeTipo.size() - 1);
-							filaCompatibilidadeTipo.set(filaCompatibilidadeTipo.size() - 1, "inteiro");
-						} else {
-							throw new Exception("Erro na linha " + token.getLinha() + ". "
-									+ "Operação de divisão com tipos incompativeis.");
-						}
+				if (filaCompatibilidadeTipo.get(filaCompatibilidadeTipo.size() - 1).equals("inteiro")) {
+					if (filaCompatibilidadeTipo.get(filaCompatibilidadeTipo.size() - 2).equals("inteiro")) {
+						filaCompatibilidadeTipo.remove(filaCompatibilidadeTipo.size() - 1);
+						filaCompatibilidadeTipo.set(filaCompatibilidadeTipo.size() - 1, "inteiro");
 					} else {
 						throw new Exception("Erro na linha " + token.getLinha() + ". "
 								+ "Operação de divisão com tipos incompativeis.");
 					}
+				} else {
+					throw new Exception("Erro na linha " + token.getLinha() + ". "
+							+ "Operação de divisão com tipos incompativeis.");
 				}
 				break;
 			case "smenor":
