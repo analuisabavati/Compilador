@@ -35,6 +35,7 @@ public class AnalisadorSintatico {
 	private static int nivelRetorno = 0;
 	private static boolean inFuncao = false;
 	private static boolean inProcedimento = false;
+	private static int controleProcedimento = 0;
 
 	public static void analisadorSintatico() throws Exception {
 
@@ -503,13 +504,17 @@ public class AnalisadorSintatico {
 			if (!pesquisaDeclaracaoProcedimentoTabela(token.getLexema())) {
 				//Alterei aqui. Adicionei inProcedimento.
 				inProcedimento = true;
+				controleProcedimento++;
 				nivel++;
 				insereTabelaSimbolos(token.getLexema(), null, nivel, null, "nomedeprocedimento");
 
 				token = lexico();
 				if (token.getSimbolo().equals("sponto_virgula")) {
 					analisaBloco(token);
-					inProcedimento = false;
+					controleProcedimento--;
+					if(controleProcedimento == 0) {
+						inProcedimento = false;
+					}
 					return token;
 					//Alterei aqui!
 					/* Antes da alteracao:
