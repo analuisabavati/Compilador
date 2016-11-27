@@ -14,6 +14,7 @@ import javax.swing.table.DefaultTableModel;
 import static main.MnemonicoParametros.*;
 import static main.ValidadorInstrucao.*;
 import static main.MnemonicoMetodos.*;
+import static gui.TelaPrincipal.*;
 
 public class MaquinaVirtual {
 
@@ -21,25 +22,10 @@ public class MaquinaVirtual {
 	private static String path;
 	private static boolean isListaInstrucoesVazia = true;
 	private static List<Instrucao> pilhaInstrucoes = new ArrayList<>();
-	private static int numeroLinha = 0;
-	private static boolean botaoContinuarPressionado = false;
-	
-	public static boolean isBotaoContinuarPressionado() {
-		return botaoContinuarPressionado;
-	}
-
-	public static void setBotaoContinuarPressionado(boolean botaoContinuarPressionado) {
-		MaquinaVirtual.botaoContinuarPressionado = botaoContinuarPressionado;
-	}
+	private static int numeroLinha = 0;	
 
 	private static List<Integer> breakPoints = new ArrayList<>();
 	
-	/*
-	 * TODO: 
-	 * Conferir msg de erros 
-	 * Fazer breakpoints 
-	 */
-
 	public static List<Instrucao> leInstrucoesDoArquivo(String caminhoDoArquivo) throws Exception {
 		
 		if(caminhoDoArquivo == null) {
@@ -62,12 +48,7 @@ public class MaquinaVirtual {
 		return instrucoes;
 	}
 
-	private static void esperaBotaoContinuar() {
-		while (!botaoContinuarPressionado) {
-			
-		}
-		
-	}
+	
 
 	private static Instrucao montaInstrucao(StringTokenizer conteudoLinha) throws Exception {
 
@@ -168,6 +149,8 @@ public class MaquinaVirtual {
 		}
 		List<Integer> pilhaDados = new ArrayList<>();
 		numeroLinha = 0;
+		
+		DefaultTableModel model = null;
 		 
 		for (int i= 0; i < pilhaInstrucoes.size() - 1; i++) {
 			if (isLinhaBreakPoint(numeroLinha)) {
@@ -300,9 +283,11 @@ public class MaquinaVirtual {
 				break;
 			}
 			numeroLinha++;
+			model = atualizaTabelaDados(pilhaDados);
+			atualizaTabelaDadosTela(model);
 		}
 		
-		return atualizaTabelaDados(pilhaDados);
+		return model;
 	}
 
 	private static DefaultTableModel atualizaTabelaDados(List<Integer>  pilhaDados) {	

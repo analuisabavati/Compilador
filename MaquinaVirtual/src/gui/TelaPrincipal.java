@@ -25,12 +25,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 public class TelaPrincipal extends JFrame {
-
-	/*
-	 * TODO: getJanelaEntrada(); BreakPoints
-	 */
 
 	private static final long serialVersionUID = 8206910973434962454L;
 	private static JTable tableInstrucoes = new JTable();
@@ -43,7 +40,7 @@ public class TelaPrincipal extends JFrame {
 	private JLabel lblInstruesASeremExecutadas;
 	private JLabel lblContedoDaPilha;
 	private static JScrollPane scrollJanelaSaida;
-	private JScrollPane scrollTableDados;
+	private static JScrollPane scrollTableDados;
 	private JScrollPane scrollJanelaBreakPoints;
 	private JScrollPane scrollTableInstrucoes;
 	private JScrollPane scrollJanelaEntrada;
@@ -116,14 +113,14 @@ public class TelaPrincipal extends JFrame {
 		JMenuBar menuBar = montaBarraMenu();
 		inicializaBotaoAbrirArquivo(scrollTableInstrucoes, menuBar);
 		inicializaBotaoExecutar(menuBar);
-		inicializaBotaoContinuar(menuBar);
+		//inicializaBotaoContinuar(menuBar);
 	}
-
+/*
 	private void inicializaBotaoContinuar(JMenuBar menuBar) {
 		JMenuItem menuContinuar = new JMenuItem("Continuar");
 		menuBar.add(menuContinuar);
 		menuContinuar.addActionListener(event -> setBotaoContinuarPressionado(true));
-	}
+	}*/
 
 	private void inicializaBotaoExecutar(JMenuBar menuBar) {
 		JMenuItem menuExecutar = new JMenuItem("Executar");
@@ -142,6 +139,12 @@ public class TelaPrincipal extends JFrame {
 
 			e.printStackTrace();
 		}
+	}
+	
+	public static void atualizaTabelaDadosTela(TableModel table) {
+		tableDados.setModel(table);
+		scrollTableDados.setViewportView(tableDados);
+		frame.getContentPane().add(scrollTableDados);
 	}
 
 	public static String getValorEntrada() {
@@ -314,6 +317,13 @@ public class TelaPrincipal extends JFrame {
 			// pinta linha
 		}
 		printJanelaBreakPoints();
+	}
+	
+	public static void esperaBotaoContinuar() {
+		int resposta = JOptionPane.showConfirmDialog(null, "Pressione OK para continuar");
+		while (resposta != JOptionPane.YES_OPTION) {
+			resposta = JOptionPane.showConfirmDialog(null, "Pressione OK para continuar");
+		}
 	}
 
 }
