@@ -2,6 +2,7 @@ package gui;
 
 import static main.MaquinaVirtual.*;
 
+import java.awt.Component;
 import java.awt.EventQueue;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -46,7 +48,7 @@ public class TelaPrincipal extends JFrame {
 	private JScrollPane scrollTableInstrucoes;
 	private JScrollPane scrollJanelaEntrada;
 	private static JTextArea janelaSaida;
-	private static JTextPane janelaEntrada;
+	private static JTextArea janelaEntrada;
 	private static JTextArea janelaBreakPoints;
 
 	/**
@@ -136,9 +138,20 @@ public class TelaPrincipal extends JFrame {
 			e.printStackTrace();
 		}
 	}
+	
+	public static String getValorEntrada(){
+				
+		switch (JOptionPane.showConfirmDialog(null, janelaEntrada)) {
+	    case JOptionPane.OK_OPTION:
+	        System.out.println(janelaEntrada.getText());
+	        break; 
+		}
+		
+		return janelaEntrada.getText();
+	}
 
 	private void inicializaJanelaEntrada(JScrollPane scrollJanelaEntrada) {
-		janelaEntrada = new JTextPane();
+		janelaEntrada = new JTextArea();
 
 		scrollJanelaEntrada.setViewportView(janelaEntrada);
 	}
@@ -297,12 +310,11 @@ public class TelaPrincipal extends JFrame {
 		}
 		janelaBreakPoints.revalidate();
 	}
-
-	// TODO: Terminar
-	public static Integer getJanelaEntrada() {
+	
+	public static String getJanelaEntrada() {
 		janelaEntrada.setEditable(true);
 		janelaEntrada.enableInputMethods(true);
-		return null;
+		return getValorEntrada();
 	}
 
 	public static void verificaBreakPoint(Integer numeroLinha) {

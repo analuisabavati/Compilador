@@ -129,7 +129,7 @@ public class MnemonicoMetodos {
 
 
 	public static List<Integer> execRD(List<Integer> pilhaDados) {							
-		Integer valor = getJanelaEntrada(); 				
+		Integer valor = Integer.parseInt(getJanelaEntrada()); 				
 		return execLDC(pilhaDados, valor);
 	}
 
