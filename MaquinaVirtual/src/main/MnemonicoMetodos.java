@@ -5,10 +5,6 @@ import static gui.TelaPrincipal.*;
 
 public class MnemonicoMetodos {
 	
-	/*
-	 * TODO:
-	 * Finalizar os metodos (jmp, etc)
-	 */
 
 	public static List<Integer> execLDC(List<Integer> pilhaDados, Integer constante) {
 		pilhaDados.add(constante);
@@ -140,15 +136,16 @@ public class MnemonicoMetodos {
 	}
 
 	public static List<Integer> execALLOC(List<Integer> pilhaDados, Integer posicaoInicio, Integer quantidadeVariaveis) {
+		
 		for (int i = 0; i < quantidadeVariaveis; i++) {
-			pilhaDados.add(null);
+			pilhaDados.add(posicaoInicio, null);
 		}
 		return pilhaDados;
 	}
 
-	public static List<Integer> execDALLOC(List<Integer> pilhaDados, Integer posicaoInicio, Integer quantidadeVariaveis) {
-		for (int i = 0; i < quantidadeVariaveis; i++) {
-			pilhaDados.remove(pilhaDados.size() - 1);
+	public static List<Integer> execDALLOC(List<Integer> pilhaDados, Integer posicaoInicio, Integer quantidadeVariaveis) {	
+		for (int i = 0; i < quantidadeVariaveis; i++) {		
+			pilhaDados.remove(posicaoInicio.intValue());
 		}
 		return pilhaDados;
 	}

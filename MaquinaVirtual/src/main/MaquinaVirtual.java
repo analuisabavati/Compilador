@@ -228,14 +228,14 @@ public class MaquinaVirtual {
 
 			case "JMP":								
 				Instrucao instrucaoJMP = new Instrucao(pilhaInstrucoes.get(i).getParametro1(), null, "NULL", null);
-				i = pilhaInstrucoes.indexOf(instrucaoJMP);
+				i = pilhaInstrucoes.indexOf(instrucaoJMP) - 1;
 				break;
 
 			case "JMPF":																	
 				Instrucao instrucaoJMPF = new Instrucao(pilhaInstrucoes.get(i).getParametro1(), null, "NULL", null);
 				int indexJMPF = pilhaInstrucoes.indexOf(instrucaoJMPF);
 				if (pilhaDados.get(pegaTopo(pilhaDados)).equals(0)) {
-					i = indexJMPF;
+					i = indexJMPF - 1;
 				}
 				pilhaDados.remove(pegaTopo(pilhaDados));
 				break;
@@ -257,15 +257,16 @@ public class MaquinaVirtual {
 				break;
 
 			case "CALL":
-				pilhaDados.add(pilhaDados.indexOf(pilhaInstrucoes.get(i)) + 1);
+				pilhaDados.add(i + 1);
 				
 				Instrucao instrucaoCALL = new Instrucao(pilhaInstrucoes.get(i).getParametro1(), null, "NULL", null);
-				i = pilhaInstrucoes.indexOf(instrucaoCALL);
+				i = pilhaInstrucoes.indexOf(instrucaoCALL) - 1;
 				
 				break;
 
 			case "RETURN":
-				i = pilhaDados.get(pilhaDados.size() - 1);
+				i = pilhaDados.get(pilhaDados.size() - 1) - 1;
+				pilhaDados.remove(pilhaDados.size() - 1);
 				
 				break;
 				

@@ -21,7 +21,6 @@ import static main.AnalisadorSemantico.pesquisa_tabela;
 import static main.AnalisadorSemantico.verificaTipoBooleano;
 import static main.AnalisadorSemantico.*;
 import static main.GeradorCodigo.*;
-import static main.GeradorCodigo.geraDalloc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,9 +114,6 @@ public class AnalisadorSintatico {
 		token = analisaSubrotinas(token);
 		token = analisaComandos(token);
 
-		geraDalloc(nivel);
-
-		
 		desempilhaNivelTabela(nivel);
 		nivel--;
 		return token;

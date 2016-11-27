@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import static main.Operadores.*;
 import static main.AnalisadorSemantico.getRotuloFuncao;
+import static main.AnalisadorSemantico.tabelaSimbolos;
 import static main.GeradorCodigo.*;
 
 
@@ -228,10 +229,16 @@ public class AnalisadorSemantico {
 	}
 
 	public static void desempilhaNivelTabela(Integer nivel) {
+		
+		int contadorVariaveis = 0;
+		int ultimoEndereco = 0;
+		
 		int i = getUltimaPosicaoLista();
 		while (i >= 0) {
 			if (tabelaSimbolos.get(i).getNivel() == nivel && 
 					NOME_DE_VARIAVEL.equals(tabelaSimbolos.get(i).getTipoLexema())){
+				contadorVariaveis++;
+				ultimoEndereco = tabelaSimbolos.get(i).getEndereco();
 				tabelaSimbolos.remove(i);
 			} else if (tabelaSimbolos.get(i).getNivel() > nivel) {
 				tabelaSimbolos.remove(i);
@@ -240,6 +247,8 @@ public class AnalisadorSemantico {
 			}
 			i--;
 		}
+		
+		gera("DALLOC "+ultimoEndereco+","+contadorVariaveis);
 	}
 
 	public static void colocaTipoRetornoFuncao(String tipo) {
