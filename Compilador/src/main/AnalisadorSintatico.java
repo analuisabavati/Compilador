@@ -280,34 +280,28 @@ public class AnalisadorSintatico {
 		if (token.getSimbolo().equals("satribuicao")) {
 			if (pesquisaDeclaracaoFuncaoVariavelTabela(tokenAnteriorAtribuicao.getLexema())) {
 				if (inFuncao && listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(0).getComando().equals(tokenAnteriorAtribuicao.getLexema())) {
-					if(nivelRetorno > 0) {
-						if (listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).size() - 1).isRetornado()) {
+					if (nivelRetorno > 0 && (listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(0).isRetornado()
+							|| listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).size() - 1).isRetornado())) {
 							throw new Exception("Erro na linha " + token.getLinha()
 									+ ". Comando "
 									+ tokenAnteriorAtribuicao.getLexema()
 									+ " inalcançável. Já existe um retorno.");
-						}
-					} else if (nivelRetorno == 0) {
-						if (listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(0).isRetornado()) {
+					} else if (nivelRetorno == 0 && listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(0).isRetornado()) {
 							throw new Exception("Erro na linha " + token.getLinha()
 									+ ". Comando "
 									+ tokenAnteriorAtribuicao.getLexema()
 									+ " inalcançável. Já existe um retorno.");
-						}
 					}
 					colocaTrueNiveisAcimaTabelaRetorno(nivelRetorno);
 				} else if (inFuncao && !listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(0).getComando().equals(tokenAnteriorAtribuicao.getLexema())
 						&& pesquisaDeclaracaoVariavelTabela(tokenAnteriorAtribuicao.getLexema())) {
-					if (nivelRetorno > 0) {
-						if (listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).size() - 1).isRetornado()) {
+					if (nivelRetorno > 0 && (listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(0).isRetornado()
+											|| listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).size() - 1).isRetornado())) {
 							throw new Exception("Erro na linha " + token.getLinha() + ". Comando "+ tokenAnteriorAtribuicao.getLexema()	
 									+ " inalcançável. Já existe um retorno.");
-						}
-					} else if (nivelRetorno == 0) {
-						if (listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(0).isRetornado()) {
+					} else if (nivelRetorno == 0 && listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(0).isRetornado()) {
 							throw new Exception("Erro na linha " + token.getLinha() + ". Comando "+ tokenAnteriorAtribuicao.getLexema()	
 									+ " inalcançável. Já existe um retorno.");
-						}
 					}
 				} else if (inFuncao && !listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(0).getComando().equals(tokenAnteriorAtribuicao.getLexema())
 						&& pesquisaDeclaracaoFuncaoTabela(tokenAnteriorAtribuicao.getLexema())) {
