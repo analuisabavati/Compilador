@@ -10,7 +10,7 @@ public class GeradorCodigo {
 	static PrintWriter gravarArq;
 
 	public static void main(String[] args) throws Exception {
-		arq = new FileWriter("C:\\Users\\AnaLuisa\\Desktop\\codigoGerado.txt");
+		arq = new FileWriter("C:\\Users\\leona\\Desktop\\codigoGerado.txt");
 		gravarArq = new PrintWriter(arq);
 		gravarArq.print("");
 	}
@@ -24,17 +24,16 @@ public class GeradorCodigo {
 		arq.close();
 	}
 	
-	public static String geraDalloc() {
+	public static String geraDalloc(Integer nivel) {
 		int i = tabelaSimbolos.size() - 1;
 		int contadorVariaveis = 0;
 		int ultimoEndereco = 0;
 
 		while (i >= 0) {
-			if (tabelaSimbolos.get(i).getTipoLexema().equals(NOME_DE_VARIAVEL)) {
+			if (tabelaSimbolos.get(i).getNivel() == nivel &&
+					tabelaSimbolos.get(i).getTipoLexema().equals(NOME_DE_VARIAVEL)) {
 				contadorVariaveis++;
 				ultimoEndereco = tabelaSimbolos.get(i).getEndereco();
-			} else {
-				break;
 			}
 			i--;
 		}

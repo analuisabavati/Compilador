@@ -115,7 +115,7 @@ public class AnalisadorSintatico {
 		token = analisaSubrotinas(token);
 		token = analisaComandos(token);
 
-		geraDalloc();
+		geraDalloc(nivel);
 
 		
 		desempilhaNivelTabela(nivel);
