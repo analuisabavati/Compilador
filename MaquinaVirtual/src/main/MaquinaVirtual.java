@@ -271,6 +271,15 @@ public class MaquinaVirtual {
 			case "RETURN":
 				pilhaDados = execRETURN(pilhaDados);
 				break;
+				
+			case "NULL":
+				break;
+				
+			case "START":
+				break;
+				
+			case "HLT":
+				break;	
 
 			default:
 				break;

@@ -8,6 +8,7 @@ import static main.AnalisadorSemantico.colocaTipoRetornoFuncao;
 import static main.AnalisadorSemantico.colocaTipoVariaveis;
 import static main.AnalisadorSemantico.desempilhaNivelTabela;
 import static main.AnalisadorSemantico.desempilhaPilhaParenteses;
+import static main.AnalisadorSemantico.getEnderecoVariavel;
 import static main.AnalisadorSemantico.getSimboloVariavelFuncao;
 import static main.AnalisadorSemantico.getTipoFuncaoVariavel;
 import static main.AnalisadorSemantico.insereTabelaSimbolos;
@@ -18,7 +19,9 @@ import static main.AnalisadorSemantico.pesquisaDeclaracaoVariavelTabela;
 import static main.AnalisadorSemantico.pesquisaDuplicidadeVariavelTabela;
 import static main.AnalisadorSemantico.pesquisa_tabela;
 import static main.AnalisadorSemantico.verificaTipoBooleano;
-import static main.AnalisadorSemantico.zeraVariaveis;
+import static main.AnalisadorSemantico.*;
+import static main.GeradorCodigo.gera;
+import static main.GeradorCodigo.geraDalloc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,37 +33,40 @@ public class AnalisadorSintatico {
 	private static Token tokenAnteriorExpressao = null;
 
 	private static List<List<Retorno>> listaFuncoesDeclaradas = new ArrayList<>();
-	//Deletar listaRetorno?
-	private static List<Retorno> listaRetorno = new ArrayList<>();
 	private static int nivelRetorno = 0;
 	private static boolean inFuncao = false;
 	private static boolean inProcedimento = false;
 	private static int controleProcedimento = 0;
-
+	private static int rotulo = 1;
+	private static int enderecoMemoria = 1;
+	
 	public static void analisadorSintatico() throws Exception {
 
 		zeraVariaveis();
 		inFuncao = false;
 		listaFuncoesDeclaradas.clear();
-		listaRetorno.clear();
 		nivel = 0;
 		nivelRetorno = 0;
 		tokenAnteriorAtribuicao = null;
 		tokenAnteriorExpressao = null;
+		rotulo = 1;
+		enderecoMemoria = 1;
 
 		AnalisadorLexico.main(null);
 		Token token = lexico();
 
 		if (token.getSimbolo().equals("sprograma")) {
+			gera("START");
 			token = lexico();
 			if (token.getSimbolo().equals("sidentificador")) {
-				insereTabelaSimbolos(token.getLexema(), null, nivel, null,
-						"nomedeprograma");
+				insereTabelaSimbolos(token.getLexema(), null, nivel, "L"+rotulo,
+						"nomedeprograma", null);
 				token = lexico();
 				if (token.getSimbolo().equals("sponto_virgula")) {
 					token = analisaBloco(token);
 					if (token.getSimbolo().equals("sponto")) {
 						try {
+							gera("HLT");
 							token = lexico();
 							throw new Exception(
 									"Não é permitido continuar o código após o 'fim.'.");
@@ -140,11 +146,17 @@ public class AnalisadorSintatico {
 	}
 
 	private static Token analisaVariaveis(Token token) throws Exception {
+		
+		int enderecoInicioAlloc = enderecoMemoria;
+		int contadorVariaveis = 0;
+		
 		do {
 			if (token.getSimbolo().equals("sidentificador")) {
 				if (!pesquisaDuplicidadeVariavelTabela(token.getLexema(), nivel)) {
+					contadorVariaveis++;
 					insereTabelaSimbolos(token.getLexema(), null, nivel, null,
-							"nomedevariavel");
+							"nomedevariavel", enderecoMemoria);	
+					enderecoMemoria++;
 					token = lexico();
 					if (token.getSimbolo().equals("svirgula") || token.getSimbolo().equals("sdoispontos")) {
 						if (token.getSimbolo().equals("svirgula")) {
@@ -166,7 +178,7 @@ public class AnalisadorSintatico {
 					}
 				} else {
 					throw new Exception(
-							"Erro na linha"
+							"Erro na linha "
 									+ token.getLinha()
 									+ ". Já existe uma variavel, função ou procedimento com esse nome.");
 				}
@@ -177,7 +189,8 @@ public class AnalisadorSintatico {
 								+ " . Espera-se um identificador.\n Ultimo token lido: "
 								+ token.getLexema());
 			}
-		} while (!token.getSimbolo().equals("sdoispontos"));
+		} while (!token.getSimbolo().equals("sdoispontos"));	
+		gera("ALLOC "+enderecoInicioAlloc+","+contadorVariaveis);
 		return analisaTipo(lexico());
 	}
 
@@ -261,7 +274,6 @@ public class AnalisadorSintatico {
 		token = lexico();
 		if (token.getSimbolo().equals("satribuicao")) {
 			if (pesquisaDeclaracaoFuncaoVariavelTabela(tokenAnteriorAtribuicao.getLexema())) {
-				//Alterei aqui! Verificar se nivel eh maior que zero (consultar ultima posicao) ou se eh zero (consultar posicao zero).
 				if (inFuncao && listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(0).getComando().equals(tokenAnteriorAtribuicao.getLexema())) {
 					if(nivelRetorno > 0) {
 						if (listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).size() - 1).isRetornado()) {
@@ -279,7 +291,6 @@ public class AnalisadorSintatico {
 						}
 					}
 					colocaTrueNiveisAcimaTabelaRetorno(nivelRetorno);
-				//Alterei os dois else if a seguir. Verificar nivel.
 				} else if (inFuncao && !listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(0).getComando().equals(tokenAnteriorAtribuicao.getLexema())
 						&& pesquisaDeclaracaoVariavelTabela(tokenAnteriorAtribuicao.getLexema())) {
 					if (nivelRetorno > 0) {
@@ -296,20 +307,11 @@ public class AnalisadorSintatico {
 				} else if (inFuncao && !listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(0).getComando().equals(tokenAnteriorAtribuicao.getLexema())
 						&& pesquisaDeclaracaoFuncaoTabela(tokenAnteriorAtribuicao.getLexema())) {
 					throw new Exception("Erro na linha " + token.getLinha()	+ ". Retorno para uma função incorreta.");
-				//Alterei aqui! Adicionei condição de retorno de função para procedimento.	
 				} else if (inProcedimento && pesquisaDeclaracaoFuncaoTabela(tokenAnteriorAtribuicao.getLexema())) {
 					throw new Exception("Erro na linha " + token.getLinha() + ". Não pode haver retorno de função em procedimento.");
+				} else if (!inFuncao && !inProcedimento && pesquisaDeclaracaoFuncaoTabela(tokenAnteriorAtribuicao.getLexema())) {
+					throw new Exception("Erro na linha " + token.getLinha() + ". Não pode haver retorno de função no programa principal.");
 				}
-				/*
-				} else if (inFuncao && !listaRetorno.get(0).getComando().equals(tokenAnteriorAtribuicao.getLexema())
-						&& listaRetorno.get(0).isRetornado() && pesquisaDeclaracaoVariavelTabela(tokenAnteriorAtribuicao.getLexema())) {
-					throw new Exception("Erro na linha " + token.getLinha() + ". Comando "+ tokenAnteriorAtribuicao.getLexema()	
-							+ " inalcançável. Já existe um retorno.");
-				} else if (inFuncao && !listaRetorno.get(0).getComando().equals(tokenAnteriorAtribuicao.getLexema())
-						&& pesquisaDeclaracaoFuncaoTabela(tokenAnteriorAtribuicao.getLexema())) {
-					throw new Exception("Erro na linha " + token.getLinha()	+ ". Retorno para uma função incorreta.");
-				}
-				*/
 				return analisaAtribuicao(token);
 			} else {
 				throw new Exception("Erro na linha " + token.getLinha() + ". A variavel ou função "
@@ -334,17 +336,30 @@ public class AnalisadorSintatico {
 							+ " . Incompatibilidade do tipo de retorno da expressao com o tipo da variavel "
 							+ tokenAnteriorAtribuicao.getLexema());
 		}
+		
+		if (inFuncao && 
+				listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(0).getComando().equals(tokenAnteriorAtribuicao.getLexema())) {
+			gera("STR 0");
+		} else {
+			int enderecoVariavel = getEnderecoVariavel(tokenAnteriorAtribuicao.getLexema());
+			gera("STR "+enderecoVariavel);
+		}
 
 		tokenAnteriorExpressao = null;
 		return token;
 	}
 
 	private static Token analisaLeia(Token token) throws Exception {
+		
+		gera("RD");
+		
 		token = lexico();
 		if (token.getSimbolo().equals("sabre_parenteses")) {
 			token = lexico();
 			if (token.getSimbolo().equals("sidentificador")) {
 				if (pesquisaDeclaracaoVariavelTabela(token.getLexema())) {
+					int enderecoVariavel = getEnderecoVariavel(token.getLexema());
+					gera("STR "+enderecoVariavel);
 					token = lexico();
 					if (token.getSimbolo().equals("sfecha_parenteses")) {
 						token = lexico();
@@ -382,6 +397,18 @@ public class AnalisadorSintatico {
 			token = lexico();
 			if (token.getSimbolo().equals("sidentificador")) {
 				if (pesquisaDeclaracaoFuncaoVariavelTabela(token.getLexema())) {
+					
+					if(pesquisaDeclaracaoFuncaoTabela(token.getLexema())) {
+						String rotuloFuncao = getRotuloFuncao(token.getLexema());
+						gera("CALL "+rotuloFuncao);
+						gera("LDV 0");
+					} else {
+						int enderecoVariavel = getEnderecoVariavel(token.getLexema());
+						gera("LDV "+enderecoVariavel);
+					}
+					
+					gera("PRN");
+									
 					token = lexico();
 					if (token.getSimbolo().equals("sfecha_parenteses")) {
 						token = lexico();
@@ -416,6 +443,15 @@ public class AnalisadorSintatico {
 	}
 
 	private static Token analisaEnquanto(Token token) throws Exception {
+		
+		int rotuloAuxiliar1 = 0;
+		int rotuloAuxiliar2 = 0;
+		
+		rotuloAuxiliar1 = rotulo;
+		
+		gera("L"+rotulo+" NULL");
+		rotulo++;
+		
 		token = lexico();
 		token = analisaExpressao(token);
 
@@ -423,9 +459,15 @@ public class AnalisadorSintatico {
 		tokenAnteriorExpressao = null;
 
 		if (token.getSimbolo().equals("sfaca")) {
+			rotuloAuxiliar2 = rotulo;
+			gera("JMPF L"+rotulo);
+			rotulo++;
 			token = lexico();
 			token = analisaComandoSimples(token);
 
+			gera("JMP L"+rotuloAuxiliar1);
+			gera("L"+rotuloAuxiliar2+" NULL");
+			
 			return token;
 		} else {
 			throw new Exception(
@@ -442,6 +484,8 @@ public class AnalisadorSintatico {
 
 		verificaTipoBooleano(analisaPosfixo(), token);
 		tokenAnteriorExpressao = null;
+		
+		gera("JMPF L"+rotulo);
 
 		if (token.getSimbolo().equals("sentao")) {
 			token = lexico();
@@ -449,12 +493,18 @@ public class AnalisadorSintatico {
 			if (inFuncao) {
 				nivelRetorno--;
 			}
+			
+			gera("JMP L"+(rotulo + 1));
 
 			if (token.getSimbolo().equals("ssenao")) {
 				if (inFuncao) {
 					nivelRetorno++;
 					listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).add(new Retorno(token.getLexema(), false, nivelRetorno));
 				}
+				
+				gera("L"+rotulo+" NULL");
+				rotulo++;
+				
 				token = lexico();
 				token = analisaComandoSimples(token);
 				if (inFuncao) {
@@ -463,6 +513,10 @@ public class AnalisadorSintatico {
 					}
 					nivelRetorno--;
 				}
+				
+				gera("L"+rotulo+" NULL");
+				rotulo++;
+				
 			}
 
 			return token;
@@ -475,8 +529,14 @@ public class AnalisadorSintatico {
 	}
 
 	private static Token analisaSubrotinas(Token token) throws Exception {
+		int rotuloAuxiliar = 0;
+		int flag = 0;
+		
 		if (token.getSimbolo().equals("sprocedimento") || token.getSimbolo().equals("sfuncao")) {
-			// geracao de codigo
+			rotuloAuxiliar = rotulo;
+			gera("JMP L"+rotulo);
+			rotulo++;
+			flag = 1;
 		}
 		while (token.getSimbolo().equals("sprocedimento") || token.getSimbolo().equals("sfuncao")) {
 			if (token.getSimbolo().equals("sprocedimento")) {
@@ -494,6 +554,11 @@ public class AnalisadorSintatico {
 								+ token.getLexema());
 			}
 		}
+		
+		if (flag == 1) {
+			gera("L"+rotuloAuxiliar+" NULL");
+		}
+		
 		return token;
 	}
 
@@ -502,14 +567,16 @@ public class AnalisadorSintatico {
 		token = lexico();
 		if (token.getSimbolo().equals("sidentificador")) {
 			if (!pesquisaDeclaracaoProcedimentoTabela(token.getLexema())) {
-				//Alterei aqui. Adicionei inProcedimento.
+
 				inProcedimento = true;
 				if(inFuncao) {
 					inFuncao = false;
 				}
 				controleProcedimento++;
 				nivel++;
-				insereTabelaSimbolos(token.getLexema(), null, nivel, null, "nomedeprocedimento");
+				insereTabelaSimbolos(token.getLexema(), null, nivel, "L"+rotulo, "nomedeprocedimento", null);
+				gera("L"+rotulo+" NULL");
+				rotulo++;
 
 				token = lexico();
 				if (token.getSimbolo().equals("sponto_virgula")) {
@@ -521,11 +588,11 @@ public class AnalisadorSintatico {
 					if(listaFuncoesDeclaradas.size() > 0) {
 						inFuncao = true;
 					}
+					
+					geraDalloc();
+					gera("RETURN");
+					
 					return token;
-					//Alterei aqui!
-					/* Antes da alteracao:
-					return analisaBloco(token);
-					*/
 				} else {
 					throw new Exception(
 							"Erro no método analisaDeclaracaoProcedimento(). Na linha"
@@ -539,9 +606,9 @@ public class AnalisadorSintatico {
 			}
 		} else {
 			throw new Exception(
-					"Erro no método analisaDeclaracaoProcedimento(). Na linha"
+					"Erro na linha "
 							+ token.getLinha()
-							+ " está faltando um identificador. \n Token lido: "
+							+ " identificador inválido. \n Último token lido: "
 							+ token.getLexema());
 		}
 	}
@@ -551,8 +618,11 @@ public class AnalisadorSintatico {
 		if (token.getSimbolo().equals("sidentificador")) {
 			if (!pesquisaDeclaracaoFuncaoTabela(token.getLexema())) {
 				nivel++;
-				insereTabelaSimbolos(token.getLexema(), null, nivel, null, "nomedefuncao");
+				insereTabelaSimbolos(token.getLexema(), null, nivel, "L"+rotulo, "nomedefuncao", null);
 
+				gera("L"+rotulo+" NULL");
+				rotulo++;
+				
 				inFuncao = true;
 				if(inProcedimento) {
 					inProcedimento = false;
@@ -560,7 +630,6 @@ public class AnalisadorSintatico {
 				List<Retorno> listaFuncao = new ArrayList<>();
 				listaFuncao.add(new Retorno(token.getLexema(), false, nivelRetorno));
 				listaFuncoesDeclaradas.add(listaFuncao);
-				//listaRetorno.add(new Retorno(token.getLexema(), false, nivelRetorno));
 
 				token = lexico();
 				if (token.getSimbolo().equals("sdoispontos")) {
@@ -574,6 +643,9 @@ public class AnalisadorSintatico {
 						token = lexico();
 						if (token.getSimbolo().equals("sponto_virgula")) {
 							analisaBloco(token);
+							
+							geraDalloc();
+							gera("RETURN");
 						}
 					} else {
 						throw new Exception(
@@ -606,22 +678,13 @@ public class AnalisadorSintatico {
 			System.out.println(retorno.toString());
 		}
 		
-		listaFuncoesDeclaradas.remove(listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1));
-
-		/*
-		System.out.println("Lista Retorno: ");
-		for (Retorno retorno : listaRetorno) {
-			System.out.println(retorno.toString());
-		} 
-		*/
-		/* Descomentar essa condição!
-		if (!listaRetorno.get(0).isRetornado()) {
+		if (!listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(0).isRetornado()) {
 			throw new Exception("Erro na função: "
-					+ listaRetorno.get(0).getComando() + " . Retorno inválido!");
+					+ listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).get(0).getComando() + " . Retorno inválido!");
 		}
-		*/
-
-		//listaRetorno.removeAll(listaRetorno);
+		
+		listaFuncoesDeclaradas.remove(listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1));
+	
 		if(listaFuncoesDeclaradas.size() == 0) {
 			inFuncao = false;
 		}
@@ -735,26 +798,21 @@ public class AnalisadorSintatico {
 		}
 	}
 
-	private static Token analisaChamadaProcedimento(Token token)
-			throws Exception {
+	private static Token analisaChamadaProcedimento(Token token) throws Exception {
 		if (!pesquisaDeclaracaoProcedimentoTabela(tokenAnteriorAtribuicao.getLexema())) {
 			throw new Exception("Erro na linha "
 					+ tokenAnteriorAtribuicao.getLinha() + ". Procedimento "
 					+ tokenAnteriorAtribuicao.getLexema() + " não declarado.");
 		}
+		
+		String rotuloProcedimento = getRotuloProcedimento(tokenAnteriorAtribuicao.getLexema());
+		
+		gera("CALL "+rotuloProcedimento);
+		
 		return token;
 	}
 
 	private static Token analisaChamadaFuncao() throws Exception {
-
-		/*
-		 * String tipoTokenAnterior =
-		 * getTipoFuncaoVariavel(tokenAnteriorAtribuicao.getLexema()); if
-		 * (tipo.equals(tipoTokenAnterior)) { return lexico(); } throw new
-		 * Exception( "Erro na linha " + tokenAnteriorAtribuicao.getLinha() +
-		 * ". Tipos não compativeis, variável de tipo " + tipoTokenAnterior +
-		 * " é diferente do tipo de retorno da função (" + tipo + ").");
-		 */
 		return lexico();
 	}
 

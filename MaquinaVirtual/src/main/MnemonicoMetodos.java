@@ -69,7 +69,7 @@ public class MnemonicoMetodos {
 
 	public static List<Integer> execNEG(List<Integer> pilhaDados) {
 		Integer valorTopo = pilhaDados.get(pegaTopo(pilhaDados));
-		pilhaDados.set(pegaTopo(pilhaDados), 1- valorTopo);
+		pilhaDados.set(pegaTopo(pilhaDados), 1 - valorTopo);
 		return pilhaDados;
 	}
 

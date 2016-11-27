@@ -7,7 +7,14 @@ public class Simbolo {
 	private Integer nivel;
 	private String rotulo;
 	private String tipoLexema;
+	private Integer endereco;
 	
+	public Integer getEndereco() {
+		return endereco;
+	}
+	public void setEndereco(Integer endereco) {
+		this.endereco = endereco;
+	}
 	public String getTipoLexema() {
 		return tipoLexema;
 	}

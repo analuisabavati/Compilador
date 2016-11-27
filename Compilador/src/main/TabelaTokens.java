@@ -23,7 +23,8 @@ public class TabelaTokens {
 		tabelaTokens.put("inteiro", "sinteiro");
 		tabelaTokens.put("booleano", "sbooleano");
 		tabelaTokens.put("identificador", "sidentificador");
-		tabelaTokens.put("numero", "snumero");
+		tabelaTokens.put("verdadeiro", "sverdadeiro");
+		tabelaTokens.put("falso", "sfalso");
 		tabelaTokens.put(".", "sponto");
 		tabelaTokens.put(";", "sponto_virgula");
 		tabelaTokens.put(",", "svirgula");

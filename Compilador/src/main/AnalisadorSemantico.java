@@ -3,6 +3,10 @@ package main;
 import java.util.ArrayList;
 import java.util.List;
 import static main.Operadores.*;
+import static main.AnalisadorSemantico.getRotuloFuncao;
+import static main.GeradorCodigo.*;
+
+
 
 public class AnalisadorSemantico {
 
@@ -86,13 +90,14 @@ public class AnalisadorSemantico {
 	}
 
 	public static void insereTabelaSimbolos(String lexema, String tipo, Integer nivel, String rotulo,
-			String tipoLexema) {
+			String tipoLexema, Integer endereco) {
 		Simbolo simbolo = new Simbolo();
 		simbolo.setLexema(lexema);
 		simbolo.setTipo(tipo);
 		simbolo.setNivel(nivel);
 		simbolo.setRotulo(rotulo);
 		simbolo.setTipoLexema(tipoLexema);
+		simbolo.setEndereco(endereco);
 		tabelaSimbolos.add(simbolo);
 	}
 
@@ -122,6 +127,43 @@ public class AnalisadorSemantico {
 		}
 		return false;
 	}
+	
+	public static Integer getEnderecoVariavel(String lexema) {
+		int i = getUltimaPosicaoLista();
+		while (i >= 0) {
+			if (tabelaSimbolos.get(i).getLexema().equals(lexema)
+					&& NOME_DE_VARIAVEL.equals(tabelaSimbolos.get(i).getTipoLexema())) {
+				return tabelaSimbolos.get(i).getEndereco();
+			}
+			i--;
+		}
+		return null;
+	}
+	
+	public static String getRotuloProcedimento(String lexema) {
+		int i = getUltimaPosicaoLista();
+		while (i >= 0) {
+			if (tabelaSimbolos.get(i).getLexema().equals(lexema)
+					&& NOME_DE_PROCEDIMENTO.equals(tabelaSimbolos.get(i).getTipoLexema())) {
+				return tabelaSimbolos.get(i).getRotulo();
+			}
+			i--;
+		}
+		return null;
+	}
+	
+	public static String getRotuloFuncao(String lexema) {
+		int i = getUltimaPosicaoLista();
+		while (i >= 0) {
+			if (tabelaSimbolos.get(i).getLexema().equals(lexema)
+					&& NOME_DE_FUNCAO.equals(tabelaSimbolos.get(i).getTipoLexema())) {
+				return tabelaSimbolos.get(i).getRotulo();
+			}
+			i--;
+		}
+		return null;
+	}
+
 
 	public static boolean pesquisaDuplicidadeVariavelTabela(String lexema, Integer nivel) {
 		int i = getUltimaPosicaoLista();
@@ -251,21 +293,35 @@ public class AnalisadorSemantico {
 			switch (token.getSimbolo()) {
 			case "snumero":
 				filaCompatibilidadeTipo.add("inteiro");
+				gera("LDC "+token.getLexema());
 				break;
 			case "sidentificador":
 				filaCompatibilidadeTipo.add(pesquisaTipoFuncaoVariavelTabela(token.getLexema()));
-				break;
-			case "snao":
-				if (filaCompatibilidadeTipo.get(filaCompatibilidadeTipo.size() - 1).equals("inteiro")) {
-
+				if(pesquisaDeclaracaoFuncaoTabela(token.getLexema())) {
+					String rotuloFuncao = getRotuloFuncao(token.getLexema());
+					
+					gera("CALL "+rotuloFuncao);
+					gera("LDV 0");
 				} else {
-
+					int enderecoVariavel = getEnderecoVariavel(token.getLexema());
+					gera("LDV "+enderecoVariavel);
 				}
+				break;
+			case "sverdadeiro":
+				filaCompatibilidadeTipo.add("booleano");
+				gera("LDC 1");
+				break;
+			case "sfalso":
+				filaCompatibilidadeTipo.add("booleano");
+				gera("LDC 0");
+				break;	
+			case "snao":
+				gera("NEG");
 				break;
 			case "smais":
 				if (token.isUnario()) {
 					if (filaCompatibilidadeTipo.get(filaCompatibilidadeTipo.size() - 1).equals("inteiro")) {
-
+						gera("NULL");
 					} else {
 						throw new Exception("Erro na linha " + token.getLinha() + ". "
 								+ "Não foi possivel aplicar o unário mais (+) em um booleano " + token.getLexema()
@@ -284,12 +340,13 @@ public class AnalisadorSemantico {
 						throw new Exception("Erro na linha " + token.getLinha() + ". "
 								+ "Operação de soma com tipos incompativeis.");
 					}
+					gera("ADD");
 				}
 				break;
 			case "smenos":
 				if (token.isUnario()) {
 					if (filaCompatibilidadeTipo.get(filaCompatibilidadeTipo.size() - 1).equals("inteiro")) {
-
+						gera("INV");
 					} else {
 						throw new Exception("Erro na linha " + token.getLinha() + ". "
 								+ "Não foi possivel aplicar o unário menos (-) em um booleano " + token.getLexema()
@@ -300,6 +357,8 @@ public class AnalisadorSemantico {
 						if (filaCompatibilidadeTipo.get(filaCompatibilidadeTipo.size() - 2).equals("inteiro")) {
 							filaCompatibilidadeTipo.remove(filaCompatibilidadeTipo.size() - 1);
 							filaCompatibilidadeTipo.set(filaCompatibilidadeTipo.size() - 1, "inteiro");
+							
+							gera("SUB");
 						} else {
 							throw new Exception("Erro na linha " + token.getLinha() + ". "
 									+ "Operação de subtração com tipos incompativeis.");
@@ -315,6 +374,8 @@ public class AnalisadorSemantico {
 					if (filaCompatibilidadeTipo.get(filaCompatibilidadeTipo.size() - 2).equals("inteiro")) {
 						filaCompatibilidadeTipo.remove(filaCompatibilidadeTipo.size() - 1);
 						filaCompatibilidadeTipo.set(filaCompatibilidadeTipo.size() - 1, "inteiro");
+						
+						gera("MULT");
 					} else {
 						throw new Exception("Erro na linha " + token.getLinha() + ". "
 								+ "Operação de multiplicação com tipos incompativeis.");
@@ -329,6 +390,8 @@ public class AnalisadorSemantico {
 					if (filaCompatibilidadeTipo.get(filaCompatibilidadeTipo.size() - 2).equals("inteiro")) {
 						filaCompatibilidadeTipo.remove(filaCompatibilidadeTipo.size() - 1);
 						filaCompatibilidadeTipo.set(filaCompatibilidadeTipo.size() - 1, "inteiro");
+						
+						gera("DIVI");
 					} else {
 						throw new Exception("Erro na linha " + token.getLinha() + ". "
 								+ "Operação de divisão com tipos incompativeis.");
@@ -343,6 +406,8 @@ public class AnalisadorSemantico {
 					if (filaCompatibilidadeTipo.get(filaCompatibilidadeTipo.size() - 2).equals("inteiro")) {
 						filaCompatibilidadeTipo.remove(filaCompatibilidadeTipo.size() - 1);
 						filaCompatibilidadeTipo.set(filaCompatibilidadeTipo.size() - 1, "booleano");
+						
+						gera("CME");
 					} else {
 						throw new Exception("Erro na linha " + token.getLinha() + ". "
 								+ "Comparação de menor com tipos incompativeis.");
@@ -357,6 +422,8 @@ public class AnalisadorSemantico {
 					if (filaCompatibilidadeTipo.get(filaCompatibilidadeTipo.size() - 2).equals("inteiro")) {
 						filaCompatibilidadeTipo.remove(filaCompatibilidadeTipo.size() - 1);
 						filaCompatibilidadeTipo.set(filaCompatibilidadeTipo.size() - 1, "booleano");
+						
+						gera("CMA");
 					} else {
 						throw new Exception("Erro na linha " + token.getLinha() + ". "
 								+ "Comparação de maior com tipos incompativeis.");
@@ -371,6 +438,8 @@ public class AnalisadorSemantico {
 					if (filaCompatibilidadeTipo.get(filaCompatibilidadeTipo.size() - 2).equals("inteiro")) {
 						filaCompatibilidadeTipo.remove(filaCompatibilidadeTipo.size() - 1);
 						filaCompatibilidadeTipo.set(filaCompatibilidadeTipo.size() - 1, "booleano");
+						
+						gera("CMAQ");
 					} else {
 						throw new Exception("Erro na linha " + token.getLinha() + ". "
 								+ "Comparação de maior ou igual com tipos incompativeis.");
@@ -385,6 +454,8 @@ public class AnalisadorSemantico {
 					if (filaCompatibilidadeTipo.get(filaCompatibilidadeTipo.size() - 2).equals("inteiro")) {
 						filaCompatibilidadeTipo.remove(filaCompatibilidadeTipo.size() - 1);
 						filaCompatibilidadeTipo.set(filaCompatibilidadeTipo.size() - 1, "booleano");
+						
+						gera("CMEQ");
 					} else {
 						throw new Exception("Erro na linha " + token.getLinha() + ". "
 								+ "Comparação de menor ou igual com tipos incompativeis.");
@@ -410,8 +481,9 @@ public class AnalisadorSemantico {
 					} else {
 						throw new Exception("Erro na linha " + token.getLinha() + ". "
 								+ "Comparação de igualdade com tipos incompativeis.");
-					}
+					}	
 				}
+				gera("CEQ");
 				break;
 			case "sdif":
 				if (filaCompatibilidadeTipo.get(filaCompatibilidadeTipo.size() - 1).equals("inteiro")) {
@@ -431,6 +503,7 @@ public class AnalisadorSemantico {
 								+ "Comparação de desigualdade com tipos incompativeis.");
 					}
 				}
+				gera("CDIF");
 				break;
 			case "se":
 				if (filaCompatibilidadeTipo.get(filaCompatibilidadeTipo.size() - 1).equals("booleano")) {
@@ -445,6 +518,7 @@ public class AnalisadorSemantico {
 					throw new Exception(
 							"Erro na linha " + token.getLinha() + ". " + "Operador lógico 'e' não aceita inteiros.");
 				}
+				gera("AND");
 				break;
 			case "sou":
 				if (filaCompatibilidadeTipo.get(filaCompatibilidadeTipo.size() - 1).equals("booleano")) {
@@ -459,6 +533,7 @@ public class AnalisadorSemantico {
 					throw new Exception(
 							"Erro na linha " + token.getLinha() + ". " + "Operador lógico 'ou' não aceita inteiros.");
 				}
+				gera("OR");
 				break;
 			default:
 				break;
