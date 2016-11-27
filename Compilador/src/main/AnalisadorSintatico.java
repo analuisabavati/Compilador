@@ -20,7 +20,7 @@ import static main.AnalisadorSemantico.pesquisaDuplicidadeVariavelTabela;
 import static main.AnalisadorSemantico.pesquisa_tabela;
 import static main.AnalisadorSemantico.verificaTipoBooleano;
 import static main.AnalisadorSemantico.*;
-import static main.GeradorCodigo.gera;
+import static main.GeradorCodigo.*;
 import static main.GeradorCodigo.geraDalloc;
 
 import java.util.ArrayList;
@@ -52,6 +52,7 @@ public class AnalisadorSintatico {
 		rotulo = 1;
 		enderecoMemoria = 1;
 
+		GeradorCodigo.main(null);
 		AnalisadorLexico.main(null);
 		Token token = lexico();
 
@@ -67,6 +68,7 @@ public class AnalisadorSintatico {
 					if (token.getSimbolo().equals("sponto")) {
 						try {
 							gera("HLT");
+							fechaArquivo();
 							token = lexico();
 							throw new Exception(
 									"Não é permitido continuar o código após o 'fim.'.");
@@ -113,6 +115,9 @@ public class AnalisadorSintatico {
 		token = analisaSubrotinas(token);
 		token = analisaComandos(token);
 
+		geraDalloc();
+
+		
 		desempilhaNivelTabela(nivel);
 		nivel--;
 		return token;
@@ -589,7 +594,6 @@ public class AnalisadorSintatico {
 						inFuncao = true;
 					}
 					
-					geraDalloc();
 					gera("RETURN");
 					
 					return token;
@@ -644,7 +648,6 @@ public class AnalisadorSintatico {
 						if (token.getSimbolo().equals("sponto_virgula")) {
 							analisaBloco(token);
 							
-							geraDalloc();
 							gera("RETURN");
 						}
 					} else {
