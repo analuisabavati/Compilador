@@ -44,7 +44,13 @@ public class MnemonicoMetodos {
 	public static List<Integer> execDIVI(List<Integer> pilhaDados) {
 		Integer valorTopo = pilhaDados.remove(pegaTopo(pilhaDados));
 		Integer valorAntesTopo = pilhaDados.get(pegaTopo(pilhaDados));
-		pilhaDados.set(pegaTopo(pilhaDados), valorAntesTopo/valorTopo);
+		
+		if (valorTopo == 0) {
+			System.err.println("Erro. Não é possivel fazer divição por zero");
+		}
+		
+		pilhaDados.set(pegaTopo(pilhaDados), valorAntesTopo/valorTopo); 
+		
 		return pilhaDados;
 	}
 
@@ -56,14 +62,14 @@ public class MnemonicoMetodos {
 	public static List<Integer> execAND(List<Integer> pilhaDados) {
 		Integer valorTopo = pilhaDados.remove(pegaTopo(pilhaDados));
 		Integer valorAnteriorTopo = pilhaDados.get(pegaTopo(pilhaDados));
-		pilhaDados.set(pegaTopo(pilhaDados), isUm(valorAnteriorTopo) && isUm(valorTopo) ?  0 : 1);	
+		pilhaDados.set(pegaTopo(pilhaDados), isUm(valorAnteriorTopo) && isUm(valorTopo) ?  1 : 0);	
 		return pilhaDados;
 	}
 
 	public static List<Integer> execOR(List<Integer> pilhaDados) {
 		Integer valorTopo = pilhaDados.remove(pegaTopo(pilhaDados));
 		Integer valorAnteriorTopo = pilhaDados.get(pegaTopo(pilhaDados));
-		pilhaDados.set(pegaTopo(pilhaDados), isUm(valorAnteriorTopo) || isUm(valorTopo) ?  0 : 1);	
+		pilhaDados.set(pegaTopo(pilhaDados), isUm(valorAnteriorTopo) || isUm(valorTopo) ?  1 : 0);	
 		return pilhaDados;	
 	}
 
@@ -108,22 +114,21 @@ public class MnemonicoMetodos {
 		pilhaDados.set(pegaTopo(pilhaDados), valorAnteriorTopo.compareTo(valorTopo) >= 0 ?  1 : 0);	
 		return pilhaDados;
 	}
+	
+	public static List<Integer> execCDIF(List<Integer> pilhaDados) {
+		Integer valorTopo = pilhaDados.remove(pegaTopo(pilhaDados));
+		Integer valorAnteriorTopo = pilhaDados.get(pegaTopo(pilhaDados));
+		pilhaDados.set(pegaTopo(pilhaDados), !valorAnteriorTopo.equals(valorTopo) ?  1 : 0);	
+		return pilhaDados;
+	}
 
 	public static List<Integer> execSTR(List<Integer> pilhaDados, Integer posicao) {
 		pilhaDados.set(posicao, pilhaDados.remove(pegaTopo(pilhaDados)));
 		return pilhaDados;
 	}
 
-	public static List<Integer> execJMP(List<Integer> pilhaDados, Integer valor) {
-		return pilhaDados;
-	}
 
-	public static List<Integer> execJMFP(List<Integer> pilhaDados, Integer valor) {
-		return pilhaDados;
-		
-	}
-
-	public static List<Integer> execRD(List<Integer> pilhaDados) {							// Verificar e faze método getJanelaEntrada();
+	public static List<Integer> execRD(List<Integer> pilhaDados) {							
 		Integer valor = getJanelaEntrada(); 				
 		return execLDC(pilhaDados, valor);
 	}
@@ -142,24 +147,13 @@ public class MnemonicoMetodos {
 	}
 
 	public static List<Integer> execDALLOC(List<Integer> pilhaDados, Integer posicaoInicio, Integer quantidadeVariaveis) {
-		int posicao = posicaoInicio;
 		for (int i = 0; i < quantidadeVariaveis; i++) {
-			pilhaDados.remove(posicao);
-			posicao--;
+			pilhaDados.remove(pilhaDados.size() - 1);
 		}
 		return pilhaDados;
 	}
-
-	public static List<Integer> execCALL(List<Integer> pilhaDados, Integer parametro1) {
-		return pilhaDados;
-	}
-
-	public static List<Integer> execRETURN(List<Integer> pilhaDados) {
-		return pilhaDados;	
-	}
 	
-	
-	private static int pegaTopo(List<Integer> pilhaDados) {
+	public static int pegaTopo(List<Integer> pilhaDados) {
 		return pilhaDados.size() - 1;
 	}
 	

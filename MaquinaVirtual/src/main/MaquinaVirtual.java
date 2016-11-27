@@ -91,11 +91,11 @@ public class MaquinaVirtual {
 					
 			case 2: if(isMnemonicoComUmParametro(elementosLinha)) {
 						instrucao.setMnemonico(elementosLinha.get(0));
-						instrucao.setParametro1(toInteger(elementosLinha.get(1)));
+						instrucao.setParametro1(elementosLinha.get(1));
 					} else if(!isMnemonicoPrimeiroElemento(elementosLinha)) {
 						if(isNotLabelInvalido(elementosLinha)) {
 							instrucao.setLabel(elementosLinha.get(0));
-							instrucao.setParametro1(toInteger(elementosLinha.get(1)));
+							instrucao.setParametro1(elementosLinha.get(1));
 						} else {
 							throw new Exception ("Erro na linha: "+numeroLinha+". Linha deve começar com um mnemonico ou label!");
 						}
@@ -106,8 +106,8 @@ public class MaquinaVirtual {
 				
 			case 3:	if(isMnemonicoComDoisParametros(elementosLinha)) {
 						instrucao.setMnemonico(elementosLinha.get(0));
-						instrucao.setParametro1(toInteger(elementosLinha.get(1)));
-						instrucao.setParametro2(toInteger(elementosLinha.get(2)));
+						instrucao.setParametro1(elementosLinha.get(1));
+						instrucao.setParametro2(elementosLinha.get(2));
 					}
 					break;
 				
@@ -169,17 +169,18 @@ public class MaquinaVirtual {
 		List<Integer> pilhaDados = new ArrayList<>();
 		numeroLinha = 0;
 		 
-		for (Instrucao instrucao : pilhaInstrucoes) {
+		for (int i= 0; i < pilhaInstrucoes.size() - 1; i++) {
 			if (isLinhaBreakPoint(numeroLinha)) {
 				esperaBotaoContinuar();
 			}
-			switch (instrucao.getMnemonico()) {
+		
+			switch (pilhaInstrucoes.get(i).getMnemonico() == null ? "NULL" : pilhaInstrucoes.get(i).getMnemonico()) {
 			case "LDC":
-				pilhaDados = execLDC(pilhaDados, instrucao.getParametro1());
+				pilhaDados = execLDC(pilhaDados, toInteger(pilhaInstrucoes.get(i).getParametro1()));
 				break;
 
 			case "LDV":
-				pilhaDados = execLDV(pilhaDados, instrucao.getParametro1());
+				pilhaDados = execLDV(pilhaDados, toInteger(pilhaInstrucoes.get(i).getParametro1()));
 				break;
 
 			case "ADD":
@@ -234,18 +235,26 @@ public class MaquinaVirtual {
 				pilhaDados = execCMAQ(pilhaDados);
 				break;
 
+			case "CDIF":
+				pilhaDados = execCDIF(pilhaDados);
+				break;	
+				
 			case "STR":
-				pilhaDados = execSTR(pilhaDados, instrucao.getParametro1());
+				pilhaDados = execSTR(pilhaDados, toInteger(pilhaInstrucoes.get(i).getParametro1()));
 				break;
 
-			case "JMP":																				
-				int indexJMP = pilhaInstrucoes.indexOf(instrucao.getParametro1().equals(instrucao.getLabel()));
-				instrucao = pilhaInstrucoes.get(indexJMP);
+			case "JMP":								
+				Instrucao instrucaoJMP = new Instrucao(pilhaInstrucoes.get(i).getParametro1(), null, "NULL", null);
+				i = pilhaInstrucoes.indexOf(instrucaoJMP);
 				break;
 
 			case "JMPF":																	
-				int indexJMPF = pilhaInstrucoes.indexOf(instrucao.getParametro1().equals(instrucao.getLabel()));
-				instrucao = pilhaInstrucoes.get(indexJMPF);
+				Instrucao instrucaoJMPF = new Instrucao(pilhaInstrucoes.get(i).getParametro1(), null, "NULL", null);
+				int indexJMPF = pilhaInstrucoes.indexOf(instrucaoJMPF);
+				if (pilhaDados.get(pegaTopo(pilhaDados)).equals(0)) {
+					i = indexJMPF;
+				}
+				pilhaDados.remove(pegaTopo(pilhaDados));
 				break;
 
 			case "RD":
@@ -257,25 +266,31 @@ public class MaquinaVirtual {
 				break;
 
 			case "ALLOC":
-				pilhaDados = execALLOC(pilhaDados, instrucao.getParametro1(), instrucao.getParametro2());
+				pilhaDados = execALLOC(pilhaDados, toInteger(pilhaInstrucoes.get(i).getParametro1()), toInteger(pilhaInstrucoes.get(i).getParametro2()));
 				break;
 
 			case "DALLOC":
-				pilhaDados = execDALLOC(pilhaDados, instrucao.getParametro1(), instrucao.getParametro2());
+				pilhaDados = execDALLOC(pilhaDados, toInteger(pilhaInstrucoes.get(i).getParametro1()), toInteger(pilhaInstrucoes.get(i).getParametro2()));
 				break;
 
 			case "CALL":
-				pilhaDados = execCALL(pilhaDados, instrucao.getParametro1());
+				pilhaDados.add(pilhaDados.indexOf(pilhaInstrucoes.get(i)) + 1);
+				
+				Instrucao instrucaoCALL = new Instrucao(pilhaInstrucoes.get(i).getParametro1(), null, "NULL", null);
+				i = pilhaInstrucoes.indexOf(instrucaoCALL);
+				
 				break;
 
 			case "RETURN":
-				pilhaDados = execRETURN(pilhaDados);
+				i = pilhaDados.get(pilhaDados.size() - 1);
+				
 				break;
 				
 			case "NULL":
 				break;
 				
 			case "START":
+				pilhaDados.add(null);
 				break;
 				
 			case "HLT":
@@ -303,7 +318,7 @@ public class MaquinaVirtual {
 		List<String[]> listaInstrucoesParaTabela = new ArrayList<>();
 		Integer numLinha = 0;
 		for (Integer dado : pilhaDados) {
-			listaInstrucoesParaTabela.add(new String[] { numLinha.toString(), dado.toString()});
+			listaInstrucoesParaTabela.add(new String[] { numLinha.toString(), dado == null ? null : dado.toString()});
 			numLinha++;
 		}
 		return listaInstrucoesParaTabela;
