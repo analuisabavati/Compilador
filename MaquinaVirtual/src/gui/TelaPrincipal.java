@@ -311,7 +311,6 @@ public class TelaPrincipal extends JFrame {
 	public static void verificaBreakPoint(Integer numeroLinha) {
 		if (isLinhaBreakPoint(numeroLinha)) {
 			removeBreakPoint(numeroLinha);
-			// volta linha cor original
 		} else {
 			insereBreakPoint(numeroLinha);
 			// pinta linha
@@ -320,10 +319,8 @@ public class TelaPrincipal extends JFrame {
 	}
 	
 	public static void esperaBotaoContinuar() {
-		int resposta = JOptionPane.showConfirmDialog(null, "Pressione OK para continuar");
-		while (resposta != JOptionPane.YES_OPTION) {
-			resposta = JOptionPane.showConfirmDialog(null, "Pressione OK para continuar");
-		}
+	 JOptionPane.showMessageDialog (null, "Para continuar clique no botão \"OK\"!");
+		
 	}
 
 }
