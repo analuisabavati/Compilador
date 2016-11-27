@@ -73,7 +73,7 @@ public class TelaPrincipal extends JFrame {
 	public TelaPrincipal() {
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 616, 467);
+		setBounds(100, 100, 708, 626);
 
 		// Jscroll
 		scrollTableInstrucoes = new JScrollPane();
@@ -86,7 +86,7 @@ public class TelaPrincipal extends JFrame {
 		lblInstruesASeremExecutadas = new JLabel("Instru\u00E7\u00F5es a serem executadas pela VM");
 		lblJanelaEntrada = new JLabel("Janela de Entrada");
 		lblJanelaDeSaida = new JLabel("Janela de Saida");
-		lblBreakPoints = new JLabel("Break Point's");
+		lblBreakPoints = new JLabel("Break Points");
 		lblContedoDaPilha = new JLabel("Conte\u00FAdo da Pilha");
 
 		inicializaContentPane();
@@ -100,6 +100,9 @@ public class TelaPrincipal extends JFrame {
 		inicializaLayout(scrollTableInstrucoes, scrollTableDados, scrollJanelaEntrada, scrollJanelaSaida,
 				scrollJanelaBreakPoints, lblInstruesASeremExecutadas, lblJanelaEntrada, lblJanelaDeSaida,
 				lblBreakPoints, lblContedoDaPilha);
+		janelaBreakPoints = new JTextArea();
+		scrollJanelaBreakPoints.setViewportView(janelaBreakPoints);
+		janelaBreakPoints.setEditable(false);
 
 	}
 
@@ -130,6 +133,8 @@ public class TelaPrincipal extends JFrame {
 
 	private static void chamaExecutaInstrucoes(JScrollPane scrollTableDados) {
 		try {
+			janelaEntrada.setText("");
+			janelaSaida.setText("");
 			tableDados.setModel(executaInstrucoes());
 			scrollTableDados.setViewportView(tableDados);
 			frame.getContentPane().add(scrollTableDados);
@@ -138,16 +143,20 @@ public class TelaPrincipal extends JFrame {
 			e.printStackTrace();
 		}
 	}
-	
-	public static String getValorEntrada(){
-				
-		switch (JOptionPane.showConfirmDialog(null, janelaEntrada)) {
-	    case JOptionPane.OK_OPTION:
-	        System.out.println(janelaEntrada.getText());
-	        break; 
+
+	public static String getValorEntrada() {
+
+		String valor = null;
+		while (valor == null || valor.equals("")) {
+			valor = JOptionPane.showInputDialog("Digite um valor de entrada: ");
+			if (valor == null || valor.equals("")) {
+				valor = JOptionPane.showInputDialog("Digite um valor de entrada: ");
+			}
 		}
 		
-		return janelaEntrada.getText();
+		janelaEntrada.setText(valor+"\n"+janelaEntrada.getText());
+
+		return valor;
 	}
 
 	private void inicializaJanelaEntrada(JScrollPane scrollJanelaEntrada) {
@@ -163,9 +172,6 @@ public class TelaPrincipal extends JFrame {
 	}
 
 	private void inicializaJanelaBreakPoints(JScrollPane scrollBreakPoints) {
-		janelaBreakPoints = new JTextArea();
-		janelaBreakPoints.setEditable(false);
-		scrollBreakPoints.setViewportView(janelaBreakPoints);
 	}
 
 	private JMenuBar montaBarraMenu() {
@@ -203,75 +209,57 @@ public class TelaPrincipal extends JFrame {
 			JLabel lblInstruesASerem, JLabel lblJanelaDeEntrada, JLabel lblJanelaDeSaida, JLabel lblBreakPoints,
 			JLabel lblContedoDaPilha) {
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
-		gl_contentPane
-				.setHorizontalGroup(
-						gl_contentPane.createParallelGroup(Alignment.LEADING).addGroup(
-								gl_contentPane
-										.createSequentialGroup().addContainerGap()
-										.addGroup(gl_contentPane
-												.createParallelGroup(
-														Alignment.LEADING)
-												.addGroup(gl_contentPane.createSequentialGroup()
-														.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-																.addComponent(scrollTableInstrucoes,
-																		GroupLayout.DEFAULT_SIZE, 408, Short.MAX_VALUE)
-																.addGroup(gl_contentPane.createSequentialGroup()
-																		.addGroup(gl_contentPane
-																				.createParallelGroup(Alignment.LEADING)
-																				.addComponent(scrollJanelaEntrada,
-																						GroupLayout.PREFERRED_SIZE, 145,
-																						GroupLayout.PREFERRED_SIZE)
-																				.addComponent(lblJanelaDeEntrada))
-																		.addGap(18)
-																		.addGroup(gl_contentPane
-																				.createParallelGroup(Alignment.LEADING)
-																				.addComponent(scrollJanelaSaida,
-																						GroupLayout.PREFERRED_SIZE, 145,
-																						GroupLayout.PREFERRED_SIZE)
-																				.addComponent(lblJanelaDeSaida))
-																		.addPreferredGap(ComponentPlacement.RELATED, 16,
-																				Short.MAX_VALUE)
-																		.addGroup(gl_contentPane
-																				.createParallelGroup(Alignment.LEADING)
-																				.addComponent(lblBreakPoints)
-																				.addComponent(scrollBreakPoints,
-																						GroupLayout.PREFERRED_SIZE, 84,
-																						GroupLayout.PREFERRED_SIZE))))
-														.addPreferredGap(ComponentPlacement.RELATED, 15,
-																Short.MAX_VALUE))
-												.addGroup(gl_contentPane.createSequentialGroup()
-														.addComponent(lblInstruesASeremExecutadas)
-														.addPreferredGap(ComponentPlacement.RELATED)))
-										.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-												.addComponent(scrollTableDados, GroupLayout.PREFERRED_SIZE, 147,
-														GroupLayout.PREFERRED_SIZE)
-												.addComponent(lblContedoDaPilha, GroupLayout.DEFAULT_SIZE,
-														GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-										.addContainerGap()));
-		gl_contentPane.setVerticalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING).addGroup(gl_contentPane
-				.createSequentialGroup()
-				.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblInstruesASeremExecutadas).addComponent(lblContedoDaPilha))
-				.addGap(7)
-				.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addComponent(scrollTableDados, GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE)
+		gl_contentPane.setHorizontalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createSequentialGroup()
-								.addComponent(scrollTableInstrucoes, GroupLayout.PREFERRED_SIZE, 239,
-										GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-										.addComponent(lblJanelaDeSaida).addComponent(lblBreakPoints)
-										.addComponent(lblJanelaDeEntrada))
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-										.addComponent(scrollBreakPoints, GroupLayout.PREFERRED_SIZE, 93,
-												GroupLayout.PREFERRED_SIZE)
-										.addComponent(scrollJanelaSaida, GroupLayout.PREFERRED_SIZE, 93,
-												GroupLayout.PREFERRED_SIZE)
-										.addComponent(scrollJanelaEntrada, GroupLayout.PREFERRED_SIZE, 93,
-												GroupLayout.PREFERRED_SIZE))
-								.addGap(4)))
-				.addContainerGap()));
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+										.addComponent(lblJanelaEntrada)
+										.addComponent(scrollJanelaEntrada, GroupLayout.PREFERRED_SIZE, 145, GroupLayout.PREFERRED_SIZE))
+									.addGap(18)
+									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+										.addComponent(lblJanelaDeSaida)
+										.addComponent(scrollJanelaSaida, GroupLayout.PREFERRED_SIZE, 145, GroupLayout.PREFERRED_SIZE))
+									.addPreferredGap(ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
+									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+										.addComponent(lblBreakPoints, GroupLayout.PREFERRED_SIZE, 86, GroupLayout.PREFERRED_SIZE)
+										.addComponent(scrollJanelaBreakPoints, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE)))
+								.addComponent(lblInstruesASeremExecutadas))
+							.addGap(58))
+						.addComponent(scrollTableInstrucoes, GroupLayout.PREFERRED_SIZE, 440, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addComponent(scrollTableDados, GroupLayout.PREFERRED_SIZE, 147, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblContedoDaPilha, GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE))
+					.addContainerGap())
+		);
+		gl_contentPane.setVerticalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblInstruesASeremExecutadas)
+						.addComponent(lblContedoDaPilha))
+					.addGap(7)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+						.addComponent(scrollTableDados, GroupLayout.DEFAULT_SIZE, 521, Short.MAX_VALUE)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addComponent(scrollTableInstrucoes, GroupLayout.PREFERRED_SIZE, 373, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblJanelaDeSaida)
+								.addComponent(lblJanelaEntrada)
+								.addComponent(lblBreakPoints))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
+								.addComponent(scrollJanelaEntrada, GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
+								.addComponent(scrollJanelaSaida)
+								.addComponent(scrollJanelaBreakPoints))))
+					.addContainerGap())
+		);
 
 		contentPane.setLayout(gl_contentPane);
 	}
@@ -310,10 +298,10 @@ public class TelaPrincipal extends JFrame {
 		}
 		janelaBreakPoints.revalidate();
 	}
-	
+
 	public static String getJanelaEntrada() {
-		janelaEntrada.setEditable(true);
-		janelaEntrada.enableInputMethods(true);
+		janelaEntrada.setEditable(false);
+		janelaEntrada.enableInputMethods(false);
 		return getValorEntrada();
 	}
 
