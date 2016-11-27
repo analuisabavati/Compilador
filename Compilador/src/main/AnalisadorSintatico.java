@@ -37,7 +37,7 @@ public class AnalisadorSintatico {
 	private static boolean inProcedimento = false;
 	private static int controleProcedimento = 0;
 	private static int rotulo = 1;
-	private static int enderecoMemoria = 1;
+	public static int enderecoMemoria = 1;
 	
 	public static void analisadorSintatico() throws Exception {
 

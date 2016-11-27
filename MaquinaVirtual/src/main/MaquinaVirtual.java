@@ -148,12 +148,11 @@ public class MaquinaVirtual {
 			throw new Exception ("Lista de instrucoes vazia! Selecione um arquivo.");
 		}
 		List<Integer> pilhaDados = new ArrayList<>();
-		numeroLinha = 0;
 		
 		DefaultTableModel model = null;
 		 
 		for (int i= 0; i < pilhaInstrucoes.size() - 1; i++) {
-			if (isLinhaBreakPoint(numeroLinha)) {
+			if (isLinhaBreakPoint(i)) {
 				esperaBotaoContinuar();
 			}
 		
@@ -283,7 +282,6 @@ public class MaquinaVirtual {
 			default:
 				break;
 			}
-			numeroLinha++;
 			model = atualizaTabelaDados(pilhaDados);
 			atualizaTabelaDadosTela(model);
 		}

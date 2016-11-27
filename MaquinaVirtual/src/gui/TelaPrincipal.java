@@ -113,14 +113,7 @@ public class TelaPrincipal extends JFrame {
 		JMenuBar menuBar = montaBarraMenu();
 		inicializaBotaoAbrirArquivo(scrollTableInstrucoes, menuBar);
 		inicializaBotaoExecutar(menuBar);
-		//inicializaBotaoContinuar(menuBar);
 	}
-/*
-	private void inicializaBotaoContinuar(JMenuBar menuBar) {
-		JMenuItem menuContinuar = new JMenuItem("Continuar");
-		menuBar.add(menuContinuar);
-		menuContinuar.addActionListener(event -> setBotaoContinuarPressionado(true));
-	}*/
 
 	private void inicializaBotaoExecutar(JMenuBar menuBar) {
 		JMenuItem menuExecutar = new JMenuItem("Executar");
@@ -313,14 +306,12 @@ public class TelaPrincipal extends JFrame {
 			removeBreakPoint(numeroLinha);
 		} else {
 			insereBreakPoint(numeroLinha);
-			// pinta linha
 		}
 		printJanelaBreakPoints();
 	}
 	
 	public static void esperaBotaoContinuar() {
-	 JOptionPane.showMessageDialog (null, "Para continuar clique no botão \"OK\"!");
-		
+	  JOptionPane.showMessageDialog (null, "Para continuar clique no botão \"OK\"!");
 	}
 
 }

@@ -3,8 +3,8 @@ package main;
 import java.util.ArrayList;
 import java.util.List;
 import static main.Operadores.*;
-import static main.AnalisadorSemantico.getRotuloFuncao;
-import static main.AnalisadorSemantico.tabelaSimbolos;
+import static main.AnalisadorSintatico.*;
+
 import static main.GeradorCodigo.*;
 
 
@@ -239,6 +239,7 @@ public class AnalisadorSemantico {
 					NOME_DE_VARIAVEL.equals(tabelaSimbolos.get(i).getTipoLexema())){
 				contadorVariaveis++;
 				ultimoEndereco = tabelaSimbolos.get(i).getEndereco();
+				enderecoMemoria--;
 				tabelaSimbolos.remove(i);
 			} else if (tabelaSimbolos.get(i).getNivel() > nivel) {
 				tabelaSimbolos.remove(i);
