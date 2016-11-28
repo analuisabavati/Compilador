@@ -248,8 +248,9 @@ public class AnalisadorSemantico {
 			}
 			i--;
 		}
-		
-		gera("DALLOC "+ultimoEndereco+","+contadorVariaveis);
+		if (contadorVariaveis > 0) {
+			gera("DALLOC "+ultimoEndereco+","+contadorVariaveis);
+		}
 	}
 
 	public static void colocaTipoRetornoFuncao(String tipo) {

@@ -154,7 +154,7 @@ public class MnemonicoMetodos {
 	}
 	
 	private static boolean isUm(Integer valor) {
-		return "1".equals(valor);
+		return 1 == (valor);
 	}
 	
 }
