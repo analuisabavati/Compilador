@@ -372,11 +372,11 @@ public class AnalisadorSemantico {
 							gera("SUB");
 						} else {
 							throw new Exception("Erro na linha " + token.getLinha() + ". "
-									+ "Operação de subtração com tipos incompativeis.");
+									+ "Operação de subtração com tipos incompatíveis.");
 						}
 					} else {
 						throw new Exception("Erro na linha " + token.getLinha() + ". "
-								+ "Operação de subtração com tipos incompativeis.");
+								+ "Operação de subtração com tipos incompatíveis.");
 					}
 				}
 				break;
@@ -389,11 +389,11 @@ public class AnalisadorSemantico {
 						gera("MULT");
 					} else {
 						throw new Exception("Erro na linha " + token.getLinha() + ". "
-								+ "Operação de multiplicação com tipos incompativeis.");
+								+ "Operação de multiplicação com tipos incompatíveis.");
 					}
 				} else {
 					throw new Exception("Erro na linha " + token.getLinha() + ". "
-							+ "Operação de multiplicação com tipos incompativeis.");
+							+ "Operação de multiplicação com tipos incompatíveis.");
 				}
 				break;
 			case "sdiv":
@@ -405,11 +405,11 @@ public class AnalisadorSemantico {
 						gera("DIVI");
 					} else {
 						throw new Exception("Erro na linha " + token.getLinha() + ". "
-								+ "Operação de divisão com tipos incompativeis.");
+								+ "Operação de divisão com tipos incompatíveis.");
 					}
 				} else {
 					throw new Exception("Erro na linha " + token.getLinha() + ". "
-							+ "Operação de divisão com tipos incompativeis.");
+							+ "Operação de divisão com tipos incompatíveis.");
 				}
 				break;
 			case "smenor":
@@ -421,11 +421,11 @@ public class AnalisadorSemantico {
 						gera("CME");
 					} else {
 						throw new Exception("Erro na linha " + token.getLinha() + ". "
-								+ "Comparação de menor com tipos incompativeis.");
+								+ "Comparação de menor com tipos incompatíveis.");
 					}
 				} else {
 					throw new Exception("Erro na linha " + token.getLinha() + ". "
-							+ "Comparação de menor com tipos incompativeis.");
+							+ "Comparação de menor com tipos incompatíveis.");
 				}
 				break;
 			case "smaior":
@@ -437,11 +437,11 @@ public class AnalisadorSemantico {
 						gera("CMA");
 					} else {
 						throw new Exception("Erro na linha " + token.getLinha() + ". "
-								+ "Comparação de maior com tipos incompativeis.");
+								+ "Comparação de maior com tipos incompatíveis.");
 					}
 				} else {
 					throw new Exception("Erro na linha " + token.getLinha() + ". "
-							+ "Comparação de maior com tipos incompativeis.");
+							+ "Comparação de maior com tipos incompatíveis.");
 				}
 				break;
 			case "smaiorig":
@@ -453,11 +453,11 @@ public class AnalisadorSemantico {
 						gera("CMAQ");
 					} else {
 						throw new Exception("Erro na linha " + token.getLinha() + ". "
-								+ "Comparação de maior ou igual com tipos incompativeis.");
+								+ "Comparação de maior ou igual com tipos incompatíveis.");
 					}
 				} else {
 					throw new Exception("Erro na linha " + token.getLinha() + ". "
-							+ "Comparação de maior ou igual com tipos incompativeis.");
+							+ "Comparação de maior ou igual com tipos incompatíveis.");
 				}
 				break;
 			case "smenorig":
@@ -469,11 +469,11 @@ public class AnalisadorSemantico {
 						gera("CMEQ");
 					} else {
 						throw new Exception("Erro na linha " + token.getLinha() + ". "
-								+ "Comparação de menor ou igual com tipos incompativeis.");
+								+ "Comparação de menor ou igual com tipos incompatíveis.");
 					}
 				} else {
 					throw new Exception("Erro na linha " + token.getLinha() + ". "
-							+ "Comparação de menor ou igual com tipos incompativeis.");
+							+ "Comparação de menor ou igual com tipos incompatíveis.");
 				}
 				break;
 			case "sig":
@@ -483,7 +483,7 @@ public class AnalisadorSemantico {
 						filaCompatibilidadeTipo.set(filaCompatibilidadeTipo.size() - 1, "booleano");
 					} else {
 						throw new Exception("Erro na linha " + token.getLinha() + ". "
-								+ "Comparação de igualdade com tipos incompativeis.");
+								+ "Comparação de igualdade com tipos incompatíveis.");
 					}
 				} else if (filaCompatibilidadeTipo.get(filaCompatibilidadeTipo.size() - 1).equals("booleano")) {
 					if (filaCompatibilidadeTipo.get(filaCompatibilidadeTipo.size() - 2).equals("booleano")) {
@@ -491,7 +491,7 @@ public class AnalisadorSemantico {
 						filaCompatibilidadeTipo.set(filaCompatibilidadeTipo.size() - 1, "booleano");
 					} else {
 						throw new Exception("Erro na linha " + token.getLinha() + ". "
-								+ "Comparação de igualdade com tipos incompativeis.");
+								+ "Comparação de igualdade com tipos incompatíveis.");
 					}	
 				}
 				gera("CEQ");
@@ -503,7 +503,7 @@ public class AnalisadorSemantico {
 						filaCompatibilidadeTipo.set(filaCompatibilidadeTipo.size() - 1, "booleano");
 					} else {
 						throw new Exception("Erro na linha " + token.getLinha() + ". "
-								+ "Comparação de desigualdade com tipos incompativeis.");
+								+ "Comparação de desigualdade com tipos incompatíveis.");
 					}
 				} else if (filaCompatibilidadeTipo.get(filaCompatibilidadeTipo.size() - 1).equals("booleano")) {
 					if (filaCompatibilidadeTipo.get(filaCompatibilidadeTipo.size() - 2).equals("booleano")) {
@@ -511,7 +511,7 @@ public class AnalisadorSemantico {
 						filaCompatibilidadeTipo.set(filaCompatibilidadeTipo.size() - 1, "booleano");
 					} else {
 						throw new Exception("Erro na linha " + token.getLinha() + ". "
-								+ "Comparação de desigualdade com tipos incompativeis.");
+								+ "Comparação de desigualdade com tipos incompatíveis.");
 					}
 				}
 				gera("CDIF");
@@ -563,7 +563,7 @@ public class AnalisadorSemantico {
 	public static void verificaTipoBooleano(String tipo, Token token) throws Exception {
 		if (!"booleano".equals(tipo)) {
 			throw new Exception("Erro na linha " + token.getLinha()
-					+ " . Espera-se que o tipo de retorno da expressao seja booleano.");
+					+ ". Espera-se que o tipo de retorno da expressão seja booleano.");
 		}
 	}
 

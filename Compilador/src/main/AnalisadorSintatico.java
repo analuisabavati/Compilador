@@ -200,7 +200,7 @@ public class AnalisadorSintatico {
 			throw new Exception(
 					"Erro na linha "
 							+ token.getLinha()
-							+ ". Apenas é permitido apenas tipo inteiro ou booleano. \n Token lido: "
+							+ ". Apenas é permitido tipo inteiro ou booleano. \n Token lido: "
 							+ token.getLexema());
 		}
 		colocaTipoVariaveis(token.getSimbolo());
@@ -221,7 +221,7 @@ public class AnalisadorSintatico {
 					throw new Exception(
 							"Erro na linha "
 									+ token.getLinha()
-									+ ". Espera-se um ponto e virgula após um comando. \nUltimo token lido: "
+									+ ". Espera-se um ponto e vírgula após um comando. \nÚltimo token lido: "
 									+ token.getLexema());
 				}
 			}
@@ -230,7 +230,7 @@ public class AnalisadorSintatico {
 			throw new Exception(
 					"Erro na linha "
 							+ token.getLinha()
-							+ ". Espera-se a palavra 'inicio' para iniciar um comando. \nUltimo token lido: "
+							+ ". Espera-se a palavra 'inicio' para iniciar um comando. \nÚltimo token lido: "
 							+ token.getLexema());
 		}
 	}
@@ -309,7 +309,7 @@ public class AnalisadorSintatico {
 				}
 				return analisaAtribuicao(token);
 			} else {
-				throw new Exception("Erro na linha " + token.getLinha() + ". A variavel ou função "
+				throw new Exception("Erro na linha " + token.getLinha() + ". A variável ou função "
 						+ tokenAnteriorAtribuicao.getLexema() + " não foi declarada.");
 			}
 		} else {
@@ -328,7 +328,7 @@ public class AnalisadorSintatico {
 			throw new Exception(
 					"Erro na linha "
 							+ token.getLinha()
-							+ " . Incompatibilidade do tipo de retorno da expressao com o tipo da variavel "
+							+ " . Incompatibilidade do tipo de retorno da expressão com o tipo da variável "
 							+ tokenAnteriorAtribuicao.getLexema());
 		}
 		
@@ -368,7 +368,7 @@ public class AnalisadorSintatico {
 					}
 				} else {
 					throw new Exception("Erro na linha " + token.getLinha()
-							+ ". Não foi encontrada a variavel para leitura.");
+							+ ". Não foi encontrada a variável para leitura.");
 				}
 			} else {
 				throw new Exception(
@@ -410,29 +410,29 @@ public class AnalisadorSintatico {
 						return token;
 					} else {
 						throw new Exception(
-								"Erro no método analisaEscreva(). Na linha "
+								"Erro na linha "
 										+ token.getLinha()
-										+ " está faltando um fecha parenteses após identificador. \n Token lido: "
+										+ ". Não foi encontrado um fecha parenteses após o identificador. \n Último token lido: "
 										+ token.getLexema());
 					}
 				} else {
 					throw new Exception(
 							"Erro na linha "
 									+ token.getLinha()
-									+ ". Não foi encontrada a variavel ou funcao para escrita.");
+									+ ". Não foi encontrada a variável ou função para a escrita.");
 				}
 			} else {
 				throw new Exception(
-						"Erro no método analisaEscreva(). Na linha "
+						"Erro na linha "
 								+ token.getLinha()
-								+ " está faltando um identificador após abertura dos parenteses. \n Token lido: "
+								+ ". Está faltando um identificador após abertura dos parenteses. \n Último token lido: "
 								+ token.getLexema());
 			}
 		} else {
 			throw new Exception(
-					"Erro no método analisaEscreva(). Na linha "
+					"Erro na linha "
 							+ token.getLinha()
-							+ " está faltando abre parenteses após a palavra escreve. \n Token lido: "
+							+ ". Está faltando um abre parenteses após a palavra escreve. \n Último token lido: "
 							+ token.getLexema());
 		}
 	}
@@ -466,9 +466,9 @@ public class AnalisadorSintatico {
 			return token;
 		} else {
 			throw new Exception(
-					"Erro no método analisaEnquanto(). Na linha "
+					"Erro na linha "
 							+ token.getLinha()
-							+ " está faltando a palavra 'faca' ou condição invalida. \n Token lido: "
+							+ ". Está faltando a palavra 'faca' ou condição inválida. \n Último token lido: "
 							+ token.getLexema());
 		}
 	}
@@ -514,9 +514,9 @@ public class AnalisadorSintatico {
 			
 			return token;
 		} else {
-			throw new Exception("Erro no método analisaSe(). Na linha "
+			throw new Exception("Erro na linha "
 					+ token.getLinha()
-					+ " está faltando a palavra 'entao'. \n Token lido: "
+					+ ". Está faltando a palavra 'entao'. \n Último token lido: "
 					+ token.getLexema());
 		}
 	}
@@ -541,9 +541,9 @@ public class AnalisadorSintatico {
 				token = lexico();
 			} else {
 				throw new Exception(
-						"Erro no método analisaSubrotinas(). Na linha "
+						"Erro na linha "
 								+ token.getLinha()
-								+ " está faltando um ponto e virgula após declaração de subrotinas. \n Token lido: "
+								+ ". Está faltando um ponto e vírgula após declaração de subrotinas. \n Último token lido: "
 								+ token.getLexema());
 			}
 		}
@@ -587,9 +587,9 @@ public class AnalisadorSintatico {
 					return token;
 				} else {
 					throw new Exception(
-							"Erro no método analisaDeclaracaoProcedimento(). Na linha"
+							"Erro na linha"
 									+ token.getLinha()
-									+ " está faltando um ponto e virgula. \n Token lido: "
+									+ ". Está faltando um ponto e vírgula. \n Último token lido: "
 									+ token.getLexema());
 				}
 			} else {
@@ -640,16 +640,16 @@ public class AnalisadorSintatico {
 						}
 					} else {
 						throw new Exception(
-								"Erro no método analisaDeclaracaoFuncao(). Na linha"
+								"Erro na linha "
 										+ token.getLinha()
-										+ " o tipo de retorno é inválido, é permitido apenas inteirou ou booleano. \n Token lido: "
+										+ ". O tipo de retorno é inválido, é permitido apenas inteiro ou booleano. \n Último token lido: "
 										+ token.getLexema());
 					}
 				} else {
 					throw new Exception(
-							"Erro no método analisaDeclaracaoFuncao(). Na linha"
+							"Erro na linha "
 									+ token.getLinha()
-									+ " está faltando dois pontos após o identificador. \n Token lido: "
+									+ ". Está faltando dois pontos após o identificador. \n Último token lido: "
 									+ token.getLexema());
 				}
 			} else {
@@ -658,9 +658,9 @@ public class AnalisadorSintatico {
 			}
 		} else {
 			throw new Exception(
-					"Erro no método analisaDeclaracaoFuncao(). Na linha"
+					"Erro na linha "
 							+ token.getLinha()
-							+ " está faltando um identificador. \n Token lido: "
+							+ ". Está faltando um identificador. \n Último token lido: "
 							+ token.getLexema());
 		}
 		
@@ -737,7 +737,6 @@ public class AnalisadorSintatico {
 					token = analisaChamadaFuncao();
 				}
 			} else {
-				// Alterei aqui! Verificar visibilidade da variavel
 				if (pesquisaDeclaracaoVariavelTabela(token.getLexema())) {
 					adicionaFilaPosfixo(token);
 					tokenAnteriorExpressao = token;
@@ -771,9 +770,9 @@ public class AnalisadorSintatico {
 				return lexico();
 			} else {
 				throw new Exception(
-						"Erro no método analisaFator(). Na linha "
+						"Erro na linha "
 								+ token.getLinha()
-								+ " está faltando um fecha parenteses, após expressão. \n Token lido: "
+								+ ". Está faltando um fecha parenteses após a expressão. \n Último token lido: "
 								+ token.getLexema());
 			}
 		} else if (token.getLexema().equals("verdadeiro") || token.getLexema().equals("falso")) {
@@ -782,9 +781,9 @@ public class AnalisadorSintatico {
 			return lexico();
 		} else {
 			throw new Exception(
-					"Erro no método analisaFator(). Na linha "
+					"Erro na linha "
 							+ token.getLinha()
-							+ " o fator é inválido. Apenas são permitidos identificadores, numeros, expressões, palavra 'verdadeiro', 'falso' ou 'nao' mais fator. \n Token lido: "
+							+ ". O fator é inválido. Apenas são permitidos identificadores, números, expressões, a palavra 'verdadeiro', a palavra 'falso' ou a palavra 'nao' mais um fator. \n Último token lido: "
 							+ token.getLexema());
 		}
 	}
