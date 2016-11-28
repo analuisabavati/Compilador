@@ -476,12 +476,13 @@ public class AnalisadorSintatico {
 	private static Token analisaSe(Token token) throws Exception {
 		token = lexico();
 		token = analisaExpressao(token);
-
+		
 		verificaTipoBooleano(analisaPosfixo(), token);
 		tokenAnteriorExpressao = null;
 		
 		gera("JMPF L"+rotulo);
-
+		int rotuloAux1 = rotulo;
+		rotulo++;
 		if (token.getSimbolo().equals("sentao")) {
 			token = lexico();
 			token = analisaComandoSimples(token);
@@ -489,16 +490,16 @@ public class AnalisadorSintatico {
 				nivelRetorno--;
 			}
 			
-			gera("JMP L"+(rotulo + 1));
+			gera("JMP L"+rotulo);
+			int rotuloAux2 = rotulo;
+			rotulo++;
+			gera("L"+rotuloAux1+" NULL");
 
 			if (token.getSimbolo().equals("ssenao")) {
 				if (inFuncao) {
 					nivelRetorno++;
 					listaFuncoesDeclaradas.get(listaFuncoesDeclaradas.size() - 1).add(new Retorno(token.getLexema(), false, nivelRetorno));
 				}
-				
-				gera("L"+rotulo+" NULL");
-				rotulo++;
 				
 				token = lexico();
 				token = analisaComandoSimples(token);
@@ -508,12 +509,9 @@ public class AnalisadorSintatico {
 					}
 					nivelRetorno--;
 				}
-				
-				gera("L"+rotulo+" NULL");
-				rotulo++;
-				
 			}
-
+			gera("L"+rotuloAux2+" NULL");
+			
 			return token;
 		} else {
 			throw new Exception("Erro no método analisaSe(). Na linha "
