@@ -732,7 +732,7 @@ public class AnalisadorSintatico {
 		if (token.getSimbolo().equals("sidentificador")) {
 			if (pesquisa_tabela(token.getLexema())) {
 				String tipo = getTipoFuncaoVariavel(token.getLexema());
-				if (tipo.equals("inteiro") || tipo.equals("boleano")) {
+				if (tipo.equals("inteiro") || tipo.equals("booleano")) {
 					adicionaFilaPosfixo(token);
 					token = analisaChamadaFuncao();
 				}
