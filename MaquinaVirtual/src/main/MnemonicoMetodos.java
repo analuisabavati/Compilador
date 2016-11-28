@@ -1,6 +1,9 @@
 package main;
 
 import java.util.List;
+
+import javax.swing.JOptionPane;
+
 import static gui.TelaPrincipal.*;
 
 public class MnemonicoMetodos {
@@ -40,11 +43,7 @@ public class MnemonicoMetodos {
 	public static List<Integer> execDIVI(List<Integer> pilhaDados) {
 		Integer valorTopo = pilhaDados.remove(pegaTopo(pilhaDados));
 		Integer valorAntesTopo = pilhaDados.get(pegaTopo(pilhaDados));
-		
-		if (valorTopo == 0) {
-			System.err.println("Erro. Não é possivel fazer divição por zero");
-		}
-		
+			
 		pilhaDados.set(pegaTopo(pilhaDados), valorAntesTopo/valorTopo); 
 		
 		return pilhaDados;

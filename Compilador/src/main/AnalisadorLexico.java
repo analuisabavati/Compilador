@@ -25,7 +25,7 @@ public class AnalisadorLexico {
 
 	public static void main(String[] args) throws Exception {
 
-		numeroLinhaArquivo = 0;
+		numeroLinhaArquivo = 1;
 
 		try {
 			entrada = new BufferedReader(new FileReader(pathArquivo));
@@ -186,6 +186,7 @@ public class AnalisadorLexico {
 			id.append(caractere);
 			token.setLexema(id.toString());
 			token.setSimbolo(retornaSimbolo(id.toString()));
+			token.setLinha(numeroLinhaArquivo);
 	        caractere = (char) entrada.read();
 		}
 		return token;

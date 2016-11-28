@@ -9,6 +9,7 @@ import java.util.StringTokenizer;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 import static main.MnemonicoParametros.*;
@@ -22,16 +23,16 @@ public class MaquinaVirtual {
 	private static String path;
 	private static boolean isListaInstrucoesVazia = true;
 	private static List<Instrucao> pilhaInstrucoes = new ArrayList<>();
-	private static int numeroLinha = 0;	
+	private static int numeroLinha = 0;
 
 	private static List<Integer> breakPoints = new ArrayList<>();
-	
+
 	public static List<Instrucao> leInstrucoesDoArquivo(String caminhoDoArquivo) throws Exception {
-		
-		if(caminhoDoArquivo == null) {
+
+		if (caminhoDoArquivo == null) {
 			throw new Exception("Caminho do arquivo invalido!");
 		}
-		
+
 		List<Instrucao> instrucoes = new ArrayList<>();
 		Scanner leArquivo = new Scanner(new FileReader(caminhoDoArquivo));
 		while (leArquivo.hasNextLine()) {
@@ -40,15 +41,13 @@ public class MaquinaVirtual {
 			StringTokenizer conteudoLinha = new StringTokenizer(linhaArquivo, ", ");
 			verificaNumElementosLinha(conteudoLinha);
 			Instrucao instrucao = montaInstrucao(conteudoLinha);
-			instrucoes.add(instrucao); 
+			instrucoes.add(instrucao);
 		}
 		leArquivo.close();
 		verificaStart(instrucoes);
 		verificaHlt(instrucoes);
 		return instrucoes;
 	}
-
-	
 
 	private static Instrucao montaInstrucao(StringTokenizer conteudoLinha) throws Exception {
 
@@ -58,41 +57,47 @@ public class MaquinaVirtual {
 		while (conteudoLinha.hasMoreTokens()) {
 			elementosLinha.add(conteudoLinha.nextToken());
 		}
-		
+
 		Integer numeroElementosLinha = elementosLinha.size();
-		
-		switch(numeroElementosLinha) {
-			case 1:	if(isMnemonicoPrimeiroElemento(elementosLinha)) {
-						instrucao.setMnemonico(elementosLinha.get(0));
-					}
-					else {
-						throw new Exception ("Erro na linha: "+numeroLinha+". Linha com somente um elemento deve ser um mnemonico!");
-					}
-					break;
-					
-			case 2: if(isMnemonicoComUmParametro(elementosLinha)) {
-						instrucao.setMnemonico(elementosLinha.get(0));
-						instrucao.setParametro1(elementosLinha.get(1));
-					} else if(!isMnemonicoPrimeiroElemento(elementosLinha)) {
-						if(isNotLabelInvalido(elementosLinha)) {
-							instrucao.setLabel(elementosLinha.get(0));
-							instrucao.setParametro1(elementosLinha.get(1));
-						} else {
-							throw new Exception ("Erro na linha: "+numeroLinha+". Linha deve começar com um mnemonico ou label!");
-						}
-					} else {
-						throw new Exception ("Erro na linha: "+numeroLinha+". Linha deve começar com um mnemonico ou label!");
-					}
-					break;
-				
-			case 3:	if(isMnemonicoComDoisParametros(elementosLinha)) {
-						instrucao.setMnemonico(elementosLinha.get(0));
-						instrucao.setParametro1(elementosLinha.get(1));
-						instrucao.setParametro2(elementosLinha.get(2));
-					}
-					break;
-				
-			default: break;
+
+		switch (numeroElementosLinha) {
+		case 1:
+			if (isMnemonicoPrimeiroElemento(elementosLinha)) {
+				instrucao.setMnemonico(elementosLinha.get(0));
+			} else {
+				throw new Exception(
+						"Erro na linha: " + numeroLinha + ". Linha com somente um elemento deve ser um mnemonico!");
+			}
+			break;
+
+		case 2:
+			if (isMnemonicoComUmParametro(elementosLinha)) {
+				instrucao.setMnemonico(elementosLinha.get(0));
+				instrucao.setParametro1(elementosLinha.get(1));
+			} else if (!isMnemonicoPrimeiroElemento(elementosLinha)) {
+				if (isNotLabelInvalido(elementosLinha)) {
+					instrucao.setLabel(elementosLinha.get(0));
+					instrucao.setParametro1(elementosLinha.get(1));
+				} else {
+					throw new Exception(
+							"Erro na linha: " + numeroLinha + ". Linha deve começar com um mnemonico ou label!");
+				}
+			} else {
+				throw new Exception(
+						"Erro na linha: " + numeroLinha + ". Linha deve começar com um mnemonico ou label!");
+			}
+			break;
+
+		case 3:
+			if (isMnemonicoComDoisParametros(elementosLinha)) {
+				instrucao.setMnemonico(elementosLinha.get(0));
+				instrucao.setParametro1(elementosLinha.get(1));
+				instrucao.setParametro2(elementosLinha.get(2));
+			}
+			break;
+
+		default:
+			break;
 		}
 
 		return instrucao;
@@ -100,10 +105,10 @@ public class MaquinaVirtual {
 
 	private static void verificaNumElementosLinha(StringTokenizer conteudoLinha) throws Exception {
 		if (conteudoLinha.countTokens() > numeroMaximoElementosLinha) {
-			throw new Exception ("Erro na linha: "+numeroLinha+". Numero de elementos por linha invalido!");
+			throw new Exception("Erro na linha: " + numeroLinha + ". Numero de elementos por linha invalido!");
 		}
 	}
-	
+
 	private static boolean isNotLabelInvalido(List<String> elementosLinha) {
 		return !(elementosLinha.get(0).equals("NULL")) && elementosLinha.get(1).equals("NULL");
 	}
@@ -128,34 +133,35 @@ public class MaquinaVirtual {
 				listaInstrucoesParaTabela.toArray(new String[listaInstrucoesParaTabela.size()][]), nomesColunas);
 
 		isListaInstrucoesVazia = false;
-		
+
 		return model;
 	}
 
-	private static List<String[]> montaListaInstrucoesParaPreencherTabela(List<Instrucao>  pilhaInstrucoes) {
+	private static List<String[]> montaListaInstrucoesParaPreencherTabela(List<Instrucao> pilhaInstrucoes) {
 		List<String[]> listaInstrucoesParaTabela = new ArrayList<>();
 		Integer numLinha = 0;
 		for (Instrucao ins : pilhaInstrucoes) {
 			listaInstrucoesParaTabela.add(new String[] { numLinha.toString(), ins.getLabel(), ins.getMnemonico(),
-					ins.getParametro1() == null ? null : ins.getParametro1().toString(), ins.getParametro2() == null ? null : ins.getParametro2().toString() });
+					ins.getParametro1() == null ? null : ins.getParametro1().toString(),
+					ins.getParametro2() == null ? null : ins.getParametro2().toString() });
 			numLinha++;
 		}
 		return listaInstrucoesParaTabela;
 	}
-	
+
 	public static DefaultTableModel executaInstrucoes() throws Exception {
 		if (isListaInstrucoesVazia) {
-			throw new Exception ("Lista de instrucoes vazia! Selecione um arquivo.");
+			throw new Exception("Lista de instrucoes vazia! Selecione um arquivo.");
 		}
 		List<Integer> pilhaDados = new ArrayList<>();
-		
+
 		DefaultTableModel model = null;
-		 
-		for (int i= 0; i < pilhaInstrucoes.size() - 1; i++) {
+
+		for (int i = 0; i < pilhaInstrucoes.size() - 1; i++) {
 			if (isLinhaBreakPoint(i)) {
 				esperaBotaoContinuar();
 			}
-		
+
 			switch (pilhaInstrucoes.get(i).getMnemonico() == null ? "NULL" : pilhaInstrucoes.get(i).getMnemonico()) {
 			case "LDC":
 				pilhaDados = execLDC(pilhaDados, toInteger(pilhaInstrucoes.get(i).getParametro1()));
@@ -178,7 +184,12 @@ public class MaquinaVirtual {
 				break;
 
 			case "DIVI":
-				pilhaDados = execDIVI(pilhaDados);
+				if (pilhaDados.get(pilhaDados.size() - 1) == 0) {
+					JOptionPane.showMessageDialog(null, "Para continuar clique no botão \"OK\"!");
+					i = pilhaInstrucoes.size() - 2;
+				} else {
+					pilhaDados = execDIVI(pilhaDados);
+				}
 				break;
 
 			case "INV":
@@ -219,18 +230,18 @@ public class MaquinaVirtual {
 
 			case "CDIF":
 				pilhaDados = execCDIF(pilhaDados);
-				break;	
-				
+				break;
+
 			case "STR":
 				pilhaDados = execSTR(pilhaDados, toInteger(pilhaInstrucoes.get(i).getParametro1()));
 				break;
 
-			case "JMP":								
+			case "JMP":
 				Instrucao instrucaoJMP = new Instrucao(pilhaInstrucoes.get(i).getParametro1(), null, "NULL", null);
 				i = pilhaInstrucoes.indexOf(instrucaoJMP) - 1;
 				break;
 
-			case "JMPF":																	
+			case "JMPF":
 				Instrucao instrucaoJMPF = new Instrucao(pilhaInstrucoes.get(i).getParametro1(), null, "NULL", null);
 				int indexJMPF = pilhaInstrucoes.indexOf(instrucaoJMPF);
 				if (pilhaDados.get(pegaTopo(pilhaDados)).equals(0)) {
@@ -248,36 +259,38 @@ public class MaquinaVirtual {
 				break;
 
 			case "ALLOC":
-				pilhaDados = execALLOC(pilhaDados, toInteger(pilhaInstrucoes.get(i).getParametro1()), toInteger(pilhaInstrucoes.get(i).getParametro2()));
+				pilhaDados = execALLOC(pilhaDados, toInteger(pilhaInstrucoes.get(i).getParametro1()),
+						toInteger(pilhaInstrucoes.get(i).getParametro2()));
 				break;
 
 			case "DALLOC":
-				pilhaDados = execDALLOC(pilhaDados, toInteger(pilhaInstrucoes.get(i).getParametro1()), toInteger(pilhaInstrucoes.get(i).getParametro2()));
+				pilhaDados = execDALLOC(pilhaDados, toInteger(pilhaInstrucoes.get(i).getParametro1()),
+						toInteger(pilhaInstrucoes.get(i).getParametro2()));
 				break;
 
 			case "CALL":
 				pilhaDados.add(i + 1);
-				
+
 				Instrucao instrucaoCALL = new Instrucao(pilhaInstrucoes.get(i).getParametro1(), null, "NULL", null);
 				i = pilhaInstrucoes.indexOf(instrucaoCALL) - 1;
-				
+
 				break;
 
 			case "RETURN":
 				i = pilhaDados.get(pilhaDados.size() - 1) - 1;
 				pilhaDados.remove(pilhaDados.size() - 1);
-				
+
 				break;
-				
+
 			case "NULL":
 				break;
-				
+
 			case "START":
 				pilhaDados.add(null);
 				break;
-				
+
 			case "HLT":
-				break;	
+				break;
 
 			default:
 				break;
@@ -285,33 +298,33 @@ public class MaquinaVirtual {
 			model = atualizaTabelaDados(pilhaDados);
 			atualizaTabelaDadosTela(model);
 		}
-		
+
 		return model;
 	}
 
-	private static DefaultTableModel atualizaTabelaDados(List<Integer>  pilhaDados) {	
+	private static DefaultTableModel atualizaTabelaDados(List<Integer> pilhaDados) {
 		List<String[]> listaDadosParaTabela = montaListaDadosParaPreencherTabela(pilhaDados);
-		String[] nomesColunas = { "Endereço", "Valor"};
+		String[] nomesColunas = { "Endereço", "Valor" };
 		DefaultTableModel model = new DefaultTableModel(
 				listaDadosParaTabela.toArray(new String[listaDadosParaTabela.size()][]), nomesColunas);
-		
+
 		return model;
 	}
-	
-	private static List<String[]> montaListaDadosParaPreencherTabela(List<Integer>  pilhaDados) {
+
+	private static List<String[]> montaListaDadosParaPreencherTabela(List<Integer> pilhaDados) {
 		List<String[]> listaInstrucoesParaTabela = new ArrayList<>();
 		Integer numLinha = 0;
 		for (Integer dado : pilhaDados) {
-			listaInstrucoesParaTabela.add(new String[] { numLinha.toString(), dado == null ? null : dado.toString()});
+			listaInstrucoesParaTabela.add(new String[] { numLinha.toString(), dado == null ? null : dado.toString() });
 			numLinha++;
 		}
 		return listaInstrucoesParaTabela;
 	}
-	
+
 	private static Integer toInteger(String valor) {
 		return Integer.parseInt(valor);
 	}
-	
+
 	public static List<Integer> getBreakPoints() {
 		return breakPoints;
 	}
@@ -327,6 +340,5 @@ public class MaquinaVirtual {
 	public static boolean isLinhaBreakPoint(Integer numeroLinha) {
 		return breakPoints.contains(numeroLinha);
 	}
-	
-	
+
 }
