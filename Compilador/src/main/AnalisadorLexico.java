@@ -225,6 +225,7 @@ public class AnalisadorLexico {
 				caractere = (char) entrada.read();
 			}
 		} else if (caractere == '!') {
+			id.append(caractere);
 			caractere = (char) entrada.read();
 			if (caractere == '=') {
 				id.append(caractere);

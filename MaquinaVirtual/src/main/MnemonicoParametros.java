@@ -43,6 +43,7 @@ public class MnemonicoParametros {
 		namesMap.put("CEQ", 0);
 		namesMap.put("CMEQ", 0);
 		namesMap.put("CMAQ", 0);
+		namesMap.put("CDIF", 0);
 		namesMap.put("START", 0);
 		namesMap.put("HLT", 0);
 		namesMap.put("STR", 1);
