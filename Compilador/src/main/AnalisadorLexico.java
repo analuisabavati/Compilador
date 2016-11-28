@@ -1,208 +1,262 @@
 package main;
 
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
-import static main.ArquivoUtil.*;
 import static main.TabelaTokens.*;
 
 public class AnalisadorLexico {
 
-	private static int indexCaractereLinha = 0;
-	private static int numeroLinha = 0;
-	private static Scanner arquivoTratado;
-	private static String linhaArquivo = null;
+	public static String pathArquivo;
+	
+	private static BufferedReader entrada;
+	private static int numeroLinhaArquivo;
+	private static char caractere;
+
+	private final static char ENTER = 13;
+	private final static char QUEBRA_LINHA = 10;
+	private final static char BACKSPACE = 8;
+	private final static char TAB = 9;
+	private final static char ESPACO = 32;
+
+	private final static char ABRE_CHAVES = 123;
+	private final static char FECHA_CHAVES = 125;
+	
 
 	public static void main(String[] args) throws Exception {
-		numeroLinhaArquivoUtil =  1;
-		indexCaractereLinha = 0;
-		numeroLinha = 0;
-		linhaArquivo = null;
-		gravaArquivoFonteTratado();
-		arquivoTratado = abreArquivoFonte(pathArquivoTratado);
-		if (arquivoTratado.hasNextLine()) {
-			trataLinhaVazia();
-		} else {
-			throw new Exception("Arquivo Vazio!");
+
+		numeroLinhaArquivo = 0;
+
+		try {
+			entrada = new BufferedReader(new FileReader(pathArquivo));
+			caractere = (char) entrada.read();
+		} catch (Exception e) {
+			throw new Exception("Não foi possivel ler o arquivo.");
 		}
+
 	}
 
 	public static Token lexico() throws Exception {
-		if (indexCaractereLinha > linhaArquivo.length() - 1) {
-			indexCaractereLinha = 0;
-			if (arquivoTratado.hasNextLine()) {
-				trataLinhaVazia();
-			} else {
-				throw new Exception("Chegou ao fim do arquivo. Não há mais tokens.");
-			}
-		} 
-		return pegaToken(linhaArquivo);
-	}
 
-	private static void trataLinhaVazia() throws Exception {
-		do {
-			linhaArquivo = arquivoTratado.nextLine();	
-			numeroLinha++;
-		} while (linhaArquivo.trim().isEmpty() && arquivoTratado.hasNextLine());
-		
-		if (linhaArquivo.trim().isEmpty()) {
+		char caractereAnterior;
+
+		while (caractere == ENTER || caractere == QUEBRA_LINHA) {
+			numeroLinhaArquivo++;
+			caractere = (char) entrada.read();
+		}
+
+		while (isCaracterValido() && (isBarra() || caractere == ABRE_CHAVES || caractere == BACKSPACE
+				|| caractere == TAB || caractere == ESPACO)) {
+			if (caractere == ABRE_CHAVES) {
+				while (isCaracterValido() && caractere != '\uffff' && caractere != FECHA_CHAVES) {
+					if (caractere == ENTER || caractere == QUEBRA_LINHA) {
+						numeroLinhaArquivo++;
+					}
+					caractere = (char) entrada.read();
+				}
+				if (caractere == FECHA_CHAVES) {
+					caractere = (char) entrada.read();
+				} else {
+					throw new Exception("Erro: Comentário foi aberto e não foi fechado!");
+				}
+			}
+
+			if (isBarra()) {
+				caractereAnterior = caractere;
+				caractere = (char) entrada.read();
+				if (isAsterisco()) {
+					caractere = (char) entrada.read();
+					while (!isBarra() && isCaracterValido() && caractere != '\uffff') {
+						caractereAnterior = caractere;
+						caractere = (char) entrada.read();
+						if (caractere == ENTER || caractere == QUEBRA_LINHA) {
+							numeroLinhaArquivo++;
+						}
+					}
+					if (isBarra() && isAsterisco(caractereAnterior)) {
+						caractere = (char) entrada.read();
+					} else {
+						throw new Exception("Erro: Comentário foi aberto e não foi fechado!");
+					}
+				} else {
+					throw new Exception("Erro: Formato de comentário inválido.");
+				}
+			}
+
+			while (isCaracterValido() && caractere != '\uffff' && (caractere == QUEBRA_LINHA || caractere == ENTER
+					|| caractere == BACKSPACE || caractere == TAB || caractere == ESPACO)) {
+				if (caractere == ENTER || caractere == QUEBRA_LINHA) {
+					numeroLinhaArquivo++;
+				}
+				caractere = (char) entrada.read();
+			}
+		}
+
+		if (isCaracterValido() && caractere != '\uffff') {
+			Token token;
+			try {
+				token = pegaToken();
+			} catch (Throwable e) {
+				throw new Exception(e.getMessage());
+			}
+			return token;
+		} else {
 			throw new Exception("Chegou ao fim do arquivo. Não há mais tokens.");
 		}
-		
 	}
 
-	private static Token pegaToken(String linha) throws Exception {
-		Character caractere = linha.charAt(indexCaractereLinha);
+	private static boolean isAsterisco() {
+		return (char) caractere == '*';
+	}
+
+	private static boolean isAsterisco(char caractereAnterior) {
+		return (char) caractereAnterior == '*';
+	}
+
+	private static boolean isBarra() {
+		return (char) caractere == '/';
+	}
+
+	private static boolean isCaracterValido() {
+		return (int) caractere != -1;
+	}
+
+	private static Token pegaToken() throws Throwable {
 		if (isDigito(caractere)) {
-			return trataDigito(linha);
+			return trataDigito();
 		} else if (isLetra(caractere)) {
-			return trataIdentificadorAndPalavraReservada(linha);
+			return trataIdentificadorAndPalavraReservada();
 		} else if (caractere == ':') {
-			return trataAtribuicao(linha);
+			return trataAtribuicao();
 		} else if (caractere == '+' || caractere == '-' || caractere == '*') {
-			return trataOperadorAritmetico(linha);
+			return trataOperadorAritmetico();
 		} else if (caractere == '<' || caractere == '>' || caractere == '=' || caractere == '!') {
-			return trataOperadoRelacional(linha);
+			return trataOperadoRelacional();
 		} else if (caractere == ';' || caractere == ',' || caractere == '(' || caractere == ')' || caractere == '.') {
-			return trataPontuacao(linha);
-		} else if (caractere == ' ') {
-			getProximoCaracterValido(linha);
-			return pegaToken(linhaArquivo);
+			return trataPontuacao();
 		} else {
-			throw new Exception("Caractere Invalido: " + caractere + " na linha: " + numeroLinha + ".");
+			throw new Exception("Erro na linha " + numeroLinhaArquivo + ". Caractere inválido: " + caractere + "");
 		}
 	}
 
-	private static void getProximoCaracterValido(String linha) throws Exception {
-		Character caractere;
-		do {
-			indexCaractereLinha++;
-			if (indexCaractereLinha > linhaArquivo.length() - 1) {
-				indexCaractereLinha = 0;
-				if (arquivoTratado.hasNextLine()) {
-					trataLinhaVazia();
-				} else {
-					throw new Exception("Chegou ao fim do arquivo. Não há mais tokens.");
-				}
-				break;
-			} else {
-				caractere = linha.charAt(indexCaractereLinha);
-			}
-		} while (caractere == ' ');
-	}
-
-	private static Token trataDigito(String linha) {
+	private static Token trataDigito() throws Exception {
 		StringBuilder numero = new StringBuilder();
-		do {
-			numero.append(linha.charAt(indexCaractereLinha));
-			indexCaractereLinha++;
-		} while ((indexCaractereLinha < linha.length()) && (isDigito(linha.charAt(indexCaractereLinha))));
-		
+
+		while (Character.isDigit(caractere)) {
+			numero.append(caractere);
+			caractere = (char) entrada.read();
+		}
+
 		Token token = new Token();
 		token.setSimbolo("snumero");
 		token.setLexema(numero.toString());
-		token.setLinha(numeroLinha);
+		token.setLinha(numeroLinhaArquivo);
 		return token;
 	}
 
-	private static Token trataIdentificadorAndPalavraReservada(String linha) {
+	private static Token trataIdentificadorAndPalavraReservada() throws Exception {
+		
 		StringBuilder id = new StringBuilder();
-		do {
-			id.append(linha.charAt(indexCaractereLinha));
-			indexCaractereLinha++;
-		} while ((indexCaractereLinha < linha.length()) && (isDigito(linha.charAt(indexCaractereLinha))
-				|| isLetra(linha.charAt(indexCaractereLinha)) || linha.charAt(indexCaractereLinha) == '_'));
+	     
+        while(isDigito(caractere) || isLetra(caractere) || caractere =='_') {
+            id.append(caractere);
+            caractere = (char) entrada.read();
+        }
 
 		Token token = new Token();
 		token.setLexema(id.toString());
 		token.setSimbolo(retornaSimbolo(id.toString()) != null ? retornaSimbolo(id.toString()) : "sidentificador");
-		token.setLinha(numeroLinha);
+		token.setLinha(numeroLinhaArquivo);
 		return token;
 	}
 
-	private static Token trataAtribuicao(String linha) {
+	private static Token trataAtribuicao() throws Exception {
+		
 		StringBuilder id = new StringBuilder();
-		id.append(linha.charAt(indexCaractereLinha));
+		id.append(caractere);
 
 		Token token = new Token();
 		token.setLexema(id.toString());
 		token.setSimbolo(retornaSimbolo(id.toString()));
-		token.setLinha(numeroLinha);
+		token.setLinha(numeroLinhaArquivo);
 
-		indexCaractereLinha++;
-		if (linha.charAt(indexCaractereLinha) == '=') {
-			id.append(linha.charAt(indexCaractereLinha));
+        caractere = (char) entrada.read();
+		
+		if (caractere == '=') {
+			id.append(caractere);
 			token.setLexema(id.toString());
 			token.setSimbolo(retornaSimbolo(id.toString()));
-			indexCaractereLinha++;
+	        caractere = (char) entrada.read();
 		}
 		return token;
 	}
 
-	private static Token trataOperadorAritmetico(String linha) {
+	private static Token trataOperadorAritmetico() throws Exception {
 		StringBuilder id = new StringBuilder();
-		id.append(linha.charAt(indexCaractereLinha));
+		id.append(caractere);
 
 		Token token = new Token();
 		token.setLexema(id.toString());
 		token.setSimbolo(retornaSimbolo(id.toString()));
-		token.setLinha(numeroLinha);
+		token.setLinha(numeroLinhaArquivo);
 
-		indexCaractereLinha++;
+		caractere = (char) entrada.read();
 
 		return token;
 	}
 
-	private static Token trataOperadoRelacional(String linha) throws Exception {
+	private static Token trataOperadoRelacional() throws Exception {
 		Token token = new Token();
 		StringBuilder id = new StringBuilder();
-		
-		if (linha.charAt(indexCaractereLinha) == '<' || linha.charAt(indexCaractereLinha) == '>') {
-			id.append(linha.charAt(indexCaractereLinha));
+
+		if (caractere == '<' || caractere == '>') {
+			id.append(caractere);
 
 			token.setLexema(id.toString());
 			token.setSimbolo(retornaSimbolo(id.toString()));
-			token.setLinha(numeroLinha);
-			indexCaractereLinha++;
-			if (linha.charAt(indexCaractereLinha) == '=') {
-				id.append(linha.charAt(indexCaractereLinha));
+			token.setLinha(numeroLinhaArquivo);
+			
+			caractere = (char) entrada.read();
+			if (caractere == '=') {
+				id.append(caractere);
 				token.setLexema(id.toString());
 				token.setSimbolo(retornaSimbolo(id.toString()));
-				indexCaractereLinha++;
+				caractere = (char) entrada.read();
 			}
-		} else if (linha.charAt(indexCaractereLinha) == '!') {
-			indexCaractereLinha++;
-			if (linha.charAt(indexCaractereLinha) == '=') {
-				id.append(linha.charAt(indexCaractereLinha));
+		} else if (caractere == '!') {
+			caractere = (char) entrada.read();
+			if (caractere == '=') {
+				id.append(caractere);
 
 				token.setLexema(id.toString());
 				token.setSimbolo(retornaSimbolo(id.toString()));
-				token.setLinha(numeroLinha);
-				indexCaractereLinha++;
+				token.setLinha(numeroLinhaArquivo);
+				caractere = (char) entrada.read();
 			} else {
 				throw new Exception("Não existe o comando : !");
 			}
-		} else if (linha.charAt(indexCaractereLinha) == '=') {
-			id.append(linha.charAt(indexCaractereLinha));
+		} else if (caractere == '=') {
+			id.append(caractere);
 
 			token.setLexema(id.toString());
 			token.setSimbolo(retornaSimbolo(id.toString()));
-			token.setLinha(numeroLinha);
-			indexCaractereLinha++;
+			token.setLinha(numeroLinhaArquivo);
+			caractere = (char) entrada.read();
 		}
 
 		return token;
 	}
 
-	private static Token trataPontuacao(String linha) {
+	private static Token trataPontuacao() throws Throwable {
 		StringBuilder id = new StringBuilder();
-		id.append(linha.charAt(indexCaractereLinha));
+		id.append(caractere);
 
 		Token token = new Token();
 		token.setLexema(id.toString());
 		token.setSimbolo(retornaSimbolo(id.toString()));
-		token.setLinha(numeroLinha);
+		token.setLinha(numeroLinhaArquivo);
 
-		indexCaractereLinha++;
+		caractere = (char) entrada.read();
 
 		return token;
 	}

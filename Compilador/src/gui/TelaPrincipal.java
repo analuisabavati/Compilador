@@ -1,7 +1,13 @@
 package gui;
 
 import java.awt.EventQueue;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 
 import javax.swing.GroupLayout;
 import javax.swing.JFileChooser;
@@ -16,8 +22,8 @@ import javax.swing.JTextArea;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 
-import static main.ArquivoUtil.*;
 import static main.AnalisadorSintatico.*;
+import static main.AnalisadorLexico.*;
 
 public class TelaPrincipal extends JFrame {
 
@@ -74,8 +80,7 @@ public class TelaPrincipal extends JFrame {
 		fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
 		int result = fileChooser.showOpenDialog(janela);
 		if (result == JFileChooser.APPROVE_OPTION) {
-			File selectedFile = fileChooser.getSelectedFile();
-			pathArquivo = selectedFile.getAbsolutePath();
+			pathArquivo = fileChooser.getSelectedFile().toString();
 		}
 	}
 
@@ -111,6 +116,16 @@ public class TelaPrincipal extends JFrame {
 				e1.printStackTrace();
 			}
 		});
+	}
+
+	public static void salvaArquivoFonte(String[] conteudoArquivoFonte) throws Exception {
+		PrintWriter arquivo = new PrintWriter(pathArquivo);
+		arquivo.print("");
+		for (String string : conteudoArquivoFonte) {
+			arquivo.write(string);
+			arquivo.write("\n");
+		}
+		arquivo.close();
 	}
 
 	private void preencheEditor(String texto) {
@@ -161,30 +176,43 @@ public class TelaPrincipal extends JFrame {
 		setContentPane(contentPane);
 
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
-		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGap(55)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addComponent(scrollPaneErro, GroupLayout.PREFERRED_SIZE, 526, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblErro)
-						.addComponent(scrollPaneEditor, GroupLayout.PREFERRED_SIZE, 524, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblEditor))
-					.addContainerGap(79, Short.MAX_VALUE))
-		);
-		gl_contentPane.setVerticalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGap(14)
-					.addComponent(lblEditor)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(scrollPaneEditor, GroupLayout.PREFERRED_SIZE, 361, GroupLayout.PREFERRED_SIZE)
-					.addGap(18)
-					.addComponent(lblErro)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(scrollPaneErro, GroupLayout.PREFERRED_SIZE, 56, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-		);
+		gl_contentPane.setHorizontalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup().addGap(55)
+						.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addComponent(scrollPaneErro, GroupLayout.PREFERRED_SIZE, 526,
+										GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblErro)
+								.addComponent(scrollPaneEditor, GroupLayout.PREFERRED_SIZE, 524,
+										GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblEditor))
+						.addContainerGap(79, Short.MAX_VALUE)));
+		gl_contentPane
+				.setVerticalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_contentPane.createSequentialGroup().addGap(14).addComponent(lblEditor)
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addComponent(scrollPaneEditor, GroupLayout.PREFERRED_SIZE, 361,
+										GroupLayout.PREFERRED_SIZE)
+								.addGap(18).addComponent(lblErro).addPreferredGap(ComponentPlacement.UNRELATED)
+								.addComponent(scrollPaneErro, GroupLayout.PREFERRED_SIZE, 56,
+										GroupLayout.PREFERRED_SIZE)
+								.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 		contentPane.setLayout(gl_contentPane);
 	}
+
+	public static String exibeArquivoFonte() throws Exception {
+
+		InputStream is = new FileInputStream(pathArquivo);
+		InputStreamReader isr = new InputStreamReader(is);
+		BufferedReader br = new BufferedReader(isr);
+
+		String linhaArquivo = br.readLine();
+
+		while (linhaArquivo != null && br.ready()) {
+			linhaArquivo = linhaArquivo + br.readLine() + "\n";
+		}
+
+		br.close();
+		return linhaArquivo;
+	}
+
 }
